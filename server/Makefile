@@ -12,10 +12,14 @@ NAME			= server
 
 DIR_COMMON		= ../common
 
-SRC			= src/server.cpp			\
-			  $(DIR_COMMON)/src/paquet.cpp		\
-			  $(DIR_COMMON)/src/paquetKeys.cpp	\
-			  $(DIR_COMMON)/src/paquetMouse.cpp
+SRC			= src/server.cpp				\
+			  $(DIR_COMMON)/src/paquet.cpp			\
+			  $(DIR_COMMON)/src/paquetKeys.cpp		\
+			  $(DIR_COMMON)/src/paquetMouse.cpp		\
+			  $(DIR_COMMON)/src/paquetCommandServer.cpp	\
+			  $(DIR_COMMON)/src/paquetCommandClient.cpp	\
+			  $(DIR_COMMON)/src/paquetFirstServer.cpp	\
+			  $(DIR_COMMON)/src/paquetFirstClient.cpp
 
 OBJ			= $(SRC:.cpp=.o)
 

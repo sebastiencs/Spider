@@ -8,7 +8,6 @@
 // Last update Thu Oct 15 08:57:50 2015 chapui_s
 //
 
-#include <cstring>
 #include "paquetKeys.hh"
 
 PaquetKeys::PaquetKeys()
@@ -25,6 +24,7 @@ PaquetKeys::PaquetKeys()
 PaquetKeys::PaquetKeys(const void *data, size_t size)
 {
   this->setData(0, (void *)data, size);
+  _parsed = 0;
 }
 
 PaquetKeys::~PaquetKeys()

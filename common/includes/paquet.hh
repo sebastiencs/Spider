@@ -12,6 +12,7 @@
 # define PAQUET_H_
 
 # include <unistd.h>
+# include <cstring>
 # include <stdint.h>
 
 class		Paquet

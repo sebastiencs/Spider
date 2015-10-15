@@ -8,7 +8,6 @@
 // Last update Thu Oct 15 11:58:10 2015 chapui_s
 //
 
-#include <cstring>
 #include "paquetMouse.hh"
 
 PaquetMouse::PaquetMouse()
@@ -26,6 +25,7 @@ PaquetMouse::PaquetMouse()
 PaquetMouse::PaquetMouse(const void *data, size_t size)
 {
   this->setData(0, (void *)data, size);
+  _parsed = 0;
 }
 
 PaquetMouse::~PaquetMouse()
