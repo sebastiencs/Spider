@@ -59,5 +59,5 @@ void		PaquetFirstServer::dumpPaquet()
   if (!_parsed) {
     parsePaquetFirstServer();
   }
-  std::cout << "PaquetFirstServer = { reponse : " << _reponse << " };" << std::endl;
+  std::cout << "PaquetFirstServer = { reponse : " << (int)_reponse << " };" << std::endl;
 }

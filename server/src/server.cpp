@@ -10,6 +10,7 @@
 
 #include "paquetKeys.hh"
 #include "paquetMouse.hh"
+#include "paquetFirstServer.hh"
 
 int		main()
 {
@@ -23,11 +24,13 @@ int		main()
 
   a.dumpPaquetHexa();
 
-  std::cout << a.getDate() << std::endl;
-  std::cout << a.getActive() << std::endl;
-  std::cout << a.getText() << std::endl;
+  std::cout << "date: " << a.getDate() << std::endl;
+  std::cout << "active: " << a.getActive() << std::endl;
+  std::cout << "text: " << a.getText() << std::endl;
 
   a.dumpPaquet();
+
+  std::cout << "\n\n";
 
   PaquetMouse	b;
 
@@ -41,10 +44,24 @@ int		main()
 
   b.dumpPaquetHexa();
 
-  std::cout << b.getDate() << std::endl;
-  std::cout << b.getActive() << std::endl;
+  std::cout << "date: " << b.getDate() << std::endl;
+  std::cout << "Active: " <<  b.getActive() << std::endl;
 
   b.dumpPaquet();
+
+  std::cout << "\n\n";
+
+  PaquetFirstServer	c;
+
+  c.setReponse(1);
+
+  c.createPaquet();
+
+  c.dumpPaquetHexa();
+
+  std::cout << "Reponse: " << (int)c.getReponse() << std::endl;
+
+  c.dumpPaquet();
 
   return (0);
 }

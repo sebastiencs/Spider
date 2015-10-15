@@ -19,7 +19,7 @@ class		Paquet
 {
 protected:
 
-  enum { LENGTH_PAQUET = 10 };
+  enum { LENGTH_PAQUET = 1 };
 
   char		*_data;
   size_t	_size;
@@ -32,6 +32,8 @@ public:
 
   char	*getData() const;
   void	setData(size_t, void *, size_t);
+
+  size_t	getSize() const;
 
   void	dumpPaquetHexa() const;
   virtual void	dumpPaquet() = 0;

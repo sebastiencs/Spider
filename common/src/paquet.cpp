@@ -30,11 +30,11 @@ char	*Paquet::getData() const
 void	Paquet::setData(size_t ptr, void *new_data, size_t length)
 {
   if (ptr + length >= _size) {
-    char *tmp = new char[(ptr + length) * 2]();
+    char *tmp = new char[ptr + length]();
     std::copy(_data, _data + _size, tmp);
     delete[] _data;
     _data = tmp;
-    _size = (ptr + length) * 2;
+    _size = ptr + length;
   }
   for (size_t i = 0; i < length; i += 1) {
     _data[ptr + i] = ((char *)(new_data))[i];
@@ -46,11 +46,16 @@ void	Paquet::setSize(size_t new_size)
   _size = new_size;
 }
 
+size_t	Paquet::getSize() const {
+  return (_size);
+}
+
 void	Paquet::dumpPaquetHexa() const
 {
+  std::cout << "Paquet = { ";
   std::cout << std::hex << std::uppercase;
   for (size_t i = 0; i < _size; i += 1) {
     std::cout << (int)((unsigned char)_data[i]) << " ";
   }
-  std::cout << std::dec << std::endl;
+  std::cout << std::dec << "}; " << std::endl;
 }
