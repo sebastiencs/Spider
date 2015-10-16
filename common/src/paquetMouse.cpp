@@ -24,7 +24,9 @@ PaquetMouse::PaquetMouse()
 
 PaquetMouse::PaquetMouse(const void *data, size_t size)
 {
-  this->setData(0, (void *)data, size);
+  size_t	ptr = 0;
+
+  writeData<char>(ptr, reinterpret_cast<const char *>(data), size);
   _parsed = 0;
 }
 
@@ -43,7 +45,7 @@ void		PaquetMouse::setActive(const std::string &active)
 {
   _sizeActive = active.size();
   _active = new char[_sizeActive + 1]();
-  memcpy(_active, active.data(), _sizeActive);
+  std::copy(active.data(), active.data() + _sizeActive, _active);
   _parsed = 0;
 }
 
@@ -67,50 +69,33 @@ void		PaquetMouse::setButton(uint32_t button)
 
 void		PaquetMouse::createPaquet()
 {
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  ptr = 0;
-  this->setData(ptr, &_id, 1);
-  ptr += 1;
-  this->setData(ptr, &_date, 4);
-  ptr += 4;
-  this->setData(ptr, &_sizeActive, 2);
-  ptr += 2;
-  if (_sizeActive) {
-    this->setData(ptr, _active, _sizeActive);
-    ptr += _sizeActive;
-  }
-  this->setData(ptr, &_X, 2);
-  ptr += 2;
-  this->setData(ptr, &_Y, 2);
-  ptr += 2;
-  this->setData(ptr, &_button, 1);
+  writeData<uint8_t>(ptr, &_id);
+  writeData<uint32_t>(ptr, &_date);
+  writeData<uint16_t>(ptr, &_sizeActive);
+  writeData<char>(ptr, _active, _sizeActive);
+  writeData<uint16_t>(ptr, &_X);
+  writeData<uint16_t>(ptr, &_Y);
+  writeData<uint8_t>(ptr, &_button);
 }
 
 void		PaquetMouse::parsePaquetMouse()
 {
-  char		*data;
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  data = this->getData();
-  ptr = 0;
-  memcpy(&_id, data + ptr, 1);
-  ptr = 1;
-  memcpy(&_date, data + ptr, 4);
-  ptr += 4;
-  memcpy(&_sizeActive, data + ptr, 2);
-  ptr += 2;
+  _id = readData<uint8_t>(ptr);
+  _date = readData<uint32_t>(ptr);
+  _sizeActive = readData<uint16_t>(ptr);
   if (_sizeActive) {
     delete[] _active;
     _active = new char[_sizeActive + 1]();
-    memcpy(_active, data + ptr, _sizeActive);
-    ptr += _sizeActive;
+    readData<char>(ptr, _active, _sizeActive);
   }
-  memcpy(&_X, data + ptr, 2);
-  ptr += 2;
-  memcpy(&_Y, data + ptr, 2);
-  ptr += 2;
-  memcpy(&_button, data + ptr, 1);
+  _X = readData<uint16_t>(ptr);
+  _Y = readData<uint16_t>(ptr);
+  _button = readData<uint8_t>(ptr);
+
   _parsed = 1;
 }
 

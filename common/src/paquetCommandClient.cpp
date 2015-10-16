@@ -21,7 +21,9 @@ PaquetCommandClient::PaquetCommandClient()
 
 PaquetCommandClient::PaquetCommandClient(const void *data, size_t size)
 {
-  this->setData(0, (void *)data, size);
+  size_t	ptr = 0;
+
+  writeData<char>(ptr, reinterpret_cast<const char *>(data), size);
   _parsed = 0;
 }
 
@@ -40,43 +42,31 @@ void		PaquetCommandClient::setDataReponse(const std::string &reponse)
 {
   _sizeData = reponse.size();
   _dataReponse = new char[_sizeData + 1]();
-  memcpy(_dataReponse, reponse.data(), _sizeData);
+  std::copy(reponse.data(), reponse.data() + _sizeData, _dataReponse);
   _parsed = 0;
 }
 
 void		PaquetCommandClient::createPaquet()
 {
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  ptr = 0;
-  this->setData(ptr, &_id, 1);
-  ptr += 1;
-  this->setData(ptr, &_ok, 1);
-  ptr += 1;
-  this->setData(ptr, &_sizeData, 2);
-  ptr += 2;
-  if (_sizeData) {
-    this->setData(ptr, _dataReponse, _sizeData);
-  }
+  writeData<uint8_t>(ptr, &_id);
+  writeData<uint8_t>(ptr, &_ok);
+  writeData<uint16_t>(ptr, &_sizeData);
+  writeData<char>(ptr, _dataReponse, _sizeData);
 }
 
 void		PaquetCommandClient::parsePaquetCommandClient()
 {
-  char		*data;
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  data = this->getData();
-  ptr = 0;
-  memcpy(&_id, data + ptr, 1);
-  ptr = 1;
-  memcpy(&_ok, data + ptr, 1);
-  ptr = 1;
-  memcpy(&_sizeData, data + ptr, 2);
-  ptr += 2;
+  _id = readData<uint8_t>(ptr);
+  _ok = readData<uint8_t>(ptr);
+  _sizeData = readData<uint16_t>(ptr);
   if (_sizeData) {
     delete[] _dataReponse;
     _dataReponse = new char[_sizeData + 1]();
-    memcpy(_dataReponse, data + ptr, _sizeData);
+    readData<char>(ptr, _dataReponse, _sizeData);
   }
   _parsed = 1;
 }
@@ -102,7 +92,7 @@ void		PaquetCommandClient::dumpPaquet()
   if (!_parsed) {
     parsePaquetCommandClient();
   }
-  std::cout << "PaquetCommandClient = { ok ? : " << _ok;
+  std::cout << "PaquetCommandClient = { ok ? : " << (int)_ok;
   std::cout << ", SizeData : " << _sizeData;
   if (_sizeData)
     std::cout << ", DataReponse : '" << _dataReponse << "'";

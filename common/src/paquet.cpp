@@ -22,25 +22,6 @@ Paquet::~Paquet()
   delete[] _data;
 }
 
-char	*Paquet::getData() const
-{
-  return (_data);
-}
-
-void	Paquet::setData(size_t ptr, void *new_data, size_t length)
-{
-  if (ptr + length >= _size) {
-    char *tmp = new char[ptr + length]();
-    std::copy(_data, _data + _size, tmp);
-    delete[] _data;
-    _data = tmp;
-    _size = ptr + length;
-  }
-  for (size_t i = 0; i < length; i += 1) {
-    _data[ptr + i] = ((char *)(new_data))[i];
-  }
-}
-
 void	Paquet::setSize(size_t new_size)
 {
   _size = new_size;
@@ -48,6 +29,15 @@ void	Paquet::setSize(size_t new_size)
 
 size_t	Paquet::getSize() const {
   return (_size);
+}
+
+void	Paquet::changeSize(size_t size) {
+  char	*tmp = new char[size];
+
+  std::copy(_data, _data + _size, tmp);
+  delete[] _data;
+  _data = tmp;
+  _size = size;
 }
 
 void	Paquet::dumpPaquetHexa() const

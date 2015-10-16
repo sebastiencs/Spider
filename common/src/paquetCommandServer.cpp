@@ -20,7 +20,9 @@ PaquetCommandServer::PaquetCommandServer()
 
 PaquetCommandServer::PaquetCommandServer(const void *data, size_t size)
 {
-  this->setData(0, (void *)data, size);
+  size_t	ptr = 0;
+
+  writeData<char>(ptr, reinterpret_cast<const char *>(data), size);
   _parsed = 0;
 }
 
@@ -33,39 +35,29 @@ void		PaquetCommandServer::setCommand(const std::string &command)
 {
   _sizeCommand = command.size();
   _command = new char[_sizeCommand + 1]();
-  memcpy(_command, command.data(), _sizeCommand);
+  std::copy(command.data(), command.data() + _sizeCommand, _command);
   _parsed = 0;
 }
 
 void		PaquetCommandServer::createPaquet()
 {
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  ptr = 0;
-  this->setData(ptr, &_id, 1);
-  ptr += 1;
-  this->setData(ptr, &_sizeCommand, 2);
-  ptr += 2;
-  if (_sizeCommand) {
-    this->setData(ptr, _command, _sizeCommand);
-  }
+  writeData<uint8_t>(ptr, &_id);
+  writeData<uint16_t>(ptr, &_sizeCommand);
+  writeData<char>(ptr, _command, _sizeCommand);
 }
 
 void		PaquetCommandServer::parsePaquetCommandServer()
 {
-  char		*data;
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  data = this->getData();
-  ptr = 0;
-  memcpy(&_id, data + ptr, 1);
-  ptr = 1;
-  memcpy(&_sizeCommand, data + ptr, 2);
-  ptr += 2;
+  _id = readData<uint8_t>(ptr);
+  _sizeCommand = readData<uint16_t>(ptr);
   if (_sizeCommand) {
     delete[] _command;
     _command = new char[_sizeCommand + 1]();
-    memcpy(_command, data + ptr, _sizeCommand);
+    readData<char>(ptr, _command, _sizeCommand);
   }
   _parsed = 1;
 }

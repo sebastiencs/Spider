@@ -11,7 +11,6 @@
 #ifndef PAQUETKEYS_H_
 # define PAQUETKEYS_H_
 
-# include <iostream>
 # include "paquet.hh"
 
 class		PaquetKeys : public Paquet

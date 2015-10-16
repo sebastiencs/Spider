@@ -20,7 +20,9 @@ PaquetFirstClient::PaquetFirstClient()
 
 PaquetFirstClient::PaquetFirstClient(const void *data, size_t size)
 {
-  this->setData(0, (void *)data, size);
+  size_t	ptr = 0;
+
+  writeData<char>(ptr, reinterpret_cast<const char *>(data), size);
   _parsed = 0;
 }
 
@@ -39,39 +41,29 @@ void		PaquetFirstClient::setName(const std::string &name)
 {
   _sizeName = name.size();
   _name = new char[_sizeName + 1]();
-  memcpy(_name, name.data(), _sizeName);
+  std::copy(name.data(), name.data() + _sizeName, _name);
   _parsed = 0;
 }
 
 void		PaquetFirstClient::createPaquet()
 {
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  ptr = 0;
-  this->setData(ptr, &_version, 2);
-  ptr += 2;
-  this->setData(ptr, &_sizeName, 2);
-  ptr += 2;
-  if (_sizeName) {
-    this->setData(ptr, _name, _sizeName);
-  }
+  writeData<uint16_t>(ptr, &_version);
+  writeData<uint16_t>(ptr, &_sizeName);
+  writeData<char>(ptr, _name, _sizeName);
 }
 
 void		PaquetFirstClient::parsePaquetFirstClient()
 {
-  char		*data;
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  data = this->getData();
-  ptr = 0;
-  memcpy(&_version, data + ptr, 2);
-  ptr = 2;
-  memcpy(&_sizeName, data + ptr, 2);
-  ptr = 2;
+  _version = readData<uint16_t>(ptr);
+  _sizeName = readData<uint16_t>(ptr);
   if (_sizeName) {
     delete[] _name;
     _name = new char[_sizeName + 1]();
-    memcpy(_name, data + ptr, _sizeName);
+    readData<char>(ptr, _name, _sizeName);
   }
   _parsed = 1;
 }

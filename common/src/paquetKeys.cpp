@@ -23,7 +23,9 @@ PaquetKeys::PaquetKeys()
 
 PaquetKeys::PaquetKeys(const void *data, size_t size)
 {
-  this->setData(0, (void *)data, size);
+  size_t	ptr = 0;
+
+  writeData<char>(ptr, reinterpret_cast<const char *>(data), size);
   _parsed = 0;
 }
 
@@ -43,7 +45,7 @@ void		PaquetKeys::setActive(const std::string &active)
 {
   _sizeActive = active.size();
   _active = new char[_sizeActive + 1]();
-  memcpy(_active, active.data(), _sizeActive);
+  std::copy(active.data(), active.data() + _sizeActive, _active);
   _parsed = 0;
 }
 
@@ -51,57 +53,39 @@ void		PaquetKeys::setText(const std::string &text)
 {
   _sizeText = text.size();
   _text = new char[_sizeText + 1]();
-  memcpy(_text, text.data(), _sizeText);
+  std::copy(text.data(), text.data() + _sizeText, _text);
   _parsed = 0;
 }
 
 void		PaquetKeys::createPaquet()
 {
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  ptr = 0;
-  this->setData(ptr, &_id, 1);
-  ptr += 1;
-  this->setData(ptr, &_date, 4);
-  ptr += 4;
-  this->setData(ptr, &_sizeActive, 2);
-  ptr += 2;
-  if (_sizeActive) {
-    this->setData(ptr, _active, _sizeActive);
-    ptr += _sizeActive;
-  }
-  this->setData(ptr, &_sizeText, 2);
-  ptr += 2;
-  if (_sizeText) {
-    this->setData(ptr, _text, _sizeText);
-  }
+  writeData<uint8_t>(ptr, &_id);
+  writeData<uint32_t>(ptr, &_date);
+  writeData<uint16_t>(ptr, &_sizeActive);
+  writeData<char>(ptr, _active, _sizeActive);
+  writeData<uint16_t>(ptr, &_sizeText);
+  writeData<char>(ptr, _text, _sizeText);
 }
 
 void		PaquetKeys::parsePaquetKeys()
 {
-  char		*data;
-  size_t	ptr;
+  size_t	ptr = 0;
 
-  data = this->getData();
-  ptr = 0;
-  memcpy(&_id, data + ptr, 1);
-  ptr = 1;
-  memcpy(&_date, data + ptr, 4);
-  ptr += 4;
-  memcpy(&_sizeActive, data + ptr, 2);
-  ptr += 2;
+  _id = readData<uint8_t>(ptr);
+  _date = readData<uint32_t>(ptr);
+  _sizeActive = readData<uint16_t>(ptr);
   if (_sizeActive) {
     delete[] _active;
     _active = new char[_sizeActive + 1]();
-    memcpy(_active, data + ptr, _sizeActive);
-    ptr += _sizeActive;
+    readData<char>(ptr, _active, _sizeActive);
   }
-  memcpy(&_sizeText, data + ptr, 2);
-  ptr += 2;
+  _sizeText = readData<uint16_t>(ptr);
   if (_sizeText) {
     delete[] _text;
     _text = new char[_sizeText + 1]();
-    memcpy(_text, data + ptr, _sizeText);
+    readData<char>(ptr, _text, _sizeText);
   }
   _parsed = 1;
 }

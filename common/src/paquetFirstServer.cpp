@@ -18,7 +18,9 @@ PaquetFirstServer::PaquetFirstServer()
 
 PaquetFirstServer::PaquetFirstServer(const void *data, size_t size)
 {
-  this->setData(0, (void *)data, size);
+  size_t	ptr = 0;
+
+  writeData<char>(ptr, reinterpret_cast<const char *>(data), size);
   _parsed = 0;
 }
 
@@ -34,15 +36,16 @@ void		PaquetFirstServer::setReponse(uint8_t reponse)
 
 void		PaquetFirstServer::createPaquet()
 {
-  this->setData(0, &_reponse, 1);
+  size_t	ptr = 0;
+
+  writeData<uint8_t>(ptr, &_reponse);
 }
 
 void		PaquetFirstServer::parsePaquetFirstServer()
 {
-  char		*data;
+  size_t	ptr = 0;
 
-  data = this->getData();
-  memcpy(&_reponse, data, 1);
+  _reponse = readData<uint8_t>(ptr);
   _parsed = 1;
 }
 
