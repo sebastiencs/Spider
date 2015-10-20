@@ -12,3 +12,4 @@ Debug/*
 hookDLL/stdafx.cpp
 hookDLL/stdafx.h
 hookDLL/targetver.h
+*.o
