@@ -6,3 +6,9 @@ Spider.sdf
 Spider.vcxproj
 *.filters
 Debug/*
+*.vcxproj
+*.idb
+*.tlog
+hookDLL/stdafx.cpp
+hookDLL/stdafx.h
+hookDLL/targetver.h

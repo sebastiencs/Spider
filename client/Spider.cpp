@@ -1,17 +1,28 @@
 #include <Windows.h>
 #include <stdio.h>
+#include <iostream>
+#include "hookDLL.h"
+
+typedef LRESULT(*HookFunction)(int, WPARAM, LPARAM);
 
 HHOOK kHook;
-
-LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
-{
-	printf("%d\n", nCode);
-	return CallNextHookEx(kHook, nCode, wParam, lParam);
-}
+HINSTANCE dllHandle;
+HookFunction hookAddr;
 
 int main()
 {
-	kHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, nullptr, NULL);
+	dllHandle = LoadLibrary(TEXT("hookDLL"));
+	if (!dllHandle)
+		std::cerr << "LoadLibrary error : " << GetLastError() << std::endl;
+
+	hookAddr = (HookFunction)GetProcAddress(dllHandle, "KeyboardProc");
+	if (!hookAddr)
+		std::cerr << "getPRocAddress error : " << GetLastError() << std::endl;
+
+	kHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)hookAddr, dllHandle, NULL);
+	if (!kHook)
+		std::cerr << "SetWindowHookEx error : " << GetLastError() << std::endl;
+
 	MSG message;
 	while (GetMessage(&message, NULL, 0, 0)) {
 		TranslateMessage(&message);
