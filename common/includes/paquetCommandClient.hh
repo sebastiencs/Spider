@@ -47,4 +47,6 @@ public:
 
 };
 
+std::ostream	&operator<<(std::ostream &, PaquetCommandClient &);
+
 #endif /* !PAQUETCOMMANDCLIENT_H_ */

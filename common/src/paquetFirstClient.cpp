@@ -86,12 +86,18 @@ char		*PaquetFirstClient::getName()
 
 void		PaquetFirstClient::dumpPaquet()
 {
-  if (!_parsed) {
-    parsePaquetFirstClient();
-  }
-  std::cout << "PaquetFirstClient = { version : " << _version;
-  std::cout << ", SizeName : " << _sizeName;
-  if (_sizeName)
-    std::cout << ", Name : '" << _name << "'";
-  std::cout << " };" << std::endl;
+  std::cout << *this;
+}
+
+
+std::ostream	&operator<<(std::ostream &os, PaquetFirstClient &p)
+{
+  std::string	name = p.getName();
+
+  os << "PaquetFirstClient = { version : " << p.getVersion();
+  os << ", SizeName : " << name.size();
+  if (name.size())
+    os << ", Name : '" << name << "'";
+  os << " };" << std::endl;
+  return (os);
 }

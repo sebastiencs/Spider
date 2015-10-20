@@ -89,12 +89,18 @@ char		*PaquetCommandClient::getDataReponse()
 
 void		PaquetCommandClient::dumpPaquet()
 {
-  if (!_parsed) {
-    parsePaquetCommandClient();
-  }
-  std::cout << "PaquetCommandClient = { ok ? : " << (int)_ok;
-  std::cout << ", SizeData : " << _sizeData;
-  if (_sizeData)
-    std::cout << ", DataReponse : '" << _dataReponse << "'";
-  std::cout << " };" << std::endl;
+  std::cout << *this;
+}
+
+std::ostream	&operator<<(std::ostream &os, PaquetCommandClient &p)
+{
+  int		ok = p.getOk();
+  std::string	reponse = p.getDataReponse();
+
+  os << "PaquetCommandClient = { ok ? : " << ok;
+  os << ", SizeData : " << reponse.size();
+  if (reponse.size())
+    os << ", DataReponse : '" << reponse << "'";
+  os << " };" << std::endl;
+  return (os);
 }

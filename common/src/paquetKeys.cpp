@@ -116,14 +116,20 @@ char		*PaquetKeys::getText()
 
 void		PaquetKeys::dumpPaquet()
 {
-  if (!_parsed) {
-    parsePaquetKeys();
-  }
-  std::cout << "PaquetKeys = { date : " << _date << ", sizeActive : " << _sizeActive;
-  if (_sizeActive)
-    std::cout << ", active : '" << _active << "'";
-  std::cout << ", sizeText : " << _sizeText;
-  if (_sizeText)
-    std::cout << ", text : '" << _text << "'";
-  std::cout << " };" << std::endl;
+  std::cout << *this;
+}
+
+std::ostream	&operator<<(std::ostream &os, PaquetKeys &p)
+{
+  std::string	active = p.getActive();
+  std::string	text = p.getText();
+
+  os << "PaquetKeys = { date : " << p.getDate() << ", sizeActive : " << active.size();
+  if (active.size())
+    os << ", active : '" << active << "'";
+  os << ", sizeText : " << text.size();
+  if (text.size())
+    os << ", text : '" << text << "'";
+  os << " };" << std::endl;
+  return (os);
 }

@@ -53,3 +53,17 @@ void	Paquet::dumpPaquetHexa() const
   }
   std::cout << std::dec << "}; " << std::endl;
 }
+
+std::ostream	&operator<<(std::ostream &os, const Paquet &p)
+{
+  char		*data;
+
+  data = p.getData();
+  os << "Paquet = { ";
+  os << std::hex << std::uppercase;
+  for (size_t i = 0; i < p.getSize(); i += 1) {
+    os << (int)((unsigned char)data[i]) << " ";
+  }
+  os << std::dec << "}; " << std::endl;
+  return (os);
+}
