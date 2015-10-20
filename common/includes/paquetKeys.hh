@@ -50,4 +50,6 @@ public:
 
 };
 
+std::ostream	&operator<<(std::ostream &, PaquetKeys &);
+
 #endif /* !PAQUETKEYS_H_ */

@@ -43,4 +43,6 @@ public:
 
 };
 
+std::ostream	&operator<<(std::ostream &, PaquetFirstClient &);
+
 #endif /* !PAQUETFIRSTCLIENT_H_ */

@@ -141,15 +141,20 @@ uint8_t		PaquetMouse::getButton()
 
 void		PaquetMouse::dumpPaquet()
 {
-  if (!_parsed) {
-    parsePaquetMouse();
-  }
-  std::cout << "PaquetMouse = { date : " << _date << ", sizeActive : " << _sizeActive;
-  if (_sizeActive)
-    std::cout << ", active : '" << _active << "'";
-  std::cout << ", X : " << _X;
-  std::cout << ", Y : " << _Y;
-  std::cout << ", Button : " << (int)_button;
-  std::cout << ((_button == 1) ? ("(Left)") : ((_button == 2) ? ("(Middle)") : ("(Right)")));
-  std::cout << " };" << std::endl;
+  std::cout << *this;
+}
+
+std::ostream	&operator<<(std::ostream &os, PaquetMouse &p)
+{
+  std::string	active = p.getActive();
+
+  os << "PaquetMouse = { date : " << p.getDate() << ", sizeActive : " << active.size();
+  if (active.size())
+    os << ", active : '" << active << "'";
+  os << ", X : " << p.getX();
+  os << ", Y : " << p.getY();
+  os << ", Button : " << (int)p.getButton();
+  os << ((p.getButton() == 1) ? ("(Left)") : ((p.getButton() == 2) ? ("(Middle)") : ("(Right)")));
+  os << " };" << std::endl;
+  return (os);
 }

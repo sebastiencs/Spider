@@ -24,7 +24,8 @@ protected:
   char		*_data;
   size_t	_size;
 
-  void	setSize(size_t);
+  void		setSize(size_t);
+  void		changeSize(size_t);
 
 public:
   Paquet();
@@ -32,8 +33,6 @@ public:
 
   size_t	getSize() const;
   char		*getData() const;
-
-  void		changeSize(size_t);
 
   void	dumpPaquetHexa() const;
   virtual void	dumpPaquet() = 0;
@@ -74,5 +73,7 @@ public:
     return (value);
   }
 };
+
+std::ostream	&operator<<(std::ostream &, const Paquet &);
 
 #endif /* !PAQUET_H_ */

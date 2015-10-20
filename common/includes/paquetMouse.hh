@@ -56,4 +56,6 @@ public:
 
 };
 
+std::ostream	&operator<<(std::ostream &, PaquetMouse &);
+
 #endif /* !PAQUETMOUSE_H_ */

@@ -59,8 +59,11 @@ uint8_t		PaquetFirstServer::getReponse()
 
 void		PaquetFirstServer::dumpPaquet()
 {
-  if (!_parsed) {
-    parsePaquetFirstServer();
-  }
-  std::cout << "PaquetFirstServer = { reponse : " << (int)_reponse << " };" << std::endl;
+  std::cout << *this;
+}
+
+std::ostream	&operator<<(std::ostream &os, PaquetFirstServer &p)
+{
+  std::cout << "PaquetFirstServer = { reponse : " << (int)p.getReponse() << " };" << std::endl;
+  return (os);
 }

@@ -72,11 +72,16 @@ char		*PaquetCommandServer::getCommand()
 
 void		PaquetCommandServer::dumpPaquet()
 {
-  if (!_parsed) {
-    parsePaquetCommandServer();
-  }
-  std::cout << "PaquetCommandServer = { sizeCommand : " << _sizeCommand;
-  if (_sizeCommand)
-    std::cout << ", command : '" << _command << "'";
-  std::cout << " };" << std::endl;
+  std::cout << *this;
+}
+
+std::ostream	&operator<<(std::ostream &os, PaquetCommandServer &p)
+{
+  std::string	command = p.getCommand();
+
+  os << "PaquetCommandServer = { sizeCommand : " << command.size();
+  if (command.size())
+    os << ", command : '" << command << "'";
+  os << " };" << std::endl;
+  return (os);
 }

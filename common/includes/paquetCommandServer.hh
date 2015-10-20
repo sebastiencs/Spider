@@ -44,4 +44,6 @@ public:
 
 };
 
+std::ostream	&operator<<(std::ostream &, PaquetCommandServer &);
+
 #endif /* !PAQUETCOMMANDSERVER_H_ */
