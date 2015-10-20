@@ -6,3 +6,4 @@ Spider.sdf
 Spider.vcxproj
 *.filters
 Debug/*
+*.o
