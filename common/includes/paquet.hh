@@ -31,6 +31,7 @@ public:
   virtual ~Paquet();
 
   size_t	getSize() const;
+  char		*getData() const;
 
   void		changeSize(size_t);
 

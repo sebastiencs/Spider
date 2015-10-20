@@ -31,6 +31,10 @@ size_t	Paquet::getSize() const {
   return (_size);
 }
 
+char	*Paquet::getData() const {
+  return (_data);
+}
+
 void	Paquet::changeSize(size_t size) {
   char	*tmp = new char[size];
 
