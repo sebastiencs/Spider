@@ -9,13 +9,13 @@ HHOOK kHook;
 HINSTANCE dllHandle;
 HookFunction hookAddr;
 
-int main()
+int main() 
 {
 	dllHandle = LoadLibrary(TEXT("hookDLL"));
 	if (!dllHandle)
 		std::cerr << "LoadLibrary error : " << GetLastError() << std::endl;
 
-	hookAddr = (HookFunction)GetProcAddress(dllHandle, "KeyboardProc");
+	hookAddr = (HookFunction)GetProcAddress(dllHandle, "_KeyboardProc@12");
 	if (!hookAddr)
 		std::cerr << "getPRocAddress error : " << GetLastError() << std::endl;
 
