@@ -39,5 +39,4 @@ public:
   virtual void			async_write_some(void *, size_t, const std::function<void()> &);
 };
 
-
 #endif /* !SSLENGINE_H_ */

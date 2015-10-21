@@ -12,27 +12,31 @@ NAME			= server
 
 DIR_COMMON		= ../common
 
-SRC			= src/server.cpp				\
+SRC			= src/main.cpp					\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\
 			  $(DIR_COMMON)/src/paquetMouse.cpp		\
 			  $(DIR_COMMON)/src/paquetCommandServer.cpp	\
 			  $(DIR_COMMON)/src/paquetCommandClient.cpp	\
 			  $(DIR_COMMON)/src/paquetFirstServer.cpp	\
-			  $(DIR_COMMON)/src/paquetFirstClient.cpp
+			  $(DIR_COMMON)/src/paquetFirstClient.cpp	\
+			  $(DIR_COMMON)/src/SslEngine.cpp
+
 
 OBJ			= $(SRC:.cpp=.o)
 
 INCLUDES		= -I ./includes -I $(DIR_COMMON)/includes
 
-CC			= g++
+CC			= clang++
 
 RM			= rm -f
 
-override CXXFLAGS	+= -Wall -Wextra $(INCLUDES) -ggdb
+override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb
+
+LDLIBS			= -lboost_system -lssl -lcrypto
 
 $(NAME):	$(OBJ)
-		$(CC) $(CFLAGS) -o $(NAME) $(OBJ)
+		$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LDLIBS)
 
 all:		$(NAME)
 
