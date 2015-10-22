@@ -10,10 +10,12 @@
 
 #include "Web.hh"
 
-Web::Web(const std::string &addr, uint16_t port)
-  : _ctx(new SslContext())
+Web::Web(uint16_t port)
+  : _ctx(new SslContext()),
+    _acceptor(new Acceptor(*_ctx, port))
 {
   DEBUG_MSG("Web is running");
+  waitSpider();
 }
 
 Web::~Web()
@@ -23,8 +25,22 @@ Web::~Web()
 
 void		Web::start()
 {
+  _acceptor->start();
 }
 
 void		Web::stop()
 {
+  _acceptor->stop();
+}
+
+void		Web::waitSpider()
+{
+  std::function<void(boost::shared_ptr<ISocketEngine> &)> f = boost::bind(&Web::handleNewSpider, this, _1);
+
+  _acceptor->async_accept(f);
+}
+
+void		Web::handleNewSpider(boost::shared_ptr<ISocketEngine> &sock)
+{
+  std::cout << "New Spider !" << std::endl;
 }

@@ -17,6 +17,7 @@ SRC			= src/main.cpp					\
 			  src/Spider.cpp				\
 			  src/Web.cpp					\
 			  src/SslContext.cpp				\
+			  src/Acceptor.cpp				\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\
 			  $(DIR_COMMON)/src/paquetMouse.cpp		\
@@ -31,11 +32,11 @@ OBJ			= $(SRC:.cpp=.o)
 
 INCLUDES		= -I ./includes -I $(DIR_COMMON)/includes
 
-CXX			= g++
+CXX			= clang++
 
 RM			= rm -f
 
-override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb
+override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh512.pem\"
 
 LDLIBS			= -lboost_system -lboost_thread -lssl -lcrypto
 

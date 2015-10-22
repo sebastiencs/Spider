@@ -20,6 +20,8 @@ private:
 public:
   SslContext();
   virtual ~SslContext();
+
+  boost::asio::ssl::context	&getCtx();
 };
 
 #endif /* !SSLCONTEXT_H_ */

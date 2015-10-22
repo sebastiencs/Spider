@@ -14,19 +14,23 @@
 # include <iostream>
 # include <boost/cstdint.hpp>
 # include "SslContext.hh"
+# include "Acceptor.hh"
 # include "debug.hh"
 
 class				Web
 {
 private:
   std::unique_ptr<SslContext>	_ctx;
+  std::unique_ptr<Acceptor>	_acceptor;
 
 public:
-  Web(const std::string &, uint16_t);
+  Web(uint16_t);
   virtual ~Web();
 
   void				start();
   void				stop();
+  void				waitSpider();
+  void				handleNewSpider(boost::shared_ptr<ISocketEngine> &);
 };
 
 #endif /* !WEB_H_ */

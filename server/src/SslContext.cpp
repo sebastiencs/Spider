@@ -39,3 +39,8 @@ SslContext::~SslContext()
 {
   DEBUG_MSG("SslContext Closed");
 }
+
+boost::asio::ssl::context	&SslContext::getCtx()
+{
+  return (_ctx);
+}

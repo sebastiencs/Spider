@@ -12,7 +12,7 @@
 #include "Server.hh"
 
 Server::Server(uint16_t port)
-  : _web(new Web("0.0.0.0", port))
+  : _web(new Web(port))
 {
   DEBUG_MSG("Server is running");
 }
@@ -32,7 +32,8 @@ void		Server::start()
   catch (const std::exception &e) {
     std::cerr << "Unable to run thread: " << e.what() << std::endl;
   }
-  sleep(20);
+  _web->start();
+//  sleep(20);
 }
 
 void		Server::readCommand()
