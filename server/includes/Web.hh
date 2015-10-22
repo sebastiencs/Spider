@@ -13,15 +13,20 @@
 
 # include <iostream>
 # include <boost/cstdint.hpp>
+# include "SslContext.hh"
+# include "debug.hh"
 
-class		Web
+class				Web
 {
+private:
+  std::unique_ptr<SslContext>	_ctx;
+
 public:
   Web(const std::string &, uint16_t);
   virtual ~Web();
 
-  void		start();
-  void		stop();
+  void				start();
+  void				stop();
 };
 
 #endif /* !WEB_H_ */

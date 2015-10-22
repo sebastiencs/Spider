@@ -13,6 +13,10 @@ NAME			= server
 DIR_COMMON		= ../common
 
 SRC			= src/main.cpp					\
+			  src/Server.cpp				\
+			  src/Spider.cpp				\
+			  src/Web.cpp					\
+			  src/SslContext.cpp				\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\
 			  $(DIR_COMMON)/src/paquetMouse.cpp		\
@@ -27,16 +31,16 @@ OBJ			= $(SRC:.cpp=.o)
 
 INCLUDES		= -I ./includes -I $(DIR_COMMON)/includes
 
-CC			= clang++
+CXX			= g++
 
 RM			= rm -f
 
 override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb
 
-LDLIBS			= -lboost_system -lssl -lcrypto
+LDLIBS			= -lboost_system -lboost_thread -lssl -lcrypto
 
 $(NAME):	$(OBJ)
-		$(CC) $(CFLAGS) -o $(NAME) $(OBJ) $(LDLIBS)
+		$(CXX) $(CFLAGS) -o $(NAME) $(OBJ) $(LDLIBS)
 
 all:		$(NAME)
 

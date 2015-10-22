@@ -12,6 +12,7 @@
 #include "paquetKeys.hh"
 #include "paquetMouse.hh"
 #include "paquetFirstServer.hh"
+#include "Server.hh"
 
 int		main(int argc, char **argv)
 {
@@ -28,6 +29,19 @@ int		main(int argc, char **argv)
     std::cerr << "error: Wrong port value" << std::endl;
     return (-1);
   }
+
+  try {
+
+    std::unique_ptr<Server>	server(new Server(port));
+
+    server->start();
+
+
+  } catch (const std::exception &e) {
+    std::cerr << "Exception : " << e.what() << std::endl;
+  }
+
+
   std::cout << "port: " << port << std::endl;
   return (0);
 }

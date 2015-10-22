@@ -11,11 +11,14 @@
 #include "Web.hh"
 
 Web::Web(const std::string &addr, uint16_t port)
+  : _ctx(new SslContext())
 {
+  DEBUG_MSG("Web is running");
 }
 
 Web::~Web()
 {
+  DEBUG_MSG("Closing Web");
 }
 
 void		Web::start()
