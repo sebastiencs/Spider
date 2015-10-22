@@ -12,19 +12,42 @@
 #include "Server.hh"
 
 Server::Server(uint16_t port)
+  : _web(new Web("0.0.0.0", port))
 {
-  std::cout << "Running server..." << std::endl;
+  DEBUG_MSG("Server is running");
 }
 
 Server::~Server()
 {
-  std::cout << "Closing server..." << std::endl;
+  DEBUG_MSG("Closing server");
+
+  _thread.detach();
 }
 
 void		Server::start()
 {
+  try {
+    _thread = boost::thread(&Server::readCommand, this);
+  }
+  catch (const std::exception &e) {
+    std::cerr << "Unable to run thread: " << e.what() << std::endl;
+  }
+  sleep(20);
 }
 
-void		Server::readInput()
+void		Server::readCommand()
 {
+  try {
+    while (1) {
+      std::string	input;
+
+      while (std::getline(std::cin, input)) {
+	std::cout << "READ: '" << input << "'\n";
+	// Envoie des commandes aux clients
+      }
+    }
+  }
+  catch (const std::exception &e) {
+    std::cerr << "Unable to read input: " << e.what() << std::endl;
+  }
 }
