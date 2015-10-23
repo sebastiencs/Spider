@@ -19,6 +19,8 @@ private:
   SslSocket	_socket;
   bool		_error;
 
+  std::function<void()>	_errorFunc = [](){};
+
   void		checkHandshake(const boost::system::error_code &, const std::function<void()> &);
   void		checkRead(const boost::system::error_code &, const std::function<void()> &);
   void		checkWrite(const boost::system::error_code &, const std::function<void()> &);
@@ -37,6 +39,7 @@ public:
   virtual void			async_write(void *, size_t, const std::function<void()> &);
   virtual void			async_read_some(void *, size_t, const std::function<void()> &);
   virtual void			async_write_some(void *, size_t, const std::function<void()> &);
+  virtual void			handleError(const std::function<void()> &);
 };
 
 #endif /* !SSLENGINE_H_ */

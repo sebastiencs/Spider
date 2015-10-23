@@ -8,16 +8,19 @@
 // Last update Tue Oct 20 14:39:18 2015 chapui_s
 //
 
+#include "debug.hh"
 #include "SslEngine.hh"
 
 SslEngine::SslEngine(boost::asio::io_service &ios, boost::asio::ssl::context &ctx)
   : _socket(ios, ctx)
 {
+  DEBUG_MSG("SSlEngine created");
   _error = false;
 }
 
 SslEngine::~SslEngine()
 {
+  DEBUG_MSG("SSlEngine deleted");
 }
 
 bool	SslEngine::isConnected() const
@@ -34,10 +37,10 @@ void	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
 			       const std::function<void()> &func)
 {
   _socket.async_handshake(type,
-			  boost::bind(&SslEngine::checkHandshake,
-			  	      this,
-				      boost::asio::placeholders::error,
-			  	      func));
+  			  boost::bind(&SslEngine::checkHandshake,
+  				      this,
+  				      boost::asio::placeholders::error,
+  				      func));
 }
 
 void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()> &func)
@@ -83,8 +86,9 @@ void	SslEngine::checkHandshake(const boost::system::error_code &e, const std::fu
   if (e) {
     std::cerr << "SSL - Can't do handshake: " << e.message() << std::endl;
     _error = true;
+    _errorFunc();
   }
-  else if (f) {
+  else {
     _error = false;
     f();
   }
@@ -95,8 +99,9 @@ void	SslEngine::checkRead(const boost::system::error_code &e, const std::functio
   if (e) {
     std::cerr << "SSL - Can't read: " << e.message() << std::endl;
     _error = true;
+    _errorFunc();
   }
-  else if (f) {
+  else {
     f();
   }
 }
@@ -106,8 +111,9 @@ void	SslEngine::checkWrite(const boost::system::error_code &e, const std::functi
   if (e) {
     std::cerr << "SSL - Can't write: " << e.message() << std::endl;
     _error = true;
+    _errorFunc();
   }
-  else if (f) {
+  else {
     f();
   }
 }
@@ -117,8 +123,9 @@ void	SslEngine::checkReadSome(const boost::system::error_code &e, const std::fun
   if (e) {
     std::cerr << "SSL - Can't read some: " << e.message() << std::endl;
     _error = true;
+    _errorFunc();
   }
-  else if (f) {
+  else {
     f();
   }
 }
@@ -128,8 +135,14 @@ void	SslEngine::checkWriteSome(const boost::system::error_code &e, const std::fu
   if (e) {
     std::cerr << "SSL - Can't write some: " << e.message() << std::endl;
     _error = true;
+    _errorFunc();
   }
-  else if (f) {
+  else {
     f();
   }
+}
+
+void	SslEngine::handleError(const std::function<void()> &f)
+{
+  _errorFunc = f;
 }
