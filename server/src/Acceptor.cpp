@@ -11,9 +11,8 @@
 #include "Acceptor.hh"
 
 Acceptor::Acceptor(SslContext &ctx, uint16_t port)
-  : _ios(new boost::asio::io_service()),
-    _acceptor(*_ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
-    _ctx(ctx)
+  :  _acceptor(_ios, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port)),
+     _ctx(ctx)
 {
   DEBUG_MSG("Acceptor created");
 }
@@ -25,11 +24,13 @@ Acceptor::~Acceptor()
 
 void	Acceptor::async_accept(std::function<void(boost::shared_ptr<ISocketEngine> &)> &f)
 {
-  boost::shared_ptr<ISocketEngine>	socket(new SslEngine(*_ios, _ctx.getCtx()));
+  boost::shared_ptr<ISocketEngine>	socket(new SslEngine(_ios, _ctx.getCtx()));
 
   _acceptor.async_accept(socket->getSocket(),
-  			 boost::bind(&Acceptor::handleAccept, this, socket, f,
-  				     boost::asio::placeholders::error));
+  			 boost::bind(&Acceptor::handleAccept, this,
+				     socket,
+				     f,
+  			 	     boost::asio::placeholders::error));
 }
 
 void	Acceptor::handleAccept(boost::shared_ptr<ISocketEngine> &sock,
@@ -47,10 +48,10 @@ void	Acceptor::handleAccept(boost::shared_ptr<ISocketEngine> &sock,
 
 void	Acceptor::start()
 {
-  _ios->run();
+ _ios.run();
 }
 
 void	Acceptor::stop()
 {
-  _ios->stop();
+  _ios.stop();
 }

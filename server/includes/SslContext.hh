@@ -17,6 +17,7 @@ class		SslContext
 {
 private:
   boost::asio::ssl::context _ctx;
+
 public:
   SslContext();
   virtual ~SslContext();

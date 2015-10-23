@@ -16,7 +16,7 @@
 
 int		main(int argc, char **argv)
 {
-  uint16_t	port;
+  uint16_t	port = 0;
 
   if (argc < 2) {
     std::cerr << "Usage: " << argv[0] << " <port>" << std::endl;

@@ -8,6 +8,7 @@
 // Last update Wed Oct 21 09:14:05 2015 chapui_s
 //
 
+#include "Spider.hh"
 #include "Web.hh"
 
 Web::Web(uint16_t port)
@@ -42,5 +43,18 @@ void		Web::waitSpider()
 
 void		Web::handleNewSpider(boost::shared_ptr<ISocketEngine> &sock)
 {
-  std::cout << "New Spider !" << std::endl;
+  const boost::shared_ptr<Spider>	spider(new Spider(sock, *this));
+
+  insertSpider(spider);
+  spider->prepareFirstConnection();
+}
+
+void		Web::insertSpider(const boost::shared_ptr<Spider> &spider)
+{
+  _spiders.insert(spider);
+}
+
+void		Web::deleteSpider(const boost::shared_ptr<Spider> &spider)
+{
+  _spiders.erase(spider);
 }

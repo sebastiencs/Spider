@@ -32,8 +32,8 @@ void		Server::start()
   catch (const std::exception &e) {
     std::cerr << "Unable to run thread: " << e.what() << std::endl;
   }
-  _web->start();
-//  sleep(20);
+ _web->start();
+ // _web->stop();
 }
 
 void		Server::readCommand()

@@ -20,9 +20,9 @@
 class			Acceptor
 {
 private:
-  std::unique_ptr<boost::asio::io_service>	_ios;
-  boost::asio::ip::tcp::acceptor		_acceptor;
-  SslContext					&_ctx;
+  boost::asio::io_service		_ios;
+  boost::asio::ip::tcp::acceptor	_acceptor;
+  SslContext				&_ctx;
 
 public:
   Acceptor(SslContext &, uint16_t);

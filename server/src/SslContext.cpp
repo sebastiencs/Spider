@@ -28,8 +28,8 @@ SslContext::SslContext()
 {
   DEBUG_MSG("Setting SslContext");
   _ctx.set_options(boost::asio::ssl::context::default_workarounds
-		   | boost::asio::ssl::context::no_sslv2
-		   | boost::asio::ssl::context::single_dh_use);
+		    | boost::asio::ssl::context::no_sslv2
+		    | boost::asio::ssl::context::single_dh_use);
   _ctx.use_certificate_chain_file(CERTIFICATE_FILE);
   _ctx.use_private_key_file(PRIVATE_KEY_FILE, boost::asio::ssl::context::pem);
   _ctx.use_tmp_dh_file(DH_FILE);
