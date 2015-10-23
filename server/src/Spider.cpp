@@ -39,7 +39,21 @@ void		Spider::prepareFirstConnection()
   _socket->doHandshake(boost::asio::ssl::stream_base::server, [this](){doFirstConnection();});
 }
 
-void		Spider::doFirstConnection()
+void			Spider::doFirstConnection()
 {
-  _socket->async_read_some(_buffer, 10, [this](){finish();});
+  PaquetFirstClient	paquet;
+
+  _socket->async_read(_buffer.data(), 4, [this, &paquet]() {
+      uint16_t		sizeName;
+
+      paquet.setVersion(_buffer.getValue<uint16_t>());
+      sizeName = _buffer.getValue<uint16_t>();
+
+      _socket->async_read(_buffer.data(), sizeName, [this, &paquet, sizeName]() {
+      	  _buffer.getValue<char>(_str, sizeName);
+      	  paquet.setName(_str);
+      	});
+
+      // std::cout << "BUFFER: " << _buffer << std::endl;
+    });
 }

@@ -15,6 +15,7 @@
 # include <boost/enable_shared_from_this.hpp>
 # include "ISocketEngine.hh"
 # include "debug.hh"
+# include "Buffer.hh"
 
 class	Web;
 
@@ -23,7 +24,8 @@ class					Spider : public boost::enable_shared_from_this<Spider>
 private:
   boost::shared_ptr<ISocketEngine>	_socket;
   Web					&_web;
-  char					_buffer[2048];
+  char					_str[2014];
+  Buffer				_buffer;
 
 public:
   Spider(const boost::shared_ptr<ISocketEngine> &, Web &);

@@ -19,6 +19,7 @@ SRC			= src/main.cpp					\
 			  src/SslContext.cpp				\
 			  src/Acceptor.cpp				\
 			  src/Signal.cpp				\
+			  src/Buffer.cpp				\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\
 			  $(DIR_COMMON)/src/paquetMouse.cpp		\

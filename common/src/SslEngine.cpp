@@ -43,6 +43,8 @@ void	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
   				      func));
 }
 
+# include <list>
+
 void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()> &func)
 {
   boost::asio::async_read(_socket,
