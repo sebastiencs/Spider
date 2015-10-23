@@ -13,6 +13,7 @@
 
 # include <boost/shared_ptr.hpp>
 # include <boost/enable_shared_from_this.hpp>
+# include <string>
 # include "ISocketEngine.hh"
 # include "debug.hh"
 # include "Buffer.hh"
@@ -27,14 +28,20 @@ private:
   char					_str[2014];
   Buffer				_buffer;
 
+  uint16_t				_proto;
+  std::string				_name;
+
 public:
   Spider(const boost::shared_ptr<ISocketEngine> &, Web &);
   virtual ~Spider();
 
   void		prepareFirstConnection();
   void		doFirstConnection();
-  void		finish();
   void		dieInDignity();
+  void		getTypeInfo();
+  void		getKeystrokes();
+  void		getMouse();
+  void		getClientCMD();
 };
 
 #endif /* !SPIDER_H_ */

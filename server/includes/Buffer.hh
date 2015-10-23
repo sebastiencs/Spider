@@ -36,6 +36,11 @@ public:
 
   void		*data() const;
 
+  void		reset() { _ptr = 0; };
+
+  uint8_t	&operator[](size_t id) { return _buffer.at(id); };
+  const uint8_t	&operator[](size_t id) const { return _buffer.at(id); };
+
   template<typename T>
   T		getValue(T *buffer = 0, size_t len = 0)
     {
