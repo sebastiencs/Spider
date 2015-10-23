@@ -16,6 +16,7 @@
 # include <memory>
 # include <iostream>
 # include "Web.hh"
+# include "Signal.hh"
 # include "debug.hh"
 
 class		Server
@@ -23,12 +24,14 @@ class		Server
 private:
   std::unique_ptr<Web>	_web;
   boost::thread		_thread;
+  Signal		_signal;
 
 public:
   Server(uint16_t);
   virtual ~Server();
 
   void		start();
+  void		stop();
   void		readCommand();
 };
 

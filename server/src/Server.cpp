@@ -12,9 +12,11 @@
 #include "Server.hh"
 
 Server::Server(uint16_t port)
-  : _web(new Web(port))
+  : _web(new Web(port)),
+    _signal(*this)
 {
   DEBUG_MSG("Server is running");
+  _signal.addSignal(SIGINT);
 }
 
 Server::~Server()
@@ -34,6 +36,11 @@ void		Server::start()
   }
  _web->start();
  // _web->stop();
+}
+
+void		Server::stop()
+{
+  _web->stop();
 }
 
 void		Server::readCommand()
