@@ -105,6 +105,10 @@ void			Spider::getKeystrokes()
 	      paquet.setText(_str);
 	      paquet.createPaquet();
 
+#ifdef DEBUG
+	      std::cerr << paquet << std::endl;
+#endif // !DEBUG
+
 	      // BORIS C'EST ICI QUE TU RECUPERES LE PAQUET
 
 	      getTypeInfo();
@@ -133,6 +137,10 @@ void			Spider::getMouse()
 	  paquet.setButton(_buffer.getValue<uint8_t>());
 	  paquet.createPaquet();
 
+#ifdef DEBUG
+	  std::cerr << paquet << std::endl;
+#endif // !DEBUG
+
 	  // TU RECUPERES LE PAQUET ICI
 
 	  getTypeInfo();
@@ -153,6 +161,10 @@ void			Spider::getClientCMD()
       _buffer.getValue<char>(_str, sizeData);
       paquet.setDataReponse(_str);
       paquet.createPaquet();
+
+#ifdef DEBUG
+      std::cerr << paquet << std::endl;
+#endif // !DEBUG
 
       // ICI
 
