@@ -1,13 +1,11 @@
 #ifndef PACKAGER_H
 #define PACKAGER_H
 
-
 #include "paquetKeys.hh"
 #include <vector>
 #include <map>
 #include <Windows.h>
 
-#pragma once
 class Packager
 {
 	std::vector<PaquetKeys *> _pKeys;
