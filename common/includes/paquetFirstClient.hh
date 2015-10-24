@@ -12,6 +12,7 @@
 # define PAQUETFIRSTCLIENT_H_
 
 # include <iostream>
+# include <string>
 # include "paquet.hh"
 
 class		PaquetFirstClient : public Paquet

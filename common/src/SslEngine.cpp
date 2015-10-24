@@ -122,7 +122,6 @@ void	SslEngine::checkReadSome(const boost::system::error_code &e, const std::fun
     f();
   }
 }
-
 void	SslEngine::checkWriteSome(const boost::system::error_code &e, const std::function<void()> &f)
 {
   if (e) {

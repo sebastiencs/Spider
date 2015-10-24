@@ -11,6 +11,7 @@
 #ifndef PAQUETKEYS_H_
 # define PAQUETKEYS_H_
 
+# include <string>
 # include "paquet.hh"
 
 class		PaquetKeys : public Paquet

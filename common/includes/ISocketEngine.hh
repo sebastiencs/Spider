@@ -14,6 +14,7 @@
 # include <boost/asio/ssl.hpp>
 # include <boost/bind.hpp>
 # include <boost/asio.hpp>
+# include <iostream>
 
 typedef boost::asio::ssl::stream<boost::asio::ip::tcp::socket> SslSocket;
 
