@@ -22,16 +22,16 @@ Buffer::~Buffer()
 
 void		*Buffer::data() const
 {
-  return ((uint8_t *)_buffer.data());
+  return (const_cast<uint8_t *>(_buffer.data()));
 }
 
 std::ostream		&operator<<(std::ostream &os, const Buffer &buffer)
 {
   char			*data;
 
-  data = (char *)buffer.data();
+  data = reinterpret_cast<char *>(buffer.data());
   for (size_t i = 0; i < Buffer::BUFFER_SIZE; i += 1) {
-    os << (char)data[i];
+    os << data[i];
   }
   return (os);
 }

@@ -22,7 +22,7 @@ Acceptor::~Acceptor()
   DEBUG_MSG("Acceptor destroyed");
 }
 
-void	Acceptor::async_accept(std::function<void(boost::shared_ptr<ISocketEngine> &)> &func)
+void	Acceptor::async_accept(const std::function<void(boost::shared_ptr<ISocketEngine> &)> &func)
 {
   boost::shared_ptr<ISocketEngine>	socket(new SslEngine(_ios, _ctx.getCtx()));
 

@@ -36,17 +36,12 @@ void		Web::stop()
 
 void		Web::waitSpider()
 {
-  std::function<void(boost::shared_ptr<ISocketEngine> &)> f = boost::bind(&Web::handleNewSpider, this, _1);
+  _acceptor->async_accept([this](boost::shared_ptr<ISocketEngine> &sock) {
+      const boost::shared_ptr<Spider>	spider(new Spider(sock, *this));
 
-  _acceptor->async_accept(f);
-}
-
-void		Web::handleNewSpider(boost::shared_ptr<ISocketEngine> &sock)
-{
-  const boost::shared_ptr<Spider>	spider(new Spider(sock, *this));
-
-  insertSpider(spider);
-  spider->prepareFirstConnection();
+      insertSpider(spider);
+      spider->prepareFirstConnection();
+    });
 }
 
 void		Web::insertSpider(const boost::shared_ptr<Spider> &spider)

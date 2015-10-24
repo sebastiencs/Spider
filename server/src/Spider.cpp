@@ -42,6 +42,8 @@ void			Spider::doFirstConnection()
       _proto = _buffer.getValue<uint16_t>();
       sizeName = _buffer.getValue<uint16_t>();
 
+      std::cout << _buffer << std::endl;
+
       _socket->async_read(_buffer.data(), sizeName, [this, sizeName]() {
       	  _buffer.getValue<char>(_str, sizeName);
 	  _name = _str;

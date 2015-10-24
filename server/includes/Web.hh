@@ -35,7 +35,6 @@ public:
   void				start();
   void				stop();
   void				waitSpider();
-  void				handleNewSpider(boost::shared_ptr<ISocketEngine> &);
   void				deleteSpider(const boost::shared_ptr<Spider> &);
 };
 

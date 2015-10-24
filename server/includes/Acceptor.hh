@@ -28,7 +28,7 @@ public:
   Acceptor(SslContext &, uint16_t);
   virtual ~Acceptor();
 
-  void			async_accept(std::function<void(boost::shared_ptr<ISocketEngine> &)> &);
+  void			async_accept(const std::function<void(boost::shared_ptr<ISocketEngine> &)> &);
   void			start();
   void			stop();
 };
