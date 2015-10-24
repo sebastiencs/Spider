@@ -12,6 +12,7 @@
 # define PAQUETMOUSE_H_
 
 # include <iostream>
+# include <string>
 # include "paquet.hh"
 
 class		PaquetMouse : public Paquet

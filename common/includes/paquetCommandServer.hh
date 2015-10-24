@@ -12,6 +12,7 @@
 # define PAQUETCOMMANDSERVER_H_
 
 # include <iostream>
+# include <string>
 # include "paquet.hh"
 
 class		PaquetCommandServer : public Paquet
