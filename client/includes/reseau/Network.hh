@@ -1,35 +1,28 @@
-
-
 #ifndef NETWORK_H_
 # define NETWORK_H_
 
-# include <boost/cstdint.hpp>
-# include "ISocketEngine.hh"
+# include "SslEngine.hh"
 
-class Network : public ISocketEngine
+class Network
 {
 private:
 	uint16_t _port;
-	uint32_t _ip;
-	boost::shared_ptr<ISocketEngine> _socket;
+	std::string _ip;
+
+	boost::asio::io_service _io_service;
+	boost::asio::ssl::context _ctx;
+
+	SslEngine *_engine;
 
 public:
-	Network(uint16_t port = 0, uint32_t ip = 0);
+	Network(uint16_t port = 0, const std::string& ip = "127.0.0.1");
 	virtual ~Network();
 
-	void doHandshake(boost::asio::ssl::stream_base::handshake_type, const std::function<void()> &);
-	void async_read(void *, size_t, const std::function<void()> &);
-	void async_write(void *, size_t, const std::function<void()> &);
-	void async_read_some(void *, size_t, const std::function<void()> &);
-	void async_write_some(void *, size_t, const std::function<void()> &);
-	void handleError(const std::function<void()> &) = 0;
-
 	void setPort(uint16_t port);
-	void setIP(uint32_t ip);
+	void setIP(const std::string& ip);
 
 	const uint16_t getPort();
-	const uint32_t getIP();
-
+	const std::string& getIP();
 };
 
 #endif /* !NETWORK_H_ */
