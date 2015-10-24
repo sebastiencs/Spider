@@ -3,7 +3,6 @@
 
 # include <Windows.h>
 # include <iostream>
-//# include "reseau\Network.hh"
 
 class Hooker {
 protected:
@@ -18,6 +17,7 @@ public:
 	void runHookLoop();
 	bool initializeHooks();
 	void deInitializeHooks();
+	void receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMouse = false);
 	bool connect();
 
 	bool& isConnected();
