@@ -44,7 +44,7 @@ void	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
 void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()> &func)
 {
   boost::asio::async_read(_socket, boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred __attribute__((unused))) {
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred ) {
       if (e) {
 	std::cerr << "SSL - Can't read: " << e.message() << std::endl;
 	_errorFunc();
@@ -58,7 +58,7 @@ void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()>
 void	SslEngine::async_write(void *buffer, size_t len, const std::function<void()> &func)
 {
   boost::asio::async_write(_socket, boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred __attribute__((unused))) {
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred ) {
       if (e) {
 	std::cerr << "SSL - Can't write: " << e.message() << std::endl;
 	_errorFunc();
@@ -72,7 +72,7 @@ void	SslEngine::async_write(void *buffer, size_t len, const std::function<void()
 void	SslEngine::async_read_some(void *buffer, size_t len, const std::function<void()> &func)
 {
   _socket.async_read_some(boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred __attribute__((unused))) {
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred ) {
       if (e) {
 	std::cerr << "SSL - Can't read some: " << e.message() << std::endl;
 	_errorFunc();
@@ -86,7 +86,7 @@ void	SslEngine::async_read_some(void *buffer, size_t len, const std::function<vo
 void	SslEngine::async_write_some(void *buffer, size_t len, const std::function<void()> &func)
 {
   _socket.async_write_some(boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred __attribute__((unused))) {
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred ) {
       if (e) {
 	std::cerr << "SSL - Can't write some: " << e.message() << std::endl;
 	_errorFunc();
