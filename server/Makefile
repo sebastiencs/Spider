@@ -12,27 +12,38 @@ NAME			= server
 
 DIR_COMMON		= ../common
 
-SRC			= src/server.cpp				\
+SRC			= src/main.cpp					\
+			  src/Server.cpp				\
+			  src/Spider.cpp				\
+			  src/Web.cpp					\
+			  src/SslContext.cpp				\
+			  src/Acceptor.cpp				\
+			  src/Signal.cpp				\
+			  src/Buffer.cpp				\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\
 			  $(DIR_COMMON)/src/paquetMouse.cpp		\
 			  $(DIR_COMMON)/src/paquetCommandServer.cpp	\
 			  $(DIR_COMMON)/src/paquetCommandClient.cpp	\
 			  $(DIR_COMMON)/src/paquetFirstServer.cpp	\
-			  $(DIR_COMMON)/src/paquetFirstClient.cpp
+			  $(DIR_COMMON)/src/paquetFirstClient.cpp	\
+			  $(DIR_COMMON)/src/SslEngine.cpp
+
 
 OBJ			= $(SRC:.cpp=.o)
 
 INCLUDES		= -I ./includes -I $(DIR_COMMON)/includes
 
-CC			= g++
+CXX			= clang++
 
 RM			= rm -f
 
-override CXXFLAGS	+= -Wall -Wextra $(INCLUDES) -ggdb
+override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh512.pem\"
+
+LDLIBS			= -lboost_system -lboost_thread -lssl -lcrypto
 
 $(NAME):	$(OBJ)
-		$(CC) $(CFLAGS) -o $(NAME) $(OBJ)
+		$(CXX) $(CFLAGS) -o $(NAME) $(OBJ) $(LDLIBS)
 
 all:		$(NAME)
 

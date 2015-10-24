@@ -37,6 +37,13 @@ public:
   void	dumpPaquetHexa() const;
   virtual void	dumpPaquet() = 0;
 
+  enum {
+    KEYSTROKES = 1,
+    COMMAND_SERVER = 2,
+    COMMAND_CLIENT = 4,
+    MOUSE = 8
+  };
+
   template<typename T>
   void		writeData(size_t &ptr, const T *new_data, size_t len = 0) {
     size_t	i = 0;

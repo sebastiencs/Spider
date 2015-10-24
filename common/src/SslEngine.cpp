@@ -8,21 +8,18 @@
 // Last update Tue Oct 20 14:39:18 2015 chapui_s
 //
 
+#include "debug.hh"
 #include "SslEngine.hh"
 
 SslEngine::SslEngine(boost::asio::io_service &ios, boost::asio::ssl::context &ctx)
   : _socket(ios, ctx)
 {
-  _error = false;
+  DEBUG_MSG("SSlEngine created");
 }
 
 SslEngine::~SslEngine()
 {
-}
-
-bool	SslEngine::isConnected() const
-{
-  return (!_error);
+  DEBUG_MSG("SSlEngine deleted");
 }
 
 SslSocket::lowest_layer_type	&SslEngine::getSocket()
@@ -33,102 +30,74 @@ SslSocket::lowest_layer_type	&SslEngine::getSocket()
 void	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
 			       const std::function<void()> &func)
 {
-  _socket.async_handshake(type,
-			  boost::bind(&SslEngine::checkHandshake,
-			  	      this,
-				      boost::asio::placeholders::error,
-			  	      func));
+  _socket.async_handshake(type, [this, func](const boost::system::error_code &e) {
+      if (e) {
+	std::cerr << "SSL - Can't do handshake: " << e.message() << std::endl;
+	_errorFunc();
+      }
+      else {
+	func();
+      }
+    });
 }
 
 void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()> &func)
 {
-  boost::asio::async_read(_socket,
-			  boost::asio::buffer(buffer, len),
-			  boost::bind(&SslEngine::checkRead,
-			  	      this,
-				      boost::asio::placeholders::error,
-			  	      func));
+  boost::asio::async_read(_socket, boost::asio::buffer(buffer, len),
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred __attribute__((unused))) {
+      if (e) {
+	std::cerr << "SSL - Can't read: " << e.message() << std::endl;
+	_errorFunc();
+      }
+      else {
+	func();
+      }
+    });
 }
 
 void	SslEngine::async_write(void *buffer, size_t len, const std::function<void()> &func)
 {
-  boost::asio::async_write(_socket,
-			   boost::asio::buffer(buffer, len),
-			   boost::bind(&SslEngine::checkWrite,
-				       this,
-				       boost::asio::placeholders::error,
-				       func));
+  boost::asio::async_write(_socket, boost::asio::buffer(buffer, len),
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred __attribute__((unused))) {
+      if (e) {
+	std::cerr << "SSL - Can't write: " << e.message() << std::endl;
+	_errorFunc();
+      }
+      else {
+	func();
+      }
+    });
 }
 
 void	SslEngine::async_read_some(void *buffer, size_t len, const std::function<void()> &func)
 {
   _socket.async_read_some(boost::asio::buffer(buffer, len),
-			  boost::bind(&SslEngine::checkReadSome,
-			  	      this,
-				      boost::asio::placeholders::error,
-			  	      func));
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred __attribute__((unused))) {
+      if (e) {
+	std::cerr << "SSL - Can't read some: " << e.message() << std::endl;
+	_errorFunc();
+      }
+      else {
+	func();
+      }
+    });
 }
 
 void	SslEngine::async_write_some(void *buffer, size_t len, const std::function<void()> &func)
 {
   _socket.async_write_some(boost::asio::buffer(buffer, len),
-			   boost::bind(&SslEngine::checkWriteSome,
-				       this,
-				       boost::asio::placeholders::error,
-				       func));
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred __attribute__((unused))) {
+      if (e) {
+	std::cerr << "SSL - Can't write some: " << e.message() << std::endl;
+	_errorFunc();
+      }
+      else {
+	func();
+      }
+    });
 }
 
-void	SslEngine::checkHandshake(const boost::system::error_code &e, const std::function<void()> &f)
+void	SslEngine::handleError(const std::function<void()> &f)
 {
-  if (e) {
-    std::cerr << "SSL - Can't do handshake: " << e.message() << std::endl;
-    _error = true;
-  }
-  else if (f) {
-    _error = false;
-    f();
-  }
-}
-
-void	SslEngine::checkRead(const boost::system::error_code &e, const std::function<void()> &f)
-{
-  if (e) {
-    std::cerr << "SSL - Can't read: " << e.message() << std::endl;
-    _error = true;
-  }
-  else if (f) {
-    f();
-  }
-}
-
-void	SslEngine::checkWrite(const boost::system::error_code &e, const std::function<void()> &f)
-{
-  if (e) {
-    std::cerr << "SSL - Can't write: " << e.message() << std::endl;
-    _error = true;
-  }
-  else if (f) {
-    f();
-  }
-}
-
-void	SslEngine::checkReadSome(const boost::system::error_code &e, const std::function<void()> &f)
-{
-  if (e) {
-    std::cerr << "SSL - Can't read some: " << e.message() << std::endl;
-    _error = true;
-  }
-  else if (f) {
-    f();
-  }
-}
-void	SslEngine::checkWriteSome(const boost::system::error_code &e, const std::function<void()> &f)
-{
-  if (e) {
-    std::cerr << "SSL - Can't write some: " << e.message() << std::endl;
-    _error = true;
-  }
-  else if (f) {
-    f();
-  }
+  _errorFunc = f;
 }
