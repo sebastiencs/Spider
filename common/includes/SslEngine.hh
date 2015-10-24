@@ -17,21 +17,13 @@ class		SslEngine : public ISocketEngine
 {
 private:
   SslSocket	_socket;
-  bool		_error;
 
   std::function<void()>	_errorFunc = [](){};
-
-  void		checkHandshake(const boost::system::error_code &, const std::function<void()> &);
-  void		checkRead(const boost::system::error_code &, const std::function<void()> &);
-  void		checkWrite(const boost::system::error_code &, const std::function<void()> &);
-  void		checkReadSome(const boost::system::error_code &, const std::function<void()> &);
-  void		checkWriteSome(const boost::system::error_code &, const std::function<void()> &);
 
 public:
   SslEngine(boost::asio::io_service &, boost::asio::ssl::context &);
   virtual ~SslEngine();
 
-  virtual bool	isConnected() const;
   virtual SslSocket::lowest_layer_type	&getSocket();
   virtual void			doHandshake(boost::asio::ssl::stream_base::handshake_type,
 					    const std::function<void()> &);

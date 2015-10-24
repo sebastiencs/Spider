@@ -22,7 +22,6 @@ class		ISocketEngine
 public:
   virtual ~ISocketEngine() {};
 
-  virtual bool				isConnected() const = 0;
   virtual SslSocket::lowest_layer_type	&getSocket() = 0;
   virtual void				doHandshake(boost::asio::ssl::stream_base::handshake_type,
 						    const std::function<void()> &) = 0;
