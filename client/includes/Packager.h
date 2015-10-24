@@ -1,3 +1,7 @@
+#ifndef PACKAGER_H
+#define PACKAGER_H
+
+
 #include "paquetKeys.hh"
 #include <vector>
 #include <map>
@@ -7,8 +11,10 @@
 class Packager
 {
 	std::vector<PaquetKeys *> _pKeys;
-	bool shift;
-	bool win;
+	bool _shift;
+	bool _win;
+	bool _ctrl;
+
 public:
 	Packager();
 	virtual ~Packager();
@@ -16,3 +22,4 @@ public:
 	void addKey(int nCode, WPARAM wParam, LPARAM lParam);
 };
 
+#endif // !PACKAGER_H
