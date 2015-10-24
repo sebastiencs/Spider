@@ -22,28 +22,20 @@ Acceptor::~Acceptor()
   DEBUG_MSG("Acceptor destroyed");
 }
 
-void	Acceptor::async_accept(std::function<void(boost::shared_ptr<ISocketEngine> &)> &f)
+void	Acceptor::async_accept(std::function<void(boost::shared_ptr<ISocketEngine> &)> &func)
 {
   boost::shared_ptr<ISocketEngine>	socket(new SslEngine(_ios, _ctx.getCtx()));
 
   _acceptor.async_accept(socket->getSocket(),
-  			 boost::bind(&Acceptor::handleAccept, this,
-				     socket,
-				     f,
-  			 	     boost::asio::placeholders::error));
-}
-
-void	Acceptor::handleAccept(boost::shared_ptr<ISocketEngine> &sock,
-			       std::function<void(boost::shared_ptr<ISocketEngine> &)> &f,
-			       const boost::system::error_code &e)
-{
-  if (e) {
-    std::cerr << "error handleAccept" << std::endl;
-  }
-  else {
-    f(sock);
-  }
-  async_accept(f);
+    [this, socket, func](const boost::system::error_code &e) mutable {
+      if (e) {
+  	std::cerr << "error handleAccept: " << e.message() << std::endl;
+      }
+      else {
+  	func(socket);
+      }
+      async_accept(func);
+    });
 }
 
 void	Acceptor::start()

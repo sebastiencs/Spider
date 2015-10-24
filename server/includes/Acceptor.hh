@@ -29,9 +29,6 @@ public:
   virtual ~Acceptor();
 
   void			async_accept(std::function<void(boost::shared_ptr<ISocketEngine> &)> &);
-  void			handleAccept(boost::shared_ptr<ISocketEngine> &,
-				     std::function<void(boost::shared_ptr<ISocketEngine> &)> &,
-				     const boost::system::error_code &);
   void			start();
   void			stop();
 };
