@@ -5,6 +5,7 @@
 
 # include <Windows.h>
 # include <iostream>
+# include <math.h>
 # include "reseau\Network.hh"
 # include "Packager.h"
 
@@ -15,6 +16,7 @@ protected:
 	bool _connected;
 	Network* _network;
 	Packager _packager;
+	POINT _previousPoint;
 
 public:
 	static Hooker& getInstance();
@@ -26,7 +28,8 @@ public:
 	bool connect();
 
 	bool& isConnected();
-	Network& getNetwork();
+	Network& getNetwork() const;
+	void setNetwork(Network* network);
 
 protected:
 	Hooker();

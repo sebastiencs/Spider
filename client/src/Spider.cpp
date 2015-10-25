@@ -8,6 +8,8 @@
 int main()
 {
 	Hooker& hooker = Hooker::getInstance();
+	Network* network = new Network();
+	hooker.setNetwork(network);
 
 	hooker.runHookLoop();
 }

