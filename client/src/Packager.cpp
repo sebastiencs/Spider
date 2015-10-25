@@ -67,8 +67,8 @@ void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
 	_paquets.push_back(tmp);
 }
 
-bool Packager::isEmpty() {
-	return _paquets.empty();
+size_t Packager::isLeft() {
+	return _paquets.size();
 }
 
 Paquet *Packager::getPaquet() {

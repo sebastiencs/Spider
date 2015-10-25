@@ -24,7 +24,7 @@ public:
 
 
 	Paquet *getPaquet();
-	bool isEmpty();
+	size_t isLeft();
 	void supprPaquet();
 };
 
