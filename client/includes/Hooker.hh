@@ -25,6 +25,7 @@ public:
 	bool initializeHooks();
 	void deInitializeHooks();
 	void receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMouse = false);
+	void sendPaquet(Paquet* paquet);
 	bool connect();
 
 	bool& isConnected();

