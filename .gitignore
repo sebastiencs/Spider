@@ -16,3 +16,4 @@ hookDLL/targetver.h
 *.user
 .vs/Spider/v14/.suo
 *.ipch
+server/server
