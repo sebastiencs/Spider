@@ -38,7 +38,7 @@ CXX			= clang++
 
 RM			= rm -f
 
-override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh512.pem\"
+override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh1024.pem\"
 
 LDLIBS			= -lboost_system -lboost_thread -lssl -lcrypto
 
