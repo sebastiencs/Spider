@@ -11,6 +11,12 @@
 #include "debug.hh"
 #include "SslEngine.hh"
 
+#ifdef __GNUC__
+# define UNUSED __attribute__((__unused__))
+#else // !__GNUC__
+# define UNUSED
+#endif // !__GNUC__
+
 SslEngine::SslEngine(boost::asio::io_service &ios, boost::asio::ssl::context &ctx)
   : _socket(ios, ctx)
 {
@@ -44,7 +50,7 @@ void	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
 void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()> &func)
 {
   boost::asio::async_read(_socket, boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred ) {
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred UNUSED ) {
       if (e) {
 	std::cerr << "SSL - Can't read: " << e.message() << std::endl;
 	_errorFunc();
@@ -58,7 +64,7 @@ void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()>
 void	SslEngine::async_write(void *buffer, size_t len, const std::function<void()> &func)
 {
   boost::asio::async_write(_socket, boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred ) {
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred UNUSED ) {
       if (e) {
 	std::cerr << "SSL - Can't write: " << e.message() << std::endl;
 	_errorFunc();
@@ -72,7 +78,7 @@ void	SslEngine::async_write(void *buffer, size_t len, const std::function<void()
 void	SslEngine::async_read_some(void *buffer, size_t len, const std::function<void()> &func)
 {
   _socket.async_read_some(boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred ) {
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred UNUSED ) {
       if (e) {
 	std::cerr << "SSL - Can't read some: " << e.message() << std::endl;
 	_errorFunc();
@@ -86,7 +92,7 @@ void	SslEngine::async_read_some(void *buffer, size_t len, const std::function<vo
 void	SslEngine::async_write_some(void *buffer, size_t len, const std::function<void()> &func)
 {
   _socket.async_write_some(boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred ) {
+    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred UNUSED ) {
       if (e) {
 	std::cerr << "SSL - Can't write some: " << e.message() << std::endl;
 	_errorFunc();
@@ -95,6 +101,16 @@ void	SslEngine::async_write_some(void *buffer, size_t len, const std::function<v
 	func();
       }
     });
+}
+
+void	SslEngine::writePaquet(const Paquet &paquet, const std::function<void()> &func)
+{
+#ifdef DEBUG
+  if (!paquet.getSize()) {
+    DEBUG_MSG("Trying to send empty paquet");
+  }
+#endif // !DEBUG
+  async_write(paquet.getData(), paquet.getSize(), func);
 }
 
 void	SslEngine::handleError(const std::function<void()> &f)

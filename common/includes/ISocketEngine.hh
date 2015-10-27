@@ -15,6 +15,7 @@
 # include <boost/bind.hpp>
 # include <boost/asio.hpp>
 # include <iostream>
+# include "paquet.hh"
 
 typedef boost::asio::ssl::stream<boost::asio::ip::tcp::socket> SslSocket;
 
@@ -31,6 +32,7 @@ public:
   virtual void				async_read_some(void *, size_t, const std::function<void()> &) = 0;
   virtual void				async_write_some(void *, size_t, const std::function<void()> &) = 0;
   virtual void				handleError(const std::function<void()> &) = 0;
+  virtual void			writePaquet(const Paquet &, const std::function<void()> &) = 0;
 };
 
 #endif /* !ISOCKETENGINE_H_ */

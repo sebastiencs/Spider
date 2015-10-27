@@ -20,7 +20,7 @@
 #endif
 
 #ifndef DH_FILE
-# define DH_FILE ("dh512.pem")
+# define DH_FILE ("dh1024.pem")
 #endif
 
 SslContext::SslContext()
