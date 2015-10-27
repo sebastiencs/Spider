@@ -5,7 +5,7 @@
 // Login   <chapui_s@epitech.eu>
 //
 // Started on  Wed Oct 21 09:14:52 2015 chapui_s
-// Last update Wed Oct 21 09:14:52 2015 chapui_s
+// Last update Tue Oct 27 17:06:12 2015 bresci_b bresci_b
 //
 
 #ifndef SPIDER_H_
@@ -17,6 +17,7 @@
 # include "ISocketEngine.hh"
 # include "debug.hh"
 # include "Buffer.hh"
+# include "Json.hh"
 
 class	Web;
 
@@ -30,6 +31,7 @@ private:
 
   uint16_t				_proto;
   std::string				_name;
+  Json					*_json;
 
 public:
   Spider(const boost::shared_ptr<ISocketEngine> &, Web &);

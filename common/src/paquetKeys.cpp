@@ -5,7 +5,7 @@
 // Login   <chapui_s@epitech.eu>
 //
 // Started on  Thu Oct 15 08:57:50 2015 chapui_s
-// Last update Thu Oct 15 08:57:50 2015 chapui_s
+// Last update Tue Oct 27 12:20:28 2015 bresci_b bresci_b
 //
 
 #include "paquetKeys.hh"
@@ -31,8 +31,10 @@ PaquetKeys::PaquetKeys(const void *data, size_t size)
 
 PaquetKeys::~PaquetKeys()
 {
-  delete[] _text;
-  delete[] _active;
+  if (_text)
+    delete[] _text;
+  if (_active)
+    delete[] _active;
 }
 
 void		PaquetKeys::setDate(uint32_t date)

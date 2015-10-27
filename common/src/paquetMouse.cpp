@@ -5,7 +5,7 @@
 // Login   <chapui_s@epitech.eu>
 //
 // Started on  Thu Oct 15 11:58:10 2015 chapui_s
-// Last update Thu Oct 15 11:58:10 2015 chapui_s
+// Last update Tue Oct 27 17:13:17 2015 bresci_b bresci_b
 //
 
 #include "paquetMouse.hh"
@@ -32,7 +32,8 @@ PaquetMouse::PaquetMouse(const void *data, size_t size)
 
 PaquetMouse::~PaquetMouse()
 {
-  delete[] _active;
+  if (_active)
+    delete[] _active;
 }
 
 void		PaquetMouse::setDate(uint32_t date)
@@ -153,7 +154,7 @@ std::ostream	&operator<<(std::ostream &os, PaquetMouse &p)
     os << ", active : '" << active << "'";
   os << ", X : " << p.getX();
   os << ", Y : " << p.getY();
-  os << ", Button : " << (int)p.getButton();
+  os << ", Button : " << static_cast<int>(p.getButton());
   os << ((p.getButton() == 1) ? ("(Left)") : ((p.getButton() == 2) ? ("(Middle)") : ("(Right)")));
   os << " };" << std::endl;
   return (os);

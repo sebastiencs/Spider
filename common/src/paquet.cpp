@@ -5,7 +5,7 @@
 // Login   <chapui_s@epitech.eu>
 //
 // Started on  Thu Oct 15 08:09:15 2015 chapui_s
-// Last update Thu Oct 15 08:09:15 2015 chapui_s
+// Last update Tue Oct 27 12:21:08 2015 bresci_b bresci_b
 //
 
 #include <iostream>
@@ -19,7 +19,8 @@ Paquet::Paquet()
 
 Paquet::~Paquet()
 {
-  delete[] _data;
+  if (_data)
+    delete[] _data;
 }
 
 void	Paquet::setSize(size_t new_size)

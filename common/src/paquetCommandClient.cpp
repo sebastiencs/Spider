@@ -5,7 +5,7 @@
 // Login   <chapui_s@epitech.eu>
 //
 // Started on  Thu Oct 15 13:02:05 2015 chapui_s
-// Last update Thu Oct 15 13:02:05 2015 chapui_s
+// Last update Tue Oct 27 12:21:25 2015 bresci_b bresci_b
 //
 
 #include "paquetCommandClient.hh"
@@ -29,7 +29,8 @@ PaquetCommandClient::PaquetCommandClient(const void *data, size_t size)
 
 PaquetCommandClient::~PaquetCommandClient()
 {
-  delete[] _dataReponse;
+  if (_dataReponse)
+    delete[] _dataReponse;
 }
 
 void		PaquetCommandClient::setOk(uint16_t ok)

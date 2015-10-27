@@ -5,7 +5,7 @@
 ## Login   <chapui_s@epitech.eu>
 ##
 ## Started on  Sat Oct 10 08:18:01 2015 chapui_s
-## Last update Sat Oct 10 08:18:01 2015 chapui_s
+## Last update Tue Oct 27 17:06:55 2015 bresci_b bresci_b
 ##
 
 NAME			= server
@@ -20,6 +20,7 @@ SRC			= src/main.cpp					\
 			  src/Acceptor.cpp				\
 			  src/Signal.cpp				\
 			  src/Buffer.cpp				\
+			  src/Json.cpp					\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\
 			  $(DIR_COMMON)/src/paquetMouse.cpp		\
@@ -40,7 +41,7 @@ RM			= rm -f
 
 override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh512.pem\"
 
-LDLIBS			= -lboost_system -lboost_thread -lssl -lcrypto
+LDLIBS			= -lboost_system -lboost_date_time -lboost_thread -lssl -lcrypto
 
 $(NAME):	$(OBJ)
 		$(CXX) $(CFLAGS) -o $(NAME) $(OBJ) $(LDLIBS)
