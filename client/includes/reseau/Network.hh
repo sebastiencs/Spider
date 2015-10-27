@@ -2,27 +2,30 @@
 # define NETWORK_H_
 
 # include "SslEngine.hh"
+# include "debug.hh"
 
 class Network
 {
 private:
-	uint16_t _port;
+	std::string _port;
 	std::string _ip;
+	int _isConnected;
 
-	boost::asio::io_service _io_service;
+	boost::asio::io_service _ios;
 	boost::asio::ssl::context _ctx;
 
+	boost::asio::ip::tcp::resolver::iterator _iterator;
+
+	boost::shared_ptr<ISocketEngine>	_socket;
 	SslEngine *_engine;
 
 public:
-	Network(uint16_t port = 0, const std::string& ip = "127.0.0.1");
+	Network(const std::string& = "1234", const std::string& ip = "127.0.0.1");
 	virtual ~Network();
 
-	void setPort(uint16_t port);
-	void setIP(const std::string& ip);
+	void initNetwork();
 
-	const uint16_t getPort();
-	const std::string& getIP();
+	void write(void *data, size_t size);
 };
 
 #endif /* !NETWORK_H_ */
