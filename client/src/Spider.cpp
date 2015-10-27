@@ -7,9 +7,12 @@
 
 int main()
 {
-	Hooker& hooker = Hooker::getInstance();
-	Network* network = new Network();
-	hooker.setNetwork(network);
-
-	hooker.runHookLoop();
+//	Hooker& hooker = Hooker::getInstance();
+	Network* network = new Network("4242", "10.41.174.3");
+	network->initNetwork();
+	network->write("coucou!", 7);
+	while (1) {
+		network->write("coucou!", 7);
+	}
+	//hooker.runHookLoop();
 }

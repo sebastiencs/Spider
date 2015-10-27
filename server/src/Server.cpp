@@ -50,8 +50,8 @@ void		Server::readCommand()
       std::string	input;
 
       while (std::getline(std::cin, input)) {
-	std::cout << "READ: '" << input << "'\n";
-	// Envoie des commandes aux clients
+		std::cout << "READ: '" << input << "'\n";
+		// Envoie des commandes aux clients
       }
     }
   }
