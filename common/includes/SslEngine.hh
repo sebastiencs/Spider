@@ -12,6 +12,7 @@
 # define SSLENGINE_H_
 
 # include "ISocketEngine.hh"
+# include "paquet.hh"
 
 class		SslEngine : public ISocketEngine
 {
@@ -32,6 +33,7 @@ public:
   virtual void			async_read_some(void *, size_t, const std::function<void()> &);
   virtual void			async_write_some(void *, size_t, const std::function<void()> &);
   virtual void			handleError(const std::function<void()> &);
+  virtual void			writePaquet(const Paquet &, const std::function<void()> &);
 };
 
 #endif /* !SSLENGINE_H_ */
