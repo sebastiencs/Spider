@@ -8,16 +8,19 @@
 // Last update Tue Oct 27 17:22:26 2015 bresci_b bresci_b
 //
 
+#include "debug.hh"
 #include "Json.hh"
 
 Json::Json()
 {
+  DEBUG_MSG("Json created");
   _file = NULL;
   _name = "";
 }
 
 Json::~Json()
 {
+  DEBUG_MSG("Json deleted");
   if (_file && _file->is_open())
     {
       _file->close();

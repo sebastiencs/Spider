@@ -31,7 +31,7 @@ private:
 
   uint16_t				_proto;
   std::string				_name;
-  Json					*_json;
+  std::unique_ptr<Json>			_json;
 
 public:
   Spider(const boost::shared_ptr<ISocketEngine> &, Web &);
