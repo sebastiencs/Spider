@@ -15,11 +15,13 @@ int main(int ac, char **av)
 			Network* network = new Network(av[2], av[1], packager);
 			Hooker& hooker = Hooker::getInstance();
 			hooker.setPackager(packager);
-			boost::thread networkThread(network);
+			boost::thread networkThread(&Network::networkLoop, network);
 			hooker.runHookLoop();
 			networkThread.join();
 		}
 		catch (std::exception& e) {
+			(void)e;
+			std::cerr << "An error occured" << std::endl;
 			return EXIT_FAILURE;
 		}
 		return EXIT_SUCCESS;

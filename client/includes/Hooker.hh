@@ -23,11 +23,7 @@ public:
 	bool initializeHooks();
 	void deInitializeHooks();
 	void receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMouse = false);
-	void sendPaquet();
-	bool connect();
 
-	bool& isConnected();
-	Network& getNetwork() const;
 	void setPackager(Packager* packager);
 
 protected:

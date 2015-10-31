@@ -37,7 +37,7 @@ void Network::initNetwork() {
 	_ios.run();
 }
 
-void Network::operator()()
+void Network::networkLoop()
 {
 	this->initNetwork();
 

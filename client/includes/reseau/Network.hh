@@ -24,7 +24,7 @@ public:
 	virtual ~Network();
 
 	void initNetwork();
-	void operator()();
+	void networkLoop();
 };
 
 #endif /* !NETWORK_H_ */

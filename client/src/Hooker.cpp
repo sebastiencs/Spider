@@ -45,8 +45,6 @@ void Hooker::deInitializeHooks() {
 }
 
 void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMouse) {
-	if (isConnected())
-		connect();
 	if (isMouse) {
 		MSLLHOOKSTRUCT* mouseStruct = (MSLLHOOKSTRUCT*)lParam;
 		if (wParam == WM_MOUSEMOVE) {
