@@ -1,4 +1,5 @@
 #include <iostream>
+#include <boost/thread.hpp>
 #include "reseau/Network.hh"
 #include "paquetFirstClient.hh"
 
@@ -6,8 +7,8 @@
 # define CERTIFICATE_FILE ("client.crt")
 #endif
 
-Network::Network(const std::string& port, const std::string& ip) :
-	_port(port), _ip(ip), _ctx(boost::asio::ssl::context::sslv23)
+Network::Network(const std::string& port, const std::string& ip, Packager* packager) :
+	_port(port), _ip(ip), _ctx(boost::asio::ssl::context::sslv23), _packager(packager)
 {
 	boost::asio::ip::tcp::resolver resolver(_ios);
 	boost::asio::ip::tcp::resolver::query query(ip, port);
@@ -26,16 +27,25 @@ void Network::initNetwork() {
 	boost::asio::ip::tcp::endpoint endpoint = *_iterator;
 	_engine->getSocket().async_connect(endpoint, [this](const boost::system::error_code& e)
 	{
-		_engine->doHandshake(boost::asio::ssl::stream_base::client, []() {});
+		if (!e)
+			_engine->doHandshake(boost::asio::ssl::stream_base::client, []() {});
+		else {
+			_engine->getSocket().close();
+			std::cerr << "Connect failed: " << e << std::endl;
+		}
 	});
 	_ios.run();
 }
 
-void Network::write(void* data, size_t size) {
-	_engine->async_write(data, size, []() {});
-}
+void Network::operator()()
+{
+	this->initNetwork();
 
-
-void Network::writePaquet(const Paquet& paquet){
-	_engine->writePaquet(paquet, []() {});
+	while (1) {
+		if (_packager->isLeft() > 0) {
+			Paquet *paquet = _packager->getPaquet();
+			_engine->writePaquet(*paquet, []() {});
+		}
+		boost::this_thread::sleep_for(boost::chrono::nanoseconds(500));
+	}
 }
