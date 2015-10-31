@@ -13,9 +13,7 @@ class Hooker {
 protected:
 	HHOOK _kHook;
 	HHOOK _mHook;
-	bool _connected;
-	Network* _network;
-	Packager _packager;
+	Packager *_packager;
 	POINT _previousPoint;
 
 public:
@@ -30,7 +28,7 @@ public:
 
 	bool& isConnected();
 	Network& getNetwork() const;
-	void setNetwork(Network* network);
+	void setPackager(Packager* packager);
 
 protected:
 	Hooker();

