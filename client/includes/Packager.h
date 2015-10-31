@@ -5,8 +5,11 @@
 #include <vector>
 #include <map>
 #include <Windows.h>
+#include <boost\thread.hpp>
+#include <boost\thread\mutex.hpp>
 #include "paquetKeys.hh"
 #include "paquetMouse.hh"
+
 #pragma once
 class Packager
 {
@@ -14,6 +17,11 @@ class Packager
 	bool _shift;
 	bool _win;
 	bool _ctrl;
+	bool _alt;
+	bool _altGr;
+	std::map<int, std::string> correspondance;
+	boost::mutex mutex;
+
 
 public:
 	Packager();
