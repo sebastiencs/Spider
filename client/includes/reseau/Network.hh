@@ -25,6 +25,7 @@ public:
 
 	void initNetwork();
 
+	void writePaquet(const Paquet& paquet);
 	void write(void *data, size_t size);
 };
 

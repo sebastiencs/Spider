@@ -29,11 +29,6 @@ void Network::initNetwork() {
 	{
 		_engine->doHandshake(boost::asio::ssl::stream_base::client, [this]()
 		{
-			PaquetFirstClient *tmp = new PaquetFirstClient;
-			tmp->setName("test");
-			tmp->setVersion(12);
-			tmp->createPaquet();
-			_engine->async_write(tmp, tmp->getSize(), []() {});
 			_isConnected = 1;
 		});
 	});
@@ -41,13 +36,10 @@ void Network::initNetwork() {
 }
 
 void Network::write(void* data, size_t size) {
-//	_ios.reset(); pour faire segfault seb
-	while (_isConnected == 0) {
-		Sleep(1);
-		std::cout << _isConnected << std::endl;
-	}
-	std::cout << _isConnected << std::endl;
 	_engine->async_write(data, size, []() {});
-
 }
 
+
+void Network::writePaquet(const Paquet& paquet){
+	_engine->writePaquet(paquet, []() {});
+}
