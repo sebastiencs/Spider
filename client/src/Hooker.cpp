@@ -3,7 +3,6 @@
 Hooker::Hooker() {
 	_previousPoint.x = 0;
 	_previousPoint.y = 0;
-	isConnected() = connect();
 	initializeHooks();
 }
 
@@ -75,15 +74,16 @@ void Hooker::sendPaquet() {
 	bool paquetSent = true;
 
 	// TODO: check if network is reachable
-	while (_packager.isLeft() && paquetSent) {
-		// paquetSent = _network.?(_packager.getPaquet());
-		if (paquetSent)
-			_packager.supprPaquet();
+	while (_packager.isLeft() && paquetSent && _network) {
+		_network->writePaquet(*_packager.getPaquet());
+		_packager.supprPaquet();
 	}
 }
 
 bool Hooker::connect() {
-	return false;
+	if (_network)
+		_network->initNetwork();
+	return true;
 }
 
 bool& Hooker::isConnected() {
@@ -92,6 +92,7 @@ bool& Hooker::isConnected() {
 
 void Hooker::setNetwork(Network* network) {
 	_network = network;
+	connect();
 }
 
 Network& Hooker::getNetwork() const {

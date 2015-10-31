@@ -9,7 +9,6 @@ class Network
 private:
 	std::string _port;
 	std::string _ip;
-	int _isConnected;
 
 	boost::asio::io_service _ios;
 	boost::asio::ssl::context _ctx;

