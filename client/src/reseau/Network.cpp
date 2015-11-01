@@ -28,7 +28,19 @@ void Network::initNetwork() {
 	_engine->getSocket().async_connect(endpoint, [this](const boost::system::error_code& e)
 	{
 		if (!e)
-			_engine->doHandshake(boost::asio::ssl::stream_base::client, []() {});
+		  _engine->doHandshake(boost::asio::ssl::stream_base::client, [this] (const boost::system::error_code& e)
+			  {
+			    if (!e)
+			    {
+			      sendFirstPaquet();
+			    }
+			    else
+			    {
+			      _engine->getSocket().close();
+			      std::cerr << "Connect failed: " << e << std::endl;
+			    }
+
+			  });
 		else {
 			_engine->getSocket().close();
 			std::cerr << "Connect failed: " << e << std::endl;
@@ -37,9 +49,34 @@ void Network::initNetwork() {
 	_ios.run();
 }
 
+void Network::sendFirstPaquet()
+{
+  PaquetFirstClient	paquet;
+
+  paquet.setVersion(1);
+  paquet.setName("John Doe");
+  paquet.createPaquet();
+
+  _engine->writePaquet(paquet, [this]() {
+      char		ret;
+
+      _engine->async_read(&ret, 1, [this]() {
+	  if (ret)
+	  {
+	    networkLoop();
+	  }
+	  else
+	  {
+	    _engine->getSocket().close();
+	    std::cerr << "Error: Wrong protocol version" << std::endl;
+	  }
+	}
+    }
+}
+
 void Network::networkLoop()
 {
-	this->initNetwork();
+	// this->initNetwork();
 
 	while (1) {
 		if (_packager->isLeft() > 0) {

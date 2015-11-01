@@ -15,7 +15,7 @@ int main(int ac, char **av)
 			Network* network = new Network(av[2], av[1], packager);
 			Hooker& hooker = Hooker::getInstance();
 			hooker.setPackager(packager);
-			boost::thread networkThread(&Network::networkLoop, network);
+			boost::thread networkThread(&Network::initNetwork, network);
 			hooker.runHookLoop();
 			networkThread.join();
 		}
