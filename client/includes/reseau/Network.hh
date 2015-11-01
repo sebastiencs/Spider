@@ -23,6 +23,7 @@ public:
 	Network(const std::string& port = "1234", const std::string& ip = "127.0.0.1", Packager* packager = nullptr);
 	virtual ~Network();
 
+	void sendFirstPaquet();
 	void initNetwork();
 	void networkLoop();
 };
