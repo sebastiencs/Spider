@@ -61,18 +61,19 @@ void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()>
     });
 }
 
-void	SslEngine::async_write(void *buffer, size_t len, const std::function<void()> &func)
+void    SslEngine::async_write(void *buffer, size_t len, const std::function<void()> &func)
 {
-  boost::asio::async_write(_socket, boost::asio::buffer(buffer, len),
-    [this, func](const boost::system::error_code &e, std::size_t bytes_transferred UNUSED ) {
-      if (e) {
-	std::cerr << "SSL - Can't write: " << e.message() << std::endl;
-	_errorFunc();
-      }
-      else {
-	func();
-      }
-    });
+	boost::asio::async_write(_socket, boost::asio::buffer(buffer, len),
+		[this, func](const boost::system::error_code &e, std::size_t bytes_transferred) {
+		if (e) {
+			std::cerr << "SSL - Can't write: " << e.message() << std::endl;
+			_errorFunc();
+		}
+		else {
+			std::cout << "Envoyé: " << (int)bytes_transferred << std::endl;
+			func();
+		}
+	});
 }
 
 void	SslEngine::async_read_some(void *buffer, size_t len, const std::function<void()> &func)
@@ -103,14 +104,16 @@ void	SslEngine::async_write_some(void *buffer, size_t len, const std::function<v
     });
 }
 
-void	SslEngine::writePaquet(const Paquet &paquet, const std::function<void()> &func)
+void    SslEngine::writePaquet(const Paquet &paquet, const std::function<void()> &func)
 {
 #ifdef DEBUG
-  if (!paquet.getSize()) {
-    DEBUG_MSG("Trying to send empty paquet");
-  }
-#endif // !DEBUG
-  async_write(paquet.getData(), paquet.getSize(), func);
+	if (!paquet.getSize()) {
+		DEBUG_MSG("Trying to send empty paquet");
+	}
+#endif // !DEBUG                                                                                                                                                                                                                               
+	std::cout << "WRITEPAQUET: " << paquet << std::endl;
+	std::cout << "WRITEPAQUET SIZE: " << paquet.getSize() << std::endl;
+	async_write(paquet.getData(), paquet.getSize(), func);
 }
 
 void	SslEngine::handleError(const std::function<void()> &f)
