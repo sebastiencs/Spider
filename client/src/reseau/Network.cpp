@@ -25,19 +25,54 @@ Network::~Network() {
 
 void Network::initNetwork() {
 	boost::asio::ip::tcp::endpoint endpoint = *_iterator;
-	_engine->getSocket().async_connect(endpoint, [this](const boost::system::error_code& e)
-	{
-		if (!e) {
-			std::cout << "SSL: initializing HandShake" << std::endl;
-			_engine->doHandshake(boost::asio::ssl::stream_base::client, [this]() { sendFirstPaquet(); });
+	boost::system::error_code ec;
+
+	boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {
+
+	    for (;;) {
+	      _engine->getSocket().async_connect(endpoint, yield[ec]);
+	      if (!ec) {
+		std::cout << "SSL: initializing HandShake" << std::endl;
+		_engine->doHandshake(boost::asio::ssl::stream_base::client, yield[ec]);
+		if (!ec) {
+		  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield[ec]);
+		  if (!ec) {
+		    sendFirstPaquet();
+		  }
+		  else {
+
+		  }
 		}
 		else {
-			_engine->getSocket().close();
-			std::cerr << "SSL: Connect failed: " << e << std::endl;
+
 		}
-	});
+	      }
+	      else {
+		// Sleep
+	      }
+
+	    }
+	  });
 	_ios.run();
 }
+
+
+// void Network::initNetwork() {
+//   boost::asio::ip::tcp::endpoint endpoint = *_iterator;
+//   _engine->getSocket().async_connect(endpoint, [this](const boost::system::error_code& e)
+// 				     {
+// 				       if (!e) {
+// 					 std::cout << "SSL: initializing HandShake" << std::endl;
+// 					 _engine->doHandshake(boost::asio::ssl::stream_base::client, [this]() { sendFirstPaquet(); });
+// 				       }
+// 				       else {
+// 					 _engine->getSocket().close();
+// 					 std::cerr << "SSL: Connect failed: " << e << std::endl;
+// 				       }
+// 				     });
+//   _ios.run();
+// }
+
 
 void Network::sendFirstPaquet()
 {
