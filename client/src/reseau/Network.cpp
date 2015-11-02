@@ -1,5 +1,6 @@
 #include <iostream>
 #include <boost/thread.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "reseau/Network.hh"
 #include "paquetFirstClient.hh"
 
@@ -76,7 +77,7 @@ void Network::networkLoop(boost::asio::yield_context yield)
 		while (_packager->isLeft() == 0)
 		{
 			std::cout << "Waiting packager" << std::endl;
-			boost::this_thread::sleep_for(boost::chrono::nanoseconds(2000));
+			boost::this_thread::sleep(boost::posix_time::microseconds(200000));
 		}
 
 		Paquet *paquet = _packager->getPaquet();
