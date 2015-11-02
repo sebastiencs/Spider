@@ -74,7 +74,7 @@ void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()>
     });
 }
 
-int	SslEngine::async_read_ctx(void *buffer, size_t len, boost::asio::yield_context yield)
+int	SslEngine::async_read(void *buffer, size_t len, boost::asio::yield_context yield)
 {
   boost::system::error_code ec;
 
@@ -102,7 +102,7 @@ void    SslEngine::async_write(void *buffer, size_t len, const std::function<voi
 	});
 }
 
-int    SslEngine::async_write_ctx(void *buffer, size_t len, boost::asio::yield_context yield)
+int    SslEngine::async_write(void *buffer, size_t len, boost::asio::yield_context yield)
 {
   boost::system::error_code	ec;
 
@@ -162,7 +162,7 @@ int	SslEngine::writePaquet(const Paquet &paquet, boost::asio::yield_context yiel
 		DEBUG_MSG("Trying to send empty paquet");
 	}
 #endif // !DEBUG
-	return (async_write_ctx(paquet.getData(), paquet.getSize(), yield));
+	return (async_write(paquet.getData(), paquet.getSize(), yield));
 }
 
 void	SslEngine::handleError(const std::function<void()> &f)

@@ -1,3 +1,5 @@
+#include "HttpPost.hh"
+
 HttpPost::HttpPost()
 {
   DEBUG_MSG("HttpPost");
@@ -17,7 +19,7 @@ bool	HttpPost::postPaquet(PaquetKeys *paquet)
     return false;
   curl_easy_setopt(curl, CURLOPT_URL, "spidermen.herokuapp.com/paquet_keys");
   curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "");
-  res = curl_easy_perfom(curl);
+  res = curl_easy_perform(curl);
   if (res != CURLE_OK)
     {
       std::cerr << curl_easy_strerror(res) << std::endl;
@@ -34,7 +36,7 @@ bool HttpPost::postPaquet(PaquetMouse *paquet)
     return false;
   curl_easy_setopt(curl, CURLOPT_URL, "spidermen.herokuapp.com/paquet_mouses");
   curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "");
-  res = curl_easy_perfom(curl);
+  res = curl_easy_perform(curl);
   if (res != CURLE_OK)
     {
       std::cerr << curl_easy_strerror(res) << std::endl;
