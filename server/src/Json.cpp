@@ -67,8 +67,8 @@ bool		Json::writePaquetKeys(PaquetKeys *paquet)
     return false;
   if (checkFileExist())
     {
-      active = paquet->getActive();
-      text = paquet->getText();
+      active = (paquet->getActive()) ? (paquet->getActive()) : (std::string());
+      text = (paquet->getText()) ? (paquet->getText()) : (std::string());
       *_file << "PaquetKeys = {name: " << getName();
       *_file << ", date: " << paquet->getDate();
       *_file << ", sizeActive: " << active.size();
