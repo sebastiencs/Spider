@@ -32,19 +32,13 @@ void Network::initNetwork() {
 	      _engine->getSocket().async_connect(endpoint, yield[ec]);
 		  if (!ec) {
 			  std::cout << "SSL: initializing HandShake" << std::endl;
-			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield[ec]);
+			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
 			  if (!ec) {
 				  sendFirstPaquet();
 			  }
-			  else {
-
-			  }
 		  }
-	      else {
-		// Sleep
-	      }
-
-	    }
+		  boost::chrono::nanoseconds(2000);
+		}
 	  });
 	_ios.run();
 }
@@ -98,12 +92,14 @@ void Network::networkLoop(boost::asio::yield_context yield)
 		while (_packager->isLeft() == 0)
 		{
 			std::cout << "Waiting packager" << std::endl;
-			boost::this_thread::sleep_for(boost::chrono::nanoseconds(500));
+			boost::this_thread::sleep_for(boost::chrono::nanoseconds(2000));
 		}
 
 		Paquet *paquet = _packager->getPaquet();
 		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
-		_engine->writePaquet(*paquet, yield);
+		if (_engine->writePaquet(*paquet, yield) == -1) {
+			return;
+		}
 		_packager->supprPaquet();
 	}
 }
