@@ -8,7 +8,6 @@
 // Last update Tue Oct 27 17:24:05 2015 bresci_b bresci_b
 //
 
-#include <boost/asio/spawn.hpp>
 #include "Spider.hh"
 #include "Web.hh"
 
