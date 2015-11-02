@@ -24,22 +24,44 @@ Network::~Network() {
 }
 
 void Network::initNetwork() {
-	boost::asio::ip::tcp::endpoint endpoint = *_iterator;
-	_engine->getSocket().async_connect(endpoint, [this](const boost::system::error_code& e)
-	{
-		if (!e) {
-			std::cout << "SSL: initializing HandShake" << std::endl;
-			_engine->doHandshake(boost::asio::ssl::stream_base::client, [this]() { sendFirstPaquet(); });
+	boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {
+		boost::asio::ip::tcp::endpoint endpoint = *_iterator;
+		boost::system::error_code ec;
+
+	    for (;;) {
+	      _engine->getSocket().async_connect(endpoint, yield[ec]);
+		  if (!ec) {
+			  std::cout << "SSL: initializing HandShake" << std::endl;
+			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
+			  if (!ec) {
+				  sendFirstPaquet(yield);
+			  }
+		  }
+		  boost::chrono::nanoseconds(2000);
 		}
-		else {
-			_engine->getSocket().close();
-			std::cerr << "SSL: Connect failed: " << e << std::endl;
-		}
-	});
+	  });
 	_ios.run();
 }
 
-void Network::sendFirstPaquet()
+
+// void Network::initNetwork() {
+//   boost::asio::ip::tcp::endpoint endpoint = *_iterator;
+//   _engine->getSocket().async_connect(endpoint, [this](const boost::system::error_code& e)
+// 				     {
+// 				       if (!e) {
+// 					 std::cout << "SSL: initializing HandShake" << std::endl;
+// 					 _engine->doHandshake(boost::asio::ssl::stream_base::client, [this]() { sendFirstPaquet(); });
+// 				       }
+// 				       else {
+// 					 _engine->getSocket().close();
+// 					 std::cerr << "SSL: Connect failed: " << e << std::endl;
+// 				       }
+// 				     });
+//   _ios.run();
+// }
+
+
+void Network::sendFirstPaquet(boost::asio::yield_context yield)
 {
 	PaquetFirstClient	paquet;
 
@@ -49,30 +71,63 @@ void Network::sendFirstPaquet()
 	paquet.setName(hostName);
 	paquet.createPaquet();
 
-	_engine->writePaquet(paquet, [this]() {
-		char ret;
-		_engine->async_read(&ret, 1, [this, &ret]() {
-			std::cout << "SSL: server RET value " << ret + '0' << std::endl;
-			if (ret)
-				networkLoop();
-			else
-			{
-				_engine->getSocket().close();
-				std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
-			}
-		});
-	});
+	if (_engine->writePaquet(paquet, yield)) {
+	  return ;
+	}
+	char ret;
+	if (_engine->async_read_ctx(&ret, 1, yield)) {
+	  return ;
+	}
+	std::cout << "SSL: server RET value " << (int)ret << std::endl;
+	if (ret == 1)
+	  networkLoop(yield);
+	  // boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {networkLoop(yield); });
+	else
+	{
+	  // _engine->getSocket().close();
+	  std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
+	}
 }
 
-void Network::networkLoop()
+// void Network::sendFirstPaquet(boost::asio::yield_context yield)
+// {
+// 	PaquetFirstClient	paquet;
+
+// 	paquet.setVersion(1);
+// 	char hostName[128];
+// 	gethostname(hostName, sizeof(hostName));
+// 	paquet.setName(hostName);
+// 	paquet.createPaquet();
+
+// 	_engine->writePaquet(paquet, [this]() {
+// 		char ret;
+// 		_engine->async_read(&ret, 1, [this, &ret]() {
+// 			std::cout << "SSL: server RET value " << (int)ret << std::endl;
+// 			if (ret)
+// 				boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {networkLoop(yield); });
+// 			else
+// 			{
+// 				_engine->getSocket().close();
+// 				std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
+// 			}
+// 		});
+// 	});
+// }
+
+void Network::networkLoop(boost::asio::yield_context yield)
 {
 	while (1) {
-		if (_packager->isLeft() > 0) {
-			Paquet *paquet = _packager->getPaquet();
-			std::cout << "SENDING PAQUET: " << *paquet << std::endl;
-			_engine->writePaquet(*paquet, []() {std::cout << "OK" << std::endl; });
-			_packager->supprPaquet();
+		while (_packager->isLeft() == 0)
+		{
+			std::cout << "Waiting packager" << std::endl;
+			boost::this_thread::sleep_for(boost::chrono::nanoseconds(2000));
 		}
-		boost::this_thread::sleep_for(boost::chrono::nanoseconds(500));
+
+		Paquet *paquet = _packager->getPaquet();
+		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
+		if (_engine->writePaquet(*paquet, yield) == -1) {
+			return;
+		}
+		_packager->supprPaquet();
 	}
 }

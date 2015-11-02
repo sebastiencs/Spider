@@ -28,13 +28,17 @@ public:
   virtual SslSocket::lowest_layer_type	&getSocket() = 0;
   virtual void				doHandshake(boost::asio::ssl::stream_base::handshake_type,
 						    const std::function<void()> &) = 0;
+  virtual int				doHandshake(boost::asio::ssl::stream_base::handshake_type,
+						    boost::asio::yield_context) = 0;
   virtual void				async_read(void *, size_t, const std::function<void()> &) = 0;
   virtual int				async_read_ctx(void *buffer, size_t len, boost::asio::yield_context yield) = 0;
+  virtual int			async_write_ctx(void *buffer, size_t len, boost::asio::yield_context yield) = 0;
   virtual void				async_write(void *, size_t, const std::function<void()> &) = 0;
   virtual void				async_read_some(void *, size_t, const std::function<void()> &) = 0;
   virtual void				async_write_some(void *, size_t, const std::function<void()> &) = 0;
   virtual void				handleError(const std::function<void()> &) = 0;
   virtual void				writePaquet(const Paquet &, const std::function<void()> &) = 0;
+  virtual int				writePaquet(const Paquet &paquet, boost::asio::yield_context) = 0;
 };
 
 #endif /* !ISOCKETENGINE_H_ */

@@ -33,8 +33,8 @@ Json::~Json()
 void		Json::openFile(const std::string &str)
 {
   boost::posix_time::ptime time_now;
-  std::string	time = "";
-  std::string	file = "";
+  std::string	time;
+  std::string	file;
 
   _name = str;
   time_now = boost::posix_time::second_clock::local_time();
