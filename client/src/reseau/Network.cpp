@@ -24,29 +24,22 @@ Network::~Network() {
 }
 
 void Network::initNetwork() {
-	boost::asio::ip::tcp::endpoint endpoint = *_iterator;
-	boost::system::error_code ec;
-
 	boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {
+		boost::asio::ip::tcp::endpoint endpoint = *_iterator;
+		boost::system::error_code ec;
 
 	    for (;;) {
 	      _engine->getSocket().async_connect(endpoint, yield[ec]);
-	      if (!ec) {
-		std::cout << "SSL: initializing HandShake" << std::endl;
-		_engine->doHandshake(boost::asio::ssl::stream_base::client, yield[ec]);
-		if (!ec) {
-		  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield[ec]);
 		  if (!ec) {
-		    sendFirstPaquet();
-		  }
-		  else {
+			  std::cout << "SSL: initializing HandShake" << std::endl;
+			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield[ec]);
+			  if (!ec) {
+				  sendFirstPaquet();
+			  }
+			  else {
 
+			  }
 		  }
-		}
-		else {
-
-		}
-	      }
 	      else {
 		// Sleep
 	      }
