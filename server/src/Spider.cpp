@@ -192,6 +192,7 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
     return ;
   }
 
+  std::fill(_str, _str + SIZE_STRING, 0);
   _buffer.getValue<char>(_str, sizeActive);
   paquet.setActive(_str);
 
@@ -236,6 +237,7 @@ void			Spider::getClientCMD(boost::asio::yield_context &yield)
     return ;
   }
 
+  std::fill(_str, _str + SIZE_STRING, 0);
   _buffer.getValue<char>(_str, sizeData);
   paquet.setDataReponse(_str);
   paquet.createPaquet();
