@@ -34,7 +34,7 @@ void Network::initNetwork() {
 			  std::cout << "SSL: initializing HandShake" << std::endl;
 			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
 			  if (!ec) {
-				  sendFirstPaquet();
+				  sendFirstPaquet(yield);
 			  }
 		  }
 		  boost::chrono::nanoseconds(2000);
@@ -61,7 +61,7 @@ void Network::initNetwork() {
 // }
 
 
-void Network::sendFirstPaquet()
+void Network::sendFirstPaquet(boost::asio::yield_context yield)
 {
 	PaquetFirstClient	paquet;
 
@@ -71,20 +71,48 @@ void Network::sendFirstPaquet()
 	paquet.setName(hostName);
 	paquet.createPaquet();
 
-	_engine->writePaquet(paquet, [this]() {
-		char ret;
-		_engine->async_read(&ret, 1, [this, &ret]() {
-			std::cout << "SSL: server RET value " << (int)ret << std::endl;
-			if (ret)
-				boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {networkLoop(yield); });
-			else
-			{
-				_engine->getSocket().close();
-				std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
-			}
-		});
-	});
+	if (_engine->writePaquet(paquet, yield)) {
+	  return ;
+	}
+	char ret;
+	if (_engine->async_read_ctx(&ret, 1, yield)) {
+	  return ;
+	}
+	std::cout << "SSL: server RET value " << (int)ret << std::endl;
+	if (ret == 1)
+	  networkLoop(yield);
+	  // boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {networkLoop(yield); });
+	else
+	{
+	  // _engine->getSocket().close();
+	  std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
+	}
 }
+
+// void Network::sendFirstPaquet(boost::asio::yield_context yield)
+// {
+// 	PaquetFirstClient	paquet;
+
+// 	paquet.setVersion(1);
+// 	char hostName[128];
+// 	gethostname(hostName, sizeof(hostName));
+// 	paquet.setName(hostName);
+// 	paquet.createPaquet();
+
+// 	_engine->writePaquet(paquet, [this]() {
+// 		char ret;
+// 		_engine->async_read(&ret, 1, [this, &ret]() {
+// 			std::cout << "SSL: server RET value " << (int)ret << std::endl;
+// 			if (ret)
+// 				boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {networkLoop(yield); });
+// 			else
+// 			{
+// 				_engine->getSocket().close();
+// 				std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
+// 			}
+// 		});
+// 	});
+// }
 
 void Network::networkLoop(boost::asio::yield_context yield)
 {
