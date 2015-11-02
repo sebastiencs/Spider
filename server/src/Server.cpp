@@ -8,6 +8,7 @@
 // Last update Wed Oct 21 09:01:22 2015 chapui_s
 //
 
+#include <boost/filesystem.hpp>
 #include <iostream>
 #include "Server.hh"
 
@@ -16,6 +17,7 @@ Server::Server(uint16_t port)
     _signal(*this)
 {
   DEBUG_MSG("Server is running");
+  boost::filesystem::create_directory("Logs");
   _signal.addSignal(SIGINT);
 }
 

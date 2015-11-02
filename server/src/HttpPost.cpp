@@ -1,3 +1,4 @@
+#include "debug.hh"
 #include "HttpPost.hh"
 
 HttpPost::HttpPost()

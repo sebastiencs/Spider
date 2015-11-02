@@ -28,6 +28,7 @@ private:
   char		*_active;
   uint16_t	_X;
   uint16_t	_Y;
+  uint16_t	_pid;
   uint8_t	_button;
   char		_parsed;
 
@@ -43,6 +44,7 @@ public:
   void		setActive(const std::string &);
   void		setX(uint16_t);
   void		setY(uint16_t);
+  void		setPid(uint16_t);
   void		setButton(uint32_t);
 
   void		createPaquet();
@@ -51,6 +53,7 @@ public:
   char		*getActive();
   uint16_t	getX();
   uint16_t	getY();
+  uint16_t	getPid();
   uint8_t	getButton();
 
   virtual void		dumpPaquet();

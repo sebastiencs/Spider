@@ -19,6 +19,7 @@ PaquetMouse::PaquetMouse()
   _date = 0;
   _X = 0;
   _Y = 0;
+  _pid = 0;
   _button = 0;
 }
 
@@ -62,6 +63,12 @@ void		PaquetMouse::setY(uint16_t Y)
   _parsed = 0;
 }
 
+void		PaquetMouse::setPid(uint16_t pid)
+{
+  _pid = pid;
+  _parsed = 0;
+}
+
 void		PaquetMouse::setButton(uint32_t button)
 {
   _button = button;
@@ -74,6 +81,7 @@ void		PaquetMouse::createPaquet()
 
   writeData<uint8_t>(ptr, &_id);
   writeData<uint32_t>(ptr, &_date);
+  writeData<uint16_t>(ptr, &_pid);
   writeData<uint16_t>(ptr, &_sizeActive);
   writeData<char>(ptr, _active, _sizeActive);
   writeData<uint16_t>(ptr, &_X);
@@ -87,6 +95,7 @@ void		PaquetMouse::parsePaquetMouse()
 
   _id = readData<uint8_t>(ptr);
   _date = readData<uint32_t>(ptr);
+  _pid = readData<uint16_t>(ptr);
   _sizeActive = readData<uint16_t>(ptr);
   if (_sizeActive) {
     delete[] _active;
@@ -132,6 +141,14 @@ uint16_t	PaquetMouse::getY()
   return (_Y);
 }
 
+uint16_t	PaquetMouse::getPid()
+{
+  if (!_parsed) {
+    parsePaquetMouse();
+  }
+  return (_pid);
+}
+
 uint8_t		PaquetMouse::getButton()
 {
   if (!_parsed) {
@@ -149,12 +166,26 @@ std::ostream	&operator<<(std::ostream &os, PaquetMouse &p)
 {
   std::string	active = (p.getActive()) ? (p.getActive()) : (std::string());
 
-  os << "PaquetMouse = { date : " << p.getDate() << ", sizeActive : " << active.size();
+  os << "PaquetMouse = { date : " << p.getDate() << ", PID : " << p.getPid() << ", sizeActive : " << active.size();
   if (active.size())
     os << ", active : '" << active << "'";
   os << ", X : " << p.getX();
   os << ", Y : " << p.getY();
   os << ", Button : " << static_cast<int>(p.getButton());
+  switch (p.getButton())
+  {
+  case (1):
+    os << "(Lelf)";
+    break ;
+  case (2):
+    os << "(Middle";
+    break ;
+  case (4):
+    os << "(Right)";
+    break ;
+  default:
+    break ;
+  }
   os << ((p.getButton() == 1) ? ("(Left)") : ((p.getButton() == 2) ? ("(Middle)") : ("(Right)")));
   os << " };" << std::endl;
   return (os);

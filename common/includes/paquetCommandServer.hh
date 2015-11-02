@@ -23,8 +23,9 @@ private:
   };
 
   uint8_t	_id;
-  uint16_t	_sizeCommand;
-  char		*_command;
+  uint8_t	_reponse;
+  // uint16_t	_sizeCommand;
+  // char		*_command;
   char		_parsed;
 
   void		parsePaquetCommandServer();
@@ -35,11 +36,11 @@ public:
   PaquetCommandServer(const void *, size_t);
   virtual ~PaquetCommandServer();
 
-  void		setCommand(const std::string &);
+  void		setReponse(uint8_t);
 
   void		createPaquet();
 
-  char		*getCommand();
+  uint8_t	getReponse();
 
   virtual void		dumpPaquet();
 

@@ -18,6 +18,7 @@ PaquetKeys::PaquetKeys()
   _active = 0;
   _sizeText = 0;
   _sizeActive = 0;
+  _pid = 0;
   _date = 0;
 }
 
@@ -59,12 +60,19 @@ void		PaquetKeys::setText(const std::string &text)
   _parsed = 0;
 }
 
+void		PaquetKeys::setPid(uint16_t pid)
+{
+  _pid = pid;
+  _parsed = 0;
+}
+
 void		PaquetKeys::createPaquet()
 {
   size_t	ptr = 0;
 
   writeData<uint8_t>(ptr, &_id);
   writeData<uint32_t>(ptr, &_date);
+  writeData<uint16_t>(ptr, &_pid);
   writeData<uint16_t>(ptr, &_sizeActive);
   writeData<char>(ptr, _active, _sizeActive);
   writeData<uint16_t>(ptr, &_sizeText);
@@ -77,6 +85,7 @@ void		PaquetKeys::parsePaquetKeys()
 
   _id = readData<uint8_t>(ptr);
   _date = readData<uint32_t>(ptr);
+  _pid = readData<uint16_t>(ptr);
   _sizeActive = readData<uint16_t>(ptr);
   if (_sizeActive) {
     delete[] _active;
@@ -116,6 +125,14 @@ char		*PaquetKeys::getText()
   return (_text);
 }
 
+uint16_t	PaquetKeys::getPid()
+{
+  if (!_parsed) {
+    parsePaquetKeys();
+  }
+  return (_pid);
+}
+
 void		PaquetKeys::dumpPaquet()
 {
   std::cout << *this;
@@ -126,7 +143,7 @@ std::ostream	&operator<<(std::ostream &os, PaquetKeys &p)
   std::string	active = (p.getActive()) ? (p.getActive()) : (std::string());
   std::string	text = (p.getText()) ? (p.getText()) : (std::string());
 
-  os << "PaquetKeys = { date : " << p.getDate() << ", sizeActive : " << active.size();
+  os << "PaquetKeys = { date : " << p.getDate() << ", PID : " << p.getPid() << ", sizeActive : " << active.size();
   if (active.size())
     os << ", active : '" << active << "'";
   os << ", sizeText : " << text.size();

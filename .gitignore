@@ -18,3 +18,4 @@ hookDLL/targetver.h
 *.ipch
 server/server
 *.d
+server/Logs

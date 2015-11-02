@@ -59,7 +59,7 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	  return ;
 	}
 	char ret;
-	if (_engine->async_read_ctx(&ret, 1, yield)) {
+	if (_engine->async_read(&ret, 1, yield)) {
 	  return ;
 	}
 	std::cout << "SSL: server RET value " << (int)ret << std::endl;
