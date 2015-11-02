@@ -11,8 +11,8 @@ class		HttpPost
 public:
   HttpPost();
   ~HttpPost();
-  bool		postPaquetKeys(PaquetKeys *paquet);
-  bool		postPaquetMouse(PaquetMouse *paquet);
+  bool		postPaquet(PaquetKeys *paquet);
+  bool		postPaquet(PaquetMouse *paquet);
   
 private:
   CURL		*curl;

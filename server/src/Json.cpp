@@ -61,7 +61,7 @@ std::string	Json::getName() const
   return _name;
 }
 
-bool		Json::writePaquetKeys(PaquetKeys *paquet)
+bool		Json::writePaquet(PaquetKeys *paquet)
 {
   std::string active = "";
   std::string text = "";
@@ -86,7 +86,7 @@ bool		Json::writePaquetKeys(PaquetKeys *paquet)
   return false;
 }
 
-bool		Json::writePaquetMouse(PaquetMouse *paquet)
+bool		Json::writePaquet(PaquetMouse *paquet)
 {
   std::string active = "";
 
