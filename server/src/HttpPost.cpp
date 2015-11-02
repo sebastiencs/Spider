@@ -2,16 +2,18 @@
 
 HttpPost::HttpPost()
 {
+  DEBUG_MSG("HttpPost");
   curl_global_init(CURL_GLOBAL_ALL);
   curl = curl_easy_init();
 }
 
 HttpPost::~HttpPost()
 {
+  DEBUG_MSG("HttpPost");
   curl_global_cleanup();
 }
 
-bool	HttpPost::postPaquetKeys(PaquetKeys *paquet)
+bool	HttpPost::postPaquet(PaquetKeys *paquet)
 {
   if (!curl || !paquet)
     return false;
@@ -20,7 +22,7 @@ bool	HttpPost::postPaquetKeys(PaquetKeys *paquet)
   res = curl_easy_perform(curl);
   if (res != CURLE_OK)
     {
-      std::cout << curl_easy_strerror(res) << std::endl;
+      std::cerr << curl_easy_strerror(res) << std::endl;
       curl_easy_cleanup(curl);
       return false;
     }
@@ -28,7 +30,7 @@ bool	HttpPost::postPaquetKeys(PaquetKeys *paquet)
   return true;
 }
 
-bool HttpPost::postPaquetMouse(PaquetMouse *paquet)
+bool HttpPost::postPaquet(PaquetMouse *paquet)
 {
   if (!curl || !paquet)
     return false;
@@ -37,7 +39,7 @@ bool HttpPost::postPaquetMouse(PaquetMouse *paquet)
   res = curl_easy_perform(curl);
   if (res != CURLE_OK)
     {
-      std::cout << curl_easy_strerror(res) << std::endl;
+      std::cerr << curl_easy_strerror(res) << std::endl;
       curl_easy_cleanup(curl);
       return false;
     }

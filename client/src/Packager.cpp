@@ -96,16 +96,19 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		mutex.lock();
 		_paquets.push_back(tmp);
 		mutex.unlock();
+		readyMutex.unlock();
 	}
 }
 
 void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
+	std::cout << "addclick" << std::endl;
 	MSLLHOOKSTRUCT* info = (MSLLHOOKSTRUCT*)lParam;
 	PaquetMouse *tmp = new PaquetMouse();
 	tmp->setDate(info->time);
 	tmp->setX(info->pt.x);
 	tmp->setY(info->pt.y);
 	WORD highOrder = info->mouseData >> 16;
+	std::cout << "highorder : " << highOrder << std::endl;
 	if (highOrder == XBUTTON1) {
 		tmp->setButton(1);
 	}
@@ -116,7 +119,10 @@ void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
 		tmp->setButton(2);
 	}
 	tmp->createPaquet();
+	mutex.lock();
 	_paquets.push_back(tmp);
+	mutex.unlock();
+	readyMutex.unlock();
 }
 
 size_t Packager::isLeft() {
@@ -126,6 +132,17 @@ size_t Packager::isLeft() {
 Paquet *Packager::getPaquet() {
 	return _paquets.front();
 }
+
 void Packager::supprPaquet() {
 	_paquets.erase(_paquets.begin());
+	if (_paquets.empty())
+		readyMutex.lock();
+}
+
+boost::mutex& Packager::getMutex() {
+	return mutex;
+}
+
+boost::mutex& Packager::getReadyMutex() {
+	return readyMutex;
 }

@@ -29,8 +29,8 @@ public:
   void		openFile(const std::string &str);
   bool		checkFileExist() const;
   std::string	getName() const;
-  bool		writePaquetKeys(PaquetKeys *paquet);
-  bool		writePaquetMouse(PaquetMouse *paquet);
+  bool		writePaquet(PaquetKeys *paquet);
+  bool		writePaquet(PaquetMouse *paquet);
 
 private:
   std::ofstream *_file;
