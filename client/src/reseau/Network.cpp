@@ -75,11 +75,7 @@ void Network::networkLoop(boost::asio::yield_context yield)
 
 		Paquet *paquet = _packager->getPaquet();
 		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
-		_engine->writePaquet(*paquet, [this]() {
-
-			std::cout << "OK" << std::endl;
-			_packager->supprPaquet();
-
-		});
+		_engine->writePaquet(*paquet, yield);
+		_packager->supprPaquet();
 	}
 }
