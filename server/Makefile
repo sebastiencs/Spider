@@ -21,6 +21,7 @@ SRC			= src/main.cpp					\
 			  src/Signal.cpp				\
 			  src/Buffer.cpp				\
 			  src/Json.cpp					\
+			  src/HttpPost.cpp				\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\
 			  $(DIR_COMMON)/src/paquetMouse.cpp		\
@@ -40,7 +41,7 @@ RM			= rm -f
 
 override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh1024.pem\"
 
-LDLIBS			= -lboost_system -lboost_coroutine -lboost_date_time -lboost_thread -lssl -lcrypto
+LDLIBS			= -lboost_system -lboost_coroutine -lboost_date_time -lboost_thread -lssl -lcrypto -lcurl
 
 DEPS			= $(OBJ:.o=.d)
 

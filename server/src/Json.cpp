@@ -39,7 +39,10 @@ void		Json::openFile(const std::string &str)
   _name = str;
   time_now = boost::posix_time::second_clock::local_time();
   time = boost::posix_time::to_simple_string(time_now).c_str();
-  std::replace(time.begin(), time.end(), ' ', '-');
+  if (!time.empty())
+    std::replace(time.begin(), time.end(), ' ', '-');
+  else
+    time = "0";
   file = str;
   file += "-";
   file += time;

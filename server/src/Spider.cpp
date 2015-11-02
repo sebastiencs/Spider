@@ -50,7 +50,7 @@ void			Spider::doFirstConnection()
 	dieInDignity();
       }
 
-      if ((sizeName = _buffer.getValue<uint16_t>()) >= SIZE_STRING) {
+j      if ((sizeName = _buffer.getValue<uint16_t>()) >= SIZE_STRING) {
 	std::cerr << "Wrong string size allowed" << std::endl;
 	dieInDignity();
       }
