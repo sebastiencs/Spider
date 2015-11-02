@@ -91,7 +91,7 @@ bool		Json::writePaquetMouse(PaquetMouse *paquet)
     return false;
   if (checkFileExist())
     {
-      active = paquet->getActive();
+      active = (paquet->getActive()) ? (paquet->getActive()) : (std::string());
       *_file << "PaquetMouse = {name: " << getName();
       *_file << ", date: " << paquet->getDate();
       *_file << ", sizeActive: " << active.size();
