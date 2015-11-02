@@ -54,7 +54,7 @@ void Network::sendFirstPaquet()
 		_engine->async_read(&ret, 1, [this, &ret]() {
 			std::cout << "SSL: server RET value " << (int)ret << std::endl;
 			if (ret)
-				networkLoop();
+				boost::asio::spawn(_ios, [this](boost::asio::yield_context yield) {networkLoop(yield); });
 			else
 			{
 				_engine->getSocket().close();
@@ -64,20 +64,22 @@ void Network::sendFirstPaquet()
 	});
 }
 
-void Network::networkLoop()
+void Network::networkLoop(boost::asio::yield_context yield)
 {
-	while (_packager->isLeft() == 0)
-	{
-		std::cout << "Waiting packager" << std::endl;
-		boost::this_thread::sleep_for(boost::chrono::nanoseconds(500));
+	while (1) {
+		while (_packager->isLeft() == 0)
+		{
+			std::cout << "Waiting packager" << std::endl;
+			boost::this_thread::sleep_for(boost::chrono::nanoseconds(500));
+		}
+
+		Paquet *paquet = _packager->getPaquet();
+		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
+		_engine->writePaquet(*paquet, [this]() {
+
+			std::cout << "OK" << std::endl;
+			_packager->supprPaquet();
+
+		});
 	}
-
-	Paquet *paquet = _packager->getPaquet();
-	std::cout << "SENDING PAQUET: " << *paquet << std::endl;
-	_engine->writePaquet(*paquet, [this]() {
-
-		std::cout << "OK" << std::endl;
-		_packager->supprPaquet();
-
-	});
 }
