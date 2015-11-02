@@ -31,11 +31,13 @@ public:
 					    const std::function<void()> &);
   virtual void			async_read(void *, size_t, const std::function<void()> &);
   virtual int			async_read_ctx(void *buffer, size_t len, boost::asio::yield_context yield);
+  virtual int			async_write_ctx(void *buffer, size_t len, boost::asio::yield_context yield);
   virtual void			async_write(void *, size_t, const std::function<void()> &);
   virtual void			async_read_some(void *, size_t, const std::function<void()> &);
   virtual void			async_write_some(void *, size_t, const std::function<void()> &);
   virtual void			handleError(const std::function<void()> &);
   virtual void			writePaquet(const Paquet &, const std::function<void()> &);
+  virtual int			writePaquet(const Paquet &paquet, boost::asio::yield_context yield);
 };
 
 #endif /* !SSLENGINE_H_ */

@@ -89,6 +89,19 @@ void    SslEngine::async_write(void *buffer, size_t len, const std::function<voi
 	});
 }
 
+int    SslEngine::async_write_ctx(void *buffer, size_t len, boost::asio::yield_context yield)
+{
+  boost::system::error_code	ec;
+
+  boost::asio::async_write(_socket, boost::asio::buffer(buffer, len), yield[ec]);
+
+  if (ec) {
+    std::cerr << "SSL - Can't write" << std::endl;
+    return (-1);
+  }
+  return (0);
+}
+
 void	SslEngine::async_read_some(void *buffer, size_t len, const std::function<void()> &func)
 {
   _socket.async_read_some(boost::asio::buffer(buffer, len),
@@ -127,6 +140,16 @@ void    SslEngine::writePaquet(const Paquet &paquet, const std::function<void()>
 	std::cout << "WRITEPAQUET: " << paquet << std::endl;
 	std::cout << "WRITEPAQUET SIZE: " << paquet.getSize() << std::endl;
 	async_write(paquet.getData(), paquet.getSize(), func);
+}
+
+int	SslEngine::writePaquet(const Paquet &paquet, boost::asio::yield_context yield)
+{
+#ifdef DEBUG
+	if (!paquet.getSize()) {
+		DEBUG_MSG("Trying to send empty paquet");
+	}
+#endif // !DEBUG
+	return (async_write_ctx(paquet.getData(), paquet.getSize(), yield));
 }
 
 void	SslEngine::handleError(const std::function<void()> &f)
