@@ -47,6 +47,19 @@ void	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
     });
 }
 
+int	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
+			       boost::asio::yield_context yield)
+{
+  boost::system::error_code	ec;
+
+  _socket.async_handshake(type, yield[ec]);
+  if (ec) {
+    std::cerr << "SSL - Can't do handshake" << std::endl;
+    return (-1);
+  }
+  return (0);
+}
+
 void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()> &func)
 {
   boost::asio::async_read(_socket, boost::asio::buffer(buffer, len),
