@@ -1,26 +1,15 @@
-//
-// Json.cpp for src in /home/bresci_b/rendu/Spider/server/src
-//
-// Made by bresci_b bresci_b
-// Login   <bresci_b@epitech.net>
-//
-// Started on  Tue Oct 27 11:35:03 2015 bresci_b bresci_b
-// Last update Tue Oct 27 17:22:26 2015 bresci_b bresci_b
-//
+#include "DumpFile.hh"
 
-#include "debug.hh"
-#include "Json.hh"
-
-Json::Json()
+DumpFile::DumpFile()
 {
-  DEBUG_MSG("Json created");
+  DEBUG_MSG("DumpFile created");
   _file = NULL;
   _name = "";
 }
 
-Json::~Json()
+DumpFile::~DumpFile()
 {
-  DEBUG_MSG("Json deleted");
+  DEBUG_MSG("DumpFile deleted");
   if (_file && _file->is_open())
     {
       _file->close();
@@ -30,38 +19,46 @@ Json::~Json()
     _name.clear();
 }
 
-void		Json::openFile(const std::string &str)
+void		DumpFile::createFile(const std::string &str)
 {
-  boost::posix_time::ptime time_now;
-  std::string	time;
   std::string	file;
 
   _name = str;
-  time_now = boost::posix_time::second_clock::local_time();
-  time = boost::posix_time::to_simple_string(time_now).c_str();
-  if (!time.empty())
-    std::replace(time.begin(), time.end(), ' ', '-');
-  else
-    time = "0";
-  file = str;
+  file = isDirectoryExist("Logs") ? "Logs/" : "";
+  file += str;
   file += "-";
-  file += time;
+  file += getTime();
   _file = new std::ofstream(file.c_str(), std::ofstream::out);
 }
 
-bool		Json::checkFileExist() const
+bool		DumpFile::checkFileExist() const
 {
   if (_file && _file->is_open())
     return true;
   return false;
 }
 
-std::string	Json::getName() const
+std::string	DumpFile::getName() const
 {
   return _name;
 }
 
-bool		Json::writePaquet(PaquetKeys *paquet)
+std::string	DumpFile::getTime() const
+{
+  boost::posix_time::ptime	time_now;
+  std::string			time;
+
+  time_now = boost::posix_time::second_clock::local_time();
+  time = boost::posix_time::to_simple_string(time_now).c_str();
+  return !time.empty() ? boost::replace_all_copy(time, " ", "-") : "0";
+}
+
+bool		DumpFile::isDirectoryExist(const std::string &dir) const
+{
+  return boost::filesystem::is_directory(dir.c_str());
+}
+
+bool		DumpFile::writePaquet(PaquetKeys *paquet)
 {
   std::string active = "";
   std::string text = "";
@@ -86,7 +83,7 @@ bool		Json::writePaquet(PaquetKeys *paquet)
   return false;
 }
 
-bool		Json::writePaquet(PaquetMouse *paquet)
+bool		DumpFile::writePaquet(PaquetMouse *paquet)
 {
   std::string active = "";
 

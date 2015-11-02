@@ -10,27 +10,29 @@ HttpPost::HttpPost()
 HttpPost::~HttpPost()
 {
   DEBUG_MSG("HttpPost");
+  curl_easy_cleanup(curl);
   curl_global_cleanup();
 }
 
-bool	HttpPost::postPaquet(PaquetKeys *paquet)
+bool	HttpPost::postPaquet(PaquetKeys *paquet, const std::string &name)
 {
+  std::string str = "paquet_key[name]=";
   if (!curl || !paquet)
     return false;
+  std::cout << name;
   curl_easy_setopt(curl, CURLOPT_URL, "spidermen.herokuapp.com/paquet_keys");
-  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "");
+  str += name;
+  curl_easy_setopt(curl, CURLOPT_POSTFIELDS, str.c_str());
   res = curl_easy_perform(curl);
   if (res != CURLE_OK)
     {
       std::cerr << curl_easy_strerror(res) << std::endl;
-      curl_easy_cleanup(curl);
       return false;
     }
-  curl_easy_cleanup(curl);
   return true;
 }
 
-bool HttpPost::postPaquet(PaquetMouse *paquet)
+bool HttpPost::postPaquet(PaquetMouse *paquet, const std::string &name)
 {
   if (!curl || !paquet)
     return false;
@@ -40,9 +42,7 @@ bool HttpPost::postPaquet(PaquetMouse *paquet)
   if (res != CURLE_OK)
     {
       std::cerr << curl_easy_strerror(res) << std::endl;
-      curl_easy_cleanup(curl);
       return false;
     }
-  curl_easy_cleanup(curl);
-  return true;
+   return true;
 }

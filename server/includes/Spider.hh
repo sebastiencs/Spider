@@ -17,7 +17,8 @@
 # include "ISocketEngine.hh"
 # include "debug.hh"
 # include "Buffer.hh"
-# include "Json.hh"
+# include "DumpFile.hh"
+# include "HttpPost.hh"
 
 # define PROTOCOL_VERSION	(1)
 # define SIZE_STRING		(2048)
@@ -34,7 +35,8 @@ private:
 
   uint16_t				_proto;
   std::string				_name;
-  std::unique_ptr<Json>			_json;
+  std::unique_ptr<DumpFile>		_dumpFile;
+  std::unique_ptr<HttpPost>		_httpPost;
 
 public:
   Spider(const boost::shared_ptr<ISocketEngine> &, Web &);
