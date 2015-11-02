@@ -123,8 +123,8 @@ void		PaquetKeys::dumpPaquet()
 
 std::ostream	&operator<<(std::ostream &os, PaquetKeys &p)
 {
-  std::string	active = p.getActive();
-  std::string	text = p.getText();
+  std::string	active = (p.getActive()) ? (p.getActive()) : (std::string());
+  std::string	text = (p.getText()) ? (p.getText()) : (std::string());
 
   os << "PaquetKeys = { date : " << p.getDate() << ", sizeActive : " << active.size();
   if (active.size())

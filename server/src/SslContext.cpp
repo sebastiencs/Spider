@@ -8,6 +8,7 @@
 // Last update Thu Oct 22 12:05:13 2015 chapui_s
 //
 
+#include <iostream>
 #include "debug.hh"
 #include "SslContext.hh"
 

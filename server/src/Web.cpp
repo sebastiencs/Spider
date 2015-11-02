@@ -53,3 +53,8 @@ void		Web::deleteSpider(const boost::shared_ptr<Spider> &spider)
 {
   _spiders.erase(spider);
 }
+
+boost::asio::io_service	&Web::get_ioservice()
+{
+  return (_acceptor->get_ioservice());
+}

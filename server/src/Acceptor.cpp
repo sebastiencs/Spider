@@ -47,3 +47,8 @@ void	Acceptor::stop()
 {
   _ios.stop();
 }
+
+boost::asio::io_service	&Acceptor::get_ioservice()
+{
+  return (_ios);
+}

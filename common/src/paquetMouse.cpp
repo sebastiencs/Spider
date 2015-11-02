@@ -147,7 +147,7 @@ void		PaquetMouse::dumpPaquet()
 
 std::ostream	&operator<<(std::ostream &os, PaquetMouse &p)
 {
-  std::string	active = p.getActive();
+  std::string	active = (p.getActive()) ? (p.getActive()) : (std::string());
 
   os << "PaquetMouse = { date : " << p.getDate() << ", sizeActive : " << active.size();
   if (active.size())

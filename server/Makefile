@@ -30,7 +30,6 @@ SRC			= src/main.cpp					\
 			  $(DIR_COMMON)/src/paquetFirstClient.cpp	\
 			  $(DIR_COMMON)/src/SslEngine.cpp
 
-
 OBJ			= $(SRC:.cpp=.o)
 
 INCLUDES		= -I ./includes -I $(DIR_COMMON)/includes
@@ -39,17 +38,24 @@ CXX			= clang++
 
 RM			= rm -f
 
-override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -ggdb -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh1024.pem\"
+override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh1024.pem\"
 
-LDLIBS			= -lboost_system -lboost_date_time -lboost_thread -lssl -lcrypto
+LDLIBS			= -lboost_system -lboost_coroutine -lboost_date_time -lboost_thread -lssl -lcrypto
+
+DEPS			= $(OBJ:.o=.d)
 
 $(NAME):	$(OBJ)
-		$(CXX) $(CFLAGS) -o $(NAME) $(OBJ) $(LDLIBS)
+		$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJ) $(LDLIBS)
+
+-include $(DEPS)
 
 all:		$(NAME)
 
+%.o:		%.cpp
+		$(CXX) -c $(CXXFLAGS) -MMD -MF $(patsubst %.o,%.d,$@) -c -o $@ $<
+
 clean:
-		$(RM) $(OBJ)
+		$(RM) $(OBJ) $(DEPS)
 
 fclean:		clean
 		$(RM) $(NAME)

@@ -11,6 +11,7 @@
 #ifndef SSLENGINE_H_
 # define SSLENGINE_H_
 
+# include <boost/asio/spawn.hpp>
 # include "ISocketEngine.hh"
 # include "paquet.hh"
 
@@ -29,6 +30,7 @@ public:
   virtual void			doHandshake(boost::asio::ssl::stream_base::handshake_type,
 					    const std::function<void()> &);
   virtual void			async_read(void *, size_t, const std::function<void()> &);
+  virtual int			async_read_ctx(void *buffer, size_t len, boost::asio::yield_context yield);
   virtual void			async_write(void *, size_t, const std::function<void()> &);
   virtual void			async_read_some(void *, size_t, const std::function<void()> &);
   virtual void			async_write_some(void *, size_t, const std::function<void()> &);

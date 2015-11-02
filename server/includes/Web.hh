@@ -36,6 +36,7 @@ public:
   void				stop();
   void				waitSpider();
   void				deleteSpider(const boost::shared_ptr<Spider> &);
+  boost::asio::io_service	&get_ioservice();
 };
 
 #endif /* !WEB_H_ */

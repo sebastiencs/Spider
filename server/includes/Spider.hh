@@ -19,6 +19,9 @@
 # include "Buffer.hh"
 # include "Json.hh"
 
+# define PROTOCOL_VERSION	(1)
+# define SIZE_STRING		(2048)
+
 class	Web;
 
 class					Spider : public boost::enable_shared_from_this<Spider>
@@ -26,7 +29,7 @@ class					Spider : public boost::enable_shared_from_this<Spider>
 private:
   boost::shared_ptr<ISocketEngine>	_socket;
   Web					&_web;
-  char					_str[2014];
+  char					_str[SIZE_STRING];
   Buffer				_buffer;
 
   uint16_t				_proto;
@@ -40,10 +43,11 @@ public:
   void		prepareFirstConnection();
   void		doFirstConnection();
   void		dieInDignity();
-  void		getTypeInfo();
-  void		getKeystrokes();
-  void		getMouse();
-  void		getClientCMD();
+  void		getTypeInfo(boost::asio::yield_context);
+//void		getTypeInfo();
+  void		getKeystrokes(boost::asio::yield_context &);
+  void		getMouse(boost::asio::yield_context &);
+  void		getClientCMD(boost::asio::yield_context &);
 };
 
 #endif /* !SPIDER_H_ */

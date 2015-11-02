@@ -31,6 +31,7 @@ public:
   void			async_accept(const std::function<void(boost::shared_ptr<ISocketEngine> &)> &);
   void			start();
   void			stop();
+  boost::asio::io_service	&get_ioservice();
 };
 
 #endif /* !ACCEPTOR_H_ */

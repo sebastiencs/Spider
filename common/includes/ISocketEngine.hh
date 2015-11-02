@@ -12,6 +12,7 @@
 # define ISOCKETENGINE_H_
 
 # include <boost/asio/ssl.hpp>
+# include <boost/asio/spawn.hpp>
 # include <boost/bind.hpp>
 # include <boost/asio.hpp>
 # include <iostream>
@@ -28,11 +29,12 @@ public:
   virtual void				doHandshake(boost::asio::ssl::stream_base::handshake_type,
 						    const std::function<void()> &) = 0;
   virtual void				async_read(void *, size_t, const std::function<void()> &) = 0;
+  virtual int				async_read_ctx(void *buffer, size_t len, boost::asio::yield_context yield) = 0;
   virtual void				async_write(void *, size_t, const std::function<void()> &) = 0;
   virtual void				async_read_some(void *, size_t, const std::function<void()> &) = 0;
   virtual void				async_write_some(void *, size_t, const std::function<void()> &) = 0;
   virtual void				handleError(const std::function<void()> &) = 0;
-  virtual void			writePaquet(const Paquet &, const std::function<void()> &) = 0;
+  virtual void				writePaquet(const Paquet &, const std::function<void()> &) = 0;
 };
 
 #endif /* !ISOCKETENGINE_H_ */
