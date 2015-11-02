@@ -13,10 +13,10 @@ public:
   ~HttpPost();
   bool		postPaquetKeys(PaquetKeys *paquet);
   bool		postPaquetMouse(PaquetMouse *paquet);
-  
+
 private:
   CURL		*curl;
   CURLcode	res;
 };
 
-#endif /* !_HTTP_HH_
+#endif /* !_HTTP_HH_ */

