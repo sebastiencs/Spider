@@ -14,8 +14,7 @@ private:
 	boost::asio::io_service _ios;
 	boost::asio::ssl::context _ctx;
 	boost::asio::ip::tcp::resolver::iterator _iterator;
-	boost::shared_ptr<ISocketEngine>	_socket;
-
+	
 	Packager *_packager;
 	SslEngine *_engine;
 
