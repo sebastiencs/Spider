@@ -14,8 +14,7 @@ PaquetCommandServer::PaquetCommandServer()
 {
   _id = PaquetCommandServer::ID;
   _parsed = 0;
-  _sizeCommand = 0;
-  _command = 0;
+  _reponse = 0;
 }
 
 PaquetCommandServer::PaquetCommandServer(const void *data, size_t size)
@@ -28,15 +27,11 @@ PaquetCommandServer::PaquetCommandServer(const void *data, size_t size)
 
 PaquetCommandServer::~PaquetCommandServer()
 {
-  if (_command)
-    delete[] _command;
 }
 
-void		PaquetCommandServer::setCommand(const std::string &command)
+void		PaquetCommandServer::setReponse(uint8_t reponse)
 {
-  _sizeCommand = command.size();
-  _command = new char[_sizeCommand + 1]();
-  std::copy(command.data(), command.data() + _sizeCommand, _command);
+  _reponse = reponse;
   _parsed = 0;
 }
 
@@ -45,8 +40,7 @@ void		PaquetCommandServer::createPaquet()
   size_t	ptr = 0;
 
   writeData<uint8_t>(ptr, &_id);
-  writeData<uint16_t>(ptr, &_sizeCommand);
-  writeData<char>(ptr, _command, _sizeCommand);
+  writeData<uint8_t>(ptr, &_reponse);
 }
 
 void		PaquetCommandServer::parsePaquetCommandServer()
@@ -54,21 +48,16 @@ void		PaquetCommandServer::parsePaquetCommandServer()
   size_t	ptr = 0;
 
   _id = readData<uint8_t>(ptr);
-  _sizeCommand = readData<uint16_t>(ptr);
-  if (_sizeCommand) {
-    delete[] _command;
-    _command = new char[_sizeCommand + 1]();
-    readData<char>(ptr, _command, _sizeCommand);
-  }
+  _reponse = readData<uint8_t>(ptr);
   _parsed = 1;
 }
 
-char		*PaquetCommandServer::getCommand()
+uint8_t		PaquetCommandServer::getReponse()
 {
   if (!_parsed) {
     parsePaquetCommandServer();
   }
-  return (_command);
+  return (_reponse);
 }
 
 void		PaquetCommandServer::dumpPaquet()
@@ -78,11 +67,7 @@ void		PaquetCommandServer::dumpPaquet()
 
 std::ostream	&operator<<(std::ostream &os, PaquetCommandServer &p)
 {
-  std::string	command = p.getCommand();
-
-  os << "PaquetCommandServer = { sizeCommand : " << command.size();
-  if (command.size())
-    os << ", command : '" << command << "'";
+  os << "PaquetCommandServer = { reponse : " << p.getReponse();
   os << " };" << std::endl;
   return (os);
 }

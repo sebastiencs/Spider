@@ -19,6 +19,7 @@ class		PaquetFirstClient : public Paquet
 {
 private:
 
+  uint32_t	_date;
   uint16_t	_version;
   uint16_t	_sizeName;
   char		*_name;
@@ -33,10 +34,12 @@ public:
   virtual ~PaquetFirstClient();
 
   void		setVersion(uint16_t);
+  void		setDate(uint32_t);
   void		setName(const std::string &);
 
   void		createPaquet();
 
+  uint32_t	getDate();
   uint8_t	getVersion();
   char		*getName();
 

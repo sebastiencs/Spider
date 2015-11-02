@@ -13,6 +13,7 @@
 PaquetFirstClient::PaquetFirstClient()
 {
   _parsed = 0;
+  _date = 0;
   _version = 0;
   _name = 0;
   _sizeName = 0;
@@ -30,6 +31,12 @@ PaquetFirstClient::~PaquetFirstClient()
 {
   if (_name)
     delete[] _name;
+}
+
+void		PaquetFirstClient::setDate(uint32_t date)
+{
+  _date = date;
+  _parsed = 0;
 }
 
 void		PaquetFirstClient::setVersion(uint16_t version)
@@ -53,6 +60,7 @@ void		PaquetFirstClient::createPaquet()
   writeData<uint16_t>(ptr, &_version);
   writeData<uint16_t>(ptr, &_sizeName);
   writeData<char>(ptr, _name, _sizeName);
+  writeData<uint32_t>(ptr, &_date);
 }
 
 void		PaquetFirstClient::parsePaquetFirstClient()
@@ -66,6 +74,7 @@ void		PaquetFirstClient::parsePaquetFirstClient()
     _name = new char[_sizeName + 1]();
     readData<char>(ptr, _name, _sizeName);
   }
+  _date = readData<uint32_t>(ptr);
   _parsed = 1;
 }
 
@@ -85,6 +94,14 @@ char		*PaquetFirstClient::getName()
   return (_name);
 }
 
+uint32_t	PaquetFirstClient::getDate()
+{
+  if (!_parsed) {
+    parsePaquetFirstClient();
+  }
+  return (_date);
+}
+
 void		PaquetFirstClient::dumpPaquet()
 {
   std::cout << *this;
@@ -99,6 +116,7 @@ std::ostream	&operator<<(std::ostream &os, PaquetFirstClient &p)
   os << ", SizeName : " << name.size();
   if (name.size())
     os << ", Name : '" << name << "'";
+  os << ", Date : " << p.getDate();
   os << " };" << std::endl;
   return (os);
 }
