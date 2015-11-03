@@ -30,6 +30,7 @@ PaquetCommandServer::PaquetCommandServer(uint8_t reponse)
   _id = PaquetCommandServer::ID;
   _parsed = 0;
   _reponse = reponse;
+  createPaquet();
 }
 
 PaquetCommandServer::~PaquetCommandServer()
@@ -74,7 +75,7 @@ void		PaquetCommandServer::dumpPaquet()
 
 std::ostream	&operator<<(std::ostream &os, PaquetCommandServer &p)
 {
-  os << "PaquetCommandServer = { reponse : " << p.getReponse();
+  os << "PaquetCommandServer = { reponse : " << (int)p.getReponse();
   os << " };" << std::endl;
   return (os);
 }

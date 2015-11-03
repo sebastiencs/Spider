@@ -21,7 +21,9 @@ Server::Server(uint16_t port)
   boost::filesystem::create_directory("Logs");
   _signal.addSignal(SIGINT);
 
-  _commands["kill"] = new PaquetCommandServer(2);
+  _commands["kill"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(6));
+  _commands["pause"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(7));
+  _commands["destroy"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(8));
 }
 
 Server::~Server()
@@ -59,14 +61,20 @@ void		Server::readCommand()
       std::string	input;
 
       while (std::getline(std::cin, input)) {
-	std::cout << "READ: '" << input << "'\n";
 
-	if (boost::starts_with(input, "kill ")) {
-	  std::cout << "KILL DETECTED\n";
+	int		found = 0;
+
+	for (auto &command : _commands) {
+
+	  if (boost::starts_with(input, command.first)) {
+	    _web->sendCommand(command.second);
+	    found = 1;
+	  }
 	}
 
-	_web->sendCommand();
-	// Envoie des commandes aux clients
+	if (!found) {
+	  std::cout << "Unknown command" << std::endl;
+	}
       }
     }
   }

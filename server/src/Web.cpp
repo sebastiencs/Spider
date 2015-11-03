@@ -44,11 +44,13 @@ void		Web::waitSpider()
     });
 }
 
-void		Web::sendCommand()
+void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p)
 {
+  boost::shared_ptr<PaquetCommandServer>	paquet = p.lock();
+
+  std::cout << "PAQUET: " << *paquet << std::endl;
   for (auto client : _spiders) {
-    char *str = (char *)"sebastien";
-    client->getSocket()->async_write(str, 9, [this]() {
+    client->getSocket()->writePaquet(*paquet, [this]() {
 	std::cout << "Command send" << std::endl;
       });
   }

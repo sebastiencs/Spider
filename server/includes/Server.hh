@@ -26,7 +26,7 @@ private:
   boost::thread		_thread;
   Signal		_signal;
 
-  std::map<std::string, std::unique_ptr<PaquetCommandServer *>>	_commands;
+  std::map<std::string, boost::shared_ptr<PaquetCommandServer>>	_commands;
 
 public:
   Server(uint16_t);
