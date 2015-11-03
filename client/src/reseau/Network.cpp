@@ -37,8 +37,11 @@ void Network::initNetwork() {
 			  std::cout << "SSL: initializing HandShake" << std::endl;
 			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
 			  if (!ec) {
-				  sendFirstPaquet(yield);
+				sendFirstPaquet(yield);
+				boost::thread readThread(&Network::readLoop, this, yield);
+				readThread.join();
 			  }
+
 		  }
 		  _engine->getSocket().close();
 		}
@@ -96,8 +99,9 @@ void Network::readLoop(boost::asio::yield_context yield)
 	while (1) {
 
 		PaquetCommandServer paquet;
-		if (_engine->readPaquet(paquet, yield) == -1) {
-			return;
+		if (_engine->readPaquet(paquet, yield) != -1) {
+			;
+//			std::cout << paquet << std::endl;
 		}
 		std::cout << "Waiting packager" << std::endl;
 		boost::this_thread::sleep(boost::posix_time::microseconds(200000));
