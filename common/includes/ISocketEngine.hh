@@ -31,8 +31,8 @@ public:
 						    const std::function<void()> &) = 0;
   virtual int				doHandshake(boost::asio::ssl::stream_base::handshake_type,
 						    boost::asio::yield_context) = 0;
-  virtual void				read(void *, size_t) = 0;
-  virtual void				read(PaquetCommandServer &) = 0;
+  virtual int				read(void *, size_t) = 0;
+  virtual int				read(PaquetCommandServer &) = 0;
   virtual void				async_read(void *, size_t, const std::function<void()> &) = 0;
   virtual int				async_read(void *buffer, size_t len, boost::asio::yield_context yield) = 0;
   virtual int				async_write(void *buffer, size_t len, boost::asio::yield_context yield) = 0;
