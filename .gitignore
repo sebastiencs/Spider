@@ -20,4 +20,4 @@ server/server
 *.d
 server/Logs
 spidermen/tmp/*
-spidermen/assets/*
+spidermen/public/assets/*
