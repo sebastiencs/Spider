@@ -97,7 +97,6 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		tmp->createPaquet();
 		mutex.lock();
 		_paquets.push_back(tmp);
-		std::cout << *tmp << std::endl;
 		mutex.unlock();
 		readyMutex.unlock();
 	}
