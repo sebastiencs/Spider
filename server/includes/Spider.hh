@@ -44,6 +44,8 @@ public:
   virtual ~Spider();
 
   boost::shared_ptr<ISocketEngine>	&getSocket();
+  const std::string			&getName() const;
+
   void		prepareFirstConnection();
   void		doFirstConnection();
   void		dieInDignity();

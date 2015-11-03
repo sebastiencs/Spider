@@ -44,13 +44,29 @@ void		Web::waitSpider()
     });
 }
 
+void		Web::listSpider()
+{
+  if (_spiders.size()) {
+
+    int		num = 0;
+
+    std::cout << "Listing Spiders:" << std::endl;
+    for (auto &spider : _spiders) {
+      std::cout << num << " - " << spider->getName() << std::endl;
+    }
+  }
+  else {
+    std::cout << "No spiders connected" << std::endl;
+  }
+}
+
 void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p)
 {
   boost::shared_ptr<PaquetCommandServer>	paquet = p.lock();
 
   std::cout << "PAQUET: " << *paquet << std::endl;
-  for (auto client : _spiders) {
-    client->getSocket()->writePaquet(*paquet, [this]() {
+  for (auto &spider : _spiders) {
+    spider->getSocket()->writePaquet(*paquet, [this]() {
 	std::cout << "Command send" << std::endl;
       });
   }

@@ -31,6 +31,11 @@ boost::shared_ptr<ISocketEngine>	&Spider::getSocket()
   return (_socket);
 }
 
+const std::string	&Spider::getName() const
+{
+  return (_name);
+}
+
 void		Spider::dieInDignity()
 {
   _web.deleteSpider(shared_from_this());

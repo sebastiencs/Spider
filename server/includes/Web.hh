@@ -35,6 +35,7 @@ public:
   void				start();
   void				stop();
   void				waitSpider();
+  void				listSpider();
   void				deleteSpider(const boost::shared_ptr<Spider> &);
   boost::asio::io_service	&get_ioservice();
   void				sendCommand(boost::weak_ptr<PaquetCommandServer> paquet);

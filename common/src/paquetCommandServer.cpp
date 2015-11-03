@@ -76,6 +76,6 @@ void		PaquetCommandServer::dumpPaquet()
 std::ostream	&operator<<(std::ostream &os, PaquetCommandServer &p)
 {
   os << "PaquetCommandServer = { reponse : " << (int)p.getReponse();
-  os << " };" << std::endl;
+  os << " };";
   return (os);
 }
