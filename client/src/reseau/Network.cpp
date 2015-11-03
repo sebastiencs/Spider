@@ -37,9 +37,9 @@ void Network::initNetwork() {
 			  std::cout << "SSL: initializing HandShake" << std::endl;
 			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
 			  if (!ec) {
-				//boost::thread readThread(&Network::readLoop, this);
+				boost::thread readThread(&Network::readLoop, this);
 				sendFirstPaquet(yield);
-				//readThread.join();
+				readThread.join();
 			  }
 
 		  }
