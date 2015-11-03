@@ -3,6 +3,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "reseau/Network.hh"
 #include "paquetFirstClient.hh"
+#include "paquetCommandServer.hh"
 
 #ifndef CERTIFICATE_FILE
 # define CERTIFICATE_FILE ("client.crt")
@@ -64,14 +65,14 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	}
 	std::cout << "SSL: server RET value " << (int)ret << std::endl;
 	if (ret == 1)
-	  networkLoop(yield);
+		writeLoop(yield);
 	else
 	{
 	  std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
 	}
 }
 
-void Network::networkLoop(boost::asio::yield_context yield)
+void Network::writeLoop(boost::asio::yield_context yield)
 {
 	while (1) {
 		while (_packager->isLeft() == 0)
@@ -86,5 +87,18 @@ void Network::networkLoop(boost::asio::yield_context yield)
 			return;
 		}
 		_packager->supprPaquet();
+	}
+}
+
+void Network::readLoop(boost::asio::yield_context yield)
+{
+	while (1) {
+
+		PaquetCommandServer paquet;
+		if (_engine->readPaquet(paquet, yield) == -1) {
+			return;
+		}
+		std::cout << "Waiting packager" << std::endl;
+		boost::this_thread::sleep(boost::posix_time::microseconds(200000));
 	}
 }
