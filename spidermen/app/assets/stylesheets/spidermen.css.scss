@@ -1,0 +1,62 @@
+div.container div.row.title div.col-md-6.title h2 {
+  float: right;
+}
+
+div.container div.row.title div.col-md-6.sub_title h3 {
+  margin-top: 25px;
+}
+
+nav.navbar div.container-fluid div.collapse ul.nav li a {
+  font-size: 18px;
+}
+
+nav.navbar div.container-fluid div.navbar-header a {
+  font-size: 24px;
+}
+
+div.container div.row.team {
+  margin-top: 80px;
+}
+
+div.container div.row.team div.col-md-2.team_thumb img {
+  border-radius: 50%;
+}
+
+div.container div.row.team div.col-md-2.team_thumb h4 {
+  text-align: center;
+}
+
+div.container div.row.stats {
+  margin-top: 45px;
+  padding-left: 365px;
+}
+
+div.container div.row.stats div.statsNumber {
+  display: none;
+}
+
+div.container div.row.stats div.numberKeys {
+  float: left;
+  h3 {
+    color: #F7464A;
+    cursor: pointer;
+  }
+}
+
+div.container div.row.stats div.numberMouses {
+  float: left;
+  h3 {
+    color: #46BFBD;
+    cursor: pointer;
+  }
+}
+
+div.container div.row.stats canvas#statsPaquet  {
+  float: left;
+}
+
+div.container div.row.stats img.spiderCochon {
+  position: absolute;
+  margin-left: -370px;
+  margin-top: 105px;
+}
