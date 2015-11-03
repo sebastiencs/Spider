@@ -24,8 +24,6 @@ class Packager
 	std::map<int, std::string> correspondance;
 
 	boost::interprocess::interprocess_semaphore	_sem;
-	/* boost::mutex mutex; */
-	/* boost::mutex readyMutex; */
 
 public:
 	Packager();
@@ -37,8 +35,6 @@ public:
 	Paquet *getPaquet();
 	size_t isLeft();
 	void supprPaquet();
-	/* boost::mutex& getMutex(); */
-	/* boost::mutex& getReadyMutex(); */
 };
 
 #endif // !PACKAGER_H
