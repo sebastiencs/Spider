@@ -45,6 +45,7 @@ void		Server::start()
     std::cerr << "Unable to run thread: " << e.what() << std::endl;
   }
  _web->start();
+ _thread.join();
 }
 
 void		Server::stop()
@@ -63,8 +64,9 @@ void		Server::readCommand()
   try {
     while (1) {
       std::string	input;
+      auto		prompt = [this]() -> int { std::cout << "> "; return (1); };
 
-      while (std::getline(std::cin, input)) {
+      while (prompt() && std::getline(std::cin, input)) {
 
 	int		found = 0;
 
