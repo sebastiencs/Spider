@@ -72,10 +72,11 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	  return ;
 	}
 	std::cout << "SSL: server RET value " << (int)ret << std::endl;
-	if (ret == 2)
+	if (ret == 2) {
 		boost::thread readThread(&Network::readLoop, this);
 		writeLoop(yield);
 		readThread.join();
+	}
 	else
 	{
 	  std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
@@ -90,7 +91,7 @@ void Network::writeLoop(boost::asio::yield_context yield)
 			std::cout << "Waiting packager" << std::endl;
 			boost::this_thread::sleep(boost::posix_time::microseconds(200000));
 		}
-
+		_packager->getMutex().lock();
 		Paquet *paquet = _packager->getPaquet();
 		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
 		if (_engine->writePaquet(*paquet, yield) == -1) {
