@@ -44,6 +44,16 @@ void		Web::waitSpider()
     });
 }
 
+void		Web::sendCommand()
+{
+  for (auto client : _spiders) {
+    char *str = (char *)"sebastien";
+    client->getSocket()->async_write(str, 9, [this]() {
+	std::cout << "Command send" << std::endl;
+      });
+  }
+}
+
 void		Web::insertSpider(const boost::shared_ptr<Spider> &spider)
 {
   _spiders.insert(spider);

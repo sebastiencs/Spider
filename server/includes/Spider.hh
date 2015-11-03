@@ -43,6 +43,7 @@ public:
   Spider(const boost::shared_ptr<ISocketEngine> &, Web &);
   virtual ~Spider();
 
+  boost::shared_ptr<ISocketEngine>	&getSocket();
   void		prepareFirstConnection();
   void		doFirstConnection();
   void		dieInDignity();

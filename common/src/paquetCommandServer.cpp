@@ -25,6 +25,13 @@ PaquetCommandServer::PaquetCommandServer(const void *data, size_t size)
   _parsed = 0;
 }
 
+PaquetCommandServer::PaquetCommandServer(uint8_t reponse)
+{
+  _id = PaquetCommandServer::ID;
+  _parsed = 0;
+  _reponse = reponse;
+}
+
 PaquetCommandServer::~PaquetCommandServer()
 {
 }
