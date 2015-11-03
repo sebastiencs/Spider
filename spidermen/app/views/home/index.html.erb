@@ -1,0 +1,38 @@
+<div class="row title">
+	<div class="col-md-6 title"><h2>Spidermen</h2></div>
+	<div class="col-md-6 sub_title"><h3>Aka Spidercochon</h3></div>
+</div>
+
+<div class="row stats">
+	<div class="statsNumber" paquetsKeys="<%= PaquetKey.count.to_s.chomp(".0") %>" paquetsMouses="<%= PaquetMouse.count.to_s.chomp(".0") %>"></div>
+	<div class="numberKeys"><h3 data-toggle="tooltip" data-placement="left" title="Paquets Keys"><%= get_percent(PaquetKey.count)%> %</h3></div>
+	<canvas id="statsPaquet" width="380" height="380"></canvas>
+	<img class="spiderCochon" alt="spider" src="https://simpsonentreamis.files.wordpress.com/2015/02/unlock_plopperpig.png"/>
+	<div class="numberMouses"><h3 data-toggle="tooltip" data-placement="right" title="Paquets Mouses"><%= get_percent(PaquetMouse.count)%> %</h3></div>
+</div>
+
+<script>
+$(document).ready( function() {
+	var data = [
+	    {
+	        value: $("div.container div.row.stats div.statsNumber").attr("paquetsKeys"),
+	        color:"#F7464A",
+	        highlight: "#FF5A5E",
+	        label: "Paquets Keys"
+	    },
+	    {
+	        value: $("div.container div.row.stats div.statsNumber").attr("paquetsMouses"),
+	        color: "#46BFBD",
+	        highlight: "#5AD3D1",
+	        label: "Paquets Mouses"
+	    },
+	];
+	var option = {
+		percentageInnerCutout: 75
+	};
+	var ctx = $("#statsPaquet").get(0).getContext("2d");
+	var myDoughnutChart = new Chart(ctx).Doughnut(data, option);
+  	$("div.container div.row.stats div.numberMouses h3[data-toggle='tooltip']").tooltip();
+  	$("div.container div.row.stats div.numberKeys h3[data-toggle='tooltip']").tooltip();
+});	
+</script>

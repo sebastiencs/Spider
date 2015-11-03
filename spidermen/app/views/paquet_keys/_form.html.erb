@@ -1,0 +1,37 @@
+<%= form_for(@paquet_key) do |f| %>
+  <% if @paquet_key.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@paquet_key.errors.count, "error") %> prohibited this paquet_key from being saved:</h2>
+
+      <ul>
+      <% @paquet_key.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :date %><br>
+    <%= f.text_field :date %>
+  </div>
+  <div class="field">
+    <%= f.label :active %><br>
+    <%= f.text_field :active %>
+  </div>
+  <div class="field">
+    <%= f.label :text %><br>
+    <%= f.text_field :text %>
+  </div>
+  <div class="field">
+    <%= f.label :pid %><br>
+    <%= f.number_field :pid %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @paquet_mouse.name %>
+</p>
+
+<p>
+  <strong>Date:</strong>
+  <%= @paquet_mouse.date %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @paquet_mouse.active %>
+</p>
+
+<p>
+  <strong>X:</strong>
+  <%= @paquet_mouse.x %>
+</p>
+
+<p>
+  <strong>Y:</strong>
+  <%= @paquet_mouse.y %>
+</p>
+
+<p>
+  <strong>Pid:</strong>
+  <%= @paquet_mouse.pid %>
+</p>
+
+<%= link_to 'Edit', edit_paquet_mouse_path(@paquet_mouse) %> |
+<%= link_to 'Back', paquet_mouses_path %>

@@ -19,3 +19,5 @@ hookDLL/targetver.h
 server/server
 *.d
 server/Logs
+spidermen/tmp/*
+spidermen/assets/*

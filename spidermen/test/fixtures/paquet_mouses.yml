@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  date: MyString
+  active: MyString
+  x: 1
+  'y': 1
+  pid: 1
+
+two:
+  name: MyString
+  date: MyString
+  active: MyString
+  x: 1
+  'y': 1
+  pid: 1
