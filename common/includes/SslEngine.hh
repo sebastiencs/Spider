@@ -40,6 +40,8 @@ public:
   virtual void			handleError(const std::function<void()> &);
   virtual void			writePaquet(const Paquet &, const std::function<void()> &);
   virtual int			writePaquet(const Paquet &paquet, boost::asio::yield_context yield);
+  virtual void			readPaquet(const Paquet &, const std::function<void()> &);
+  virtual int			readPaquet(const Paquet &paquet, boost::asio::yield_context yield);
 };
 
 #endif /* !SSLENGINE_H_ */
