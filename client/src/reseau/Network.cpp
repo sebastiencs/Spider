@@ -65,12 +65,16 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	if (_engine->writePaquet(paquet, yield)) {
 	  return ;
 	}
-	uint16_t ret;
-	if (_engine->async_read(&ret, 2, yield)) {
+	uint8_t id;
+	uint8_t ret;
+	if (_engine->async_read(&id, 1, yield)) {
 	  return ;
 	}
-	std::cout << "SSL: server RET value " << (int)(ret & 0xFF) << std::endl;
-	if (ret & 0xFF == 2)
+	if (_engine->async_read(&ret, 1, yield)) {
+	  return ;
+	}
+	std::cout << "SSL: server RET value " << (int)ret << std::endl;
+	if (ret == 2)
 		writeLoop(yield);
 	else
 	{
