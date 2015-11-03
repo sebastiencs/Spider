@@ -45,7 +45,7 @@ void		Server::start()
     std::cerr << "Unable to run thread: " << e.what() << std::endl;
   }
  _web->start();
- _thread.join();
+ _thread.interrupt();
 }
 
 void		Server::stop()

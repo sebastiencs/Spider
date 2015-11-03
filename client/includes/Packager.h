@@ -5,10 +5,12 @@
 #include <vector>
 #include <map>
 #include <Windows.h>
+#include <boost\interprocess\sync\interprocess_semaphore.hpp>
 #include <boost\thread.hpp>
 #include <boost\thread\mutex.hpp>
 #include "paquetKeys.hh"
 #include "paquetMouse.hh"
+#include "Tools.hh"
 
 #pragma once
 class Packager
@@ -20,8 +22,8 @@ class Packager
 	bool _alt;
 	bool _altGr;
 	std::map<int, std::string> correspondance;
-	boost::mutex mutex;
-	boost::mutex readyMutex;
+
+	boost::interprocess::interprocess_semaphore	_sem;
 
 public:
 	Packager();
@@ -30,13 +32,9 @@ public:
 	void addKey(int nCode, WPARAM wParam, LPARAM lParam);
 	void addClick(int nCode, WPARAM wParam, LPARAM lParam);
 
-	static uint32_t secondsSinceEpoch();
-
 	Paquet *getPaquet();
 	size_t isLeft();
 	void supprPaquet();
-	boost::mutex& getMutex();
-	boost::mutex& getReadyMutex();
 };
 
 #endif // !PACKAGER_H

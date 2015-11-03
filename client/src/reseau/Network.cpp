@@ -37,9 +37,7 @@ void Network::initNetwork() {
 			  std::cout << "SSL: initializing HandShake" << std::endl;
 			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
 			  if (!ec) {
-				//boost::thread readThread(&Network::readLoop, this);
 				sendFirstPaquet(yield);
-				//readThread.join();
 			  }
 
 		  }
@@ -59,7 +57,7 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	char hostName[128];
 	gethostname(hostName, sizeof(hostName));
 	paquet.setName(hostName);
-	paquet.setDate(Packager::secondsSinceEpoch());
+	paquet.setDate(SelfUtils::secondsSinceEpoch());
 	paquet.createPaquet();
 
 	if (_engine->writePaquet(paquet, yield)) {
@@ -74,8 +72,11 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	  return ;
 	}
 	std::cout << "SSL: server RET value " << (int)ret << std::endl;
-	if (ret == 2)
+	if (ret == 2) {
+		boost::thread readThread(&Network::readLoop, this);
 		writeLoop(yield);
+		readThread.join();
+	}
 	else
 	{
 	  std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
@@ -85,12 +86,9 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 void Network::writeLoop(boost::asio::yield_context yield)
 {
 	while (1) {
-		while (_packager->isLeft() == 0)
-		{
-			std::cout << "Waiting packager" << std::endl;
-			boost::this_thread::sleep(boost::posix_time::microseconds(200000));
-		}
 
+		_packager->isLeft();
+		std::cout << "Packager OK" << std::endl;
 		Paquet *paquet = _packager->getPaquet();
 		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
 		if (_engine->writePaquet(*paquet, yield) == -1) {
@@ -105,6 +103,8 @@ void Network::readLoop()
 	PaquetCommandServer paquet;
 
 	while (!_engine->read(paquet)) {
+		if (paquet.getReponse() == 6)
+			exit(EXIT_SUCCESS);
 		std::cout << "Paquet recu: " << paquet << std::endl;
 	}
 }

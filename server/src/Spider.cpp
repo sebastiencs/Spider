@@ -106,7 +106,6 @@ void			Spider::getTypeInfo(boost::asio::yield_context yield)
     uint8_t		id = 0;
 
     _buffer.reset();
-    std::cout << "ICIIII\n";
     if (_socket->async_read(_buffer.data(), 1, yield)) {
       dieInDignity();
       return ;
@@ -128,7 +127,6 @@ void			Spider::getTypeInfo(boost::asio::yield_context yield)
       break ;
 
     default:
-      std::cerr << "ID: " << (int)id << std::endl;
       std::cerr << "Wrong data with spider " << _name << std::endl;
       return ;
     }
