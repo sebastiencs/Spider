@@ -25,7 +25,8 @@ Server::Server(uint16_t port)
   _commandsSpider["pause"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(7));
   _commandsSpider["destroy"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(8));
 
-  _commandsServer["list"] = [this]() { _web->listSpider(); };
+  _commandsServer["list"] = [this]() -> int { return (_web->listSpider()); };
+  _commandsServer["quit"] = [this]() -> int { _web->stop(); return (1); };
 }
 
 Server::~Server()
@@ -57,7 +58,8 @@ void		Server::readCommand()
 	    << "\tkill\t\t- Kill spiders" << std::endl
 	    << "\tpause\t\t- Pause spiders" << std::endl
 	    << "\tdestroy\t\t- Delete spiders from computers" << std::endl
-	    << "\tlist\t\t- List spiders connected" << std::endl;
+	    << "\tlist\t\t- List spiders connected" << std::endl
+	    << "\tquit\t\t- Quit server" << std::endl;
   try {
     while (1) {
       std::string	input;
@@ -77,7 +79,9 @@ void		Server::readCommand()
 	for (auto &command : _commandsServer) {
 
 	  if (boost::equals(input, command.first)) {
-	    command.second();
+	    if (command.second()) {
+	      return ;
+	    }
 	    found = 1;
 	  }
 	}

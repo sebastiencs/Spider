@@ -44,7 +44,7 @@ void		Web::waitSpider()
     });
 }
 
-void		Web::listSpider()
+int		Web::listSpider()
 {
   if (_spiders.size()) {
 
@@ -58,6 +58,7 @@ void		Web::listSpider()
   else {
     std::cout << "No spiders connected" << std::endl;
   }
+  return (0);
 }
 
 void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p)
