@@ -3,25 +3,22 @@
 Protocole de communication pour le projet Spider V1
 ====================================================
 
-Toutes les chaines de caracteres seront encodÃ©es en ASCII, sauf si je note
-autre chose.
-Puisqu'on envoit la taille de la chaine de caracteres a chaque fois, il ne FAUT PAS
-envoyÃ© le '\0' qui termine la chaine.
-
-----------------------------------------------------
+Toutes les chaines de caracteres seront encodées en ASCII, sauf si je note autre chose.
+Puisqu'on envoit la taille de la chaine de caracteres a chaque fois, il ne FAUT PAS envoyé le '\0' qui termine la chaine.
+Le communication est basé sur un protocle TCP chiffré par l'algorithme SSL (2.0), et le transferts de bits est en little endian.
 
 1 - 1ere connection
 
 
 Lorsqu'un client se connecte au serveur, il (le client) lui envoi quelques infos.
 Ensuite le serveur lui reponds pour determiner si on peut commencer l'envoi des
-donnÃ©es.
+données.
 
-	 ----------------------------------
-Client:	| Version  | Size name |   Name    |
-	 ----------------------------------
- 	| uint16_t |  uint16_t |  char *   |
-	 ----------------------------------
+		 ---------------------------------------------
+Client:		| Version  | Size name |   Name    | Date     |
+		 ---------------------------------------------
+		| uint16_t |  uint16_t |  char *   | uint32_t |
+		 ---------------------------------------------
 
 	Version: unsigned short ( 16 bits )
 
@@ -35,21 +32,9 @@ Client:	| Version  | Size name |   Name    |
 
 	    	 Chaine de caracteres corresponds au nom du client
 		 ( Ouais il a un nom )
-
-
-          ----------
-Serveur: |  Reponse |
-          -----------
-	 |  uint8_t |
-          ----------
-
-	Reponse: unsigned char ( 8 bits )
-
-		 0 -> KO. La version du protocole n'est pas bonne.
-		      Le client se deconnecte.
-
-		 1 -> OK. Le protocole correspond, le jeu commence.
-
+		 
+	Date :	uint32_t
+		Timestamp de la Date
 
 ----------------------------------------------------
 
@@ -61,114 +46,13 @@ avec un & binaire.
 ----------------------------------------------------
 
 
-2 - Touches du clavier
+2 - Touches de la souris
 
-
-         ----------------------------------------------------------------
-Client: |   ID    |   Date   | Size Active | Active | Size text |  Text  |
-         ----------------------------------------------------------------
-	| uint8_t | uint32_t |  uint16_t   | char * |  uint16_t | char * |
-         ----------------------------------------------------------------
-
-
-	 ID: unsigned char ( 8 bits )
-
-	     	  Valeur: 1
-
-	 Date: unsigned int ( 32 bits )
-
-	       	  Octet qui correspond a la date des entrÃ©es clavier
-
-	 Size Active: unsigned short ( 16 bits )
-
-	      	  Taille de la chaine de caracteres qui suit
-
-	 Active: char *
-
-	 	  Chaine de caracteres qui correspond a la fenetre active
-
-	 Size text: unsigned short ( 16 bits )
-
-	      	  Taille de la chaine de caracteres qui suit
-
-	 Text: char *
-
-	       	  Chaine de caracteres correspondant au texte tapÃ© au clavier
-		  encodÃ© en UTF-8 ( comme ca y'a les CTRL, DEL, MAJ etc ).
-		  Il est possible d'envoyÃ© plusieurs touches en meme temps,
-		  c'est au client de voir.
-
-
-----------------------------------------------------
-
-3 - Commandes
-
-
-Le serveur envoi sa commande puis le client lui rÃ©ponds
-
-          ----------------------------------
-Serveur: |    ID   | Size command | Command |
-	 | uint8_t |    uint16_t  | char *  |
-          ----------------------------------
-
-	  ID: unsigned char ( 8 bits )
-
-	     	  Valeur: 2
-
-	  Size command: unsigned short ( 16 bits )
-
-	      	  Taille de la chaine de caracteres qui suit
-
-	  Command: char *
-
-	       	  Chaine de caractere qui correspond a une commande
-
-
-          -----------------------------------------
-Client:  |    ID   |   OK ?  |  Size data | Data   |
-          -----------------------------------------
-         | uint8_t | uint8_t |  uint16_t  | char * |
-          -----------------------------------------
-
-	  ID: unsigned char ( 8 bits )
-
-	     	  Valeur: 4
-
-	  OK ?: unsigned char
-
-	     	  1 -> OK. Commande comprise et executÃ©e
-		  0 -> KO. Commande de merde
-
-	  Size data: unsigned short ( 16 bits )
-
-	      	  Taille de la donnÃ©e qui suit
-
-	  Data: char *
-
-	       	  DonnÃ©e correspond a la reponse de la commande
-
-
-Note: Si le "OK ?" est a 0 et qu'on envoi pas de donnÃ©e, le paquet sera former comme
-ca:
-
-   --------------------------------
-  |    ID   |   OK ?  |  Size data |
-   --------------------------------
-  | uint8_t | uint8_t |  uint16_t  |
-   --------------------------------
-(avec Size data = 0 )
-
-
-----------------------------------------------------
-
-
-4 - Touches de la souris
-
-         ----------------------------------------------------------------------------
-Client: |   ID    |   Date   | Size Active | Active |     X     |    Y     | Button  |
-         ----------------------------------------------------------------------------
-	| uint8_t | uint32_t |  uint16_t   | char * |  uint16_t | uint16_t | uint8_t |
-         ----------------------------------------------------------------------------
+         ---------------------------------------------------------------------------------------
+Client: |   ID    |   Date   | PID      | Size Active | Active |     X     |    Y     | Button  |
+         ---------------------------------------------------------------------------------------
+	| uint8_t | uint32_t | uint16_t |  uint16_t   | char * |  uint16_t | uint16_t | uint8_t |
+         ---------------------------------------------------------------------------------------
 
 
 	 ID: unsigned char ( 8 bits )
@@ -177,7 +61,7 @@ Client: |   ID    |   Date   | Size Active | Active |     X     |    Y     | But
 
 	 Date: unsigned int ( 32 bits )
 
-	       	  Octet qui correspond a la date des entrÃ©s
+	       	  Octet qui correspond a la date des entrés
 
 	 Size Active: unsigned short ( 16 bits )
 
@@ -198,11 +82,129 @@ Client: |   ID    |   Date   | Size Active | Active |     X     |    Y     | But
          Button: unsigned char ( 8 bits )
 
 	 	  Valeurs:
-		       	  1 -> Clique gauche
-		  	  2 -> Clique milieu
-			  4 -> Clique droit
+			1  -> Clique gauche
+			2  -> Clique milieu
+			4  -> Clique droit
+			8  -> x1Button
+			16 -> x2Button
 
 
+-----------------------------------------------------
+
+
+3 - Touches du clavier
+
+
+         ---------------------------------------------------------------------------
+Client: |   ID    |   Date   | PID      | Size Active | Active | Size text |  Text  |
+         ---------------------------------------------------------------------------
+	| uint8_t | uint32_t | uint16_t | uint16_t    | char * |  uint16_t | char * |
+         ---------------------------------------------------------------------------
+
+
+	 ID: unsigned char ( 8 bits )
+
+	     	  Valeur: 1
+
+	 Date: unsigned int ( 32 bits )
+
+	       	  Octet qui correspond a la date des entrées clavier
+
+	 Size Active: unsigned short ( 16 bits )
+
+	      	  Taille de la chaine de caracteres qui suit
+
+	 Active: char *
+
+	 	  Chaine de caracteres qui correspond a la fenetre active
+
+	 Size text: unsigned short ( 16 bits )
+
+	      	  Taille de la chaine de caracteres qui suit
+
+	 Text: char *
+
+	       	  Chaine de caracteres correspondant au texte tapé au clavier
+		  encodé en UTF-8 ( comme ca y'a les CTRL, DEL, MAJ etc ).
+		  Il est possible d'envoyé plusieurs touches en meme temps,
+		  c'est au client de voir.
+
+
+----------------------------------------------------
+
+4 - Retour du serveur
+
+
+Le serveur envoi sa commande puis le client lui réponds
+
+          --------------------
+Serveur: |    ID   | Retour   |
+	  --------------------
+	 | uint8_t | uint8_t |
+          --------------------
+
+	  ID: unsigned char ( 8 bits )
+
+	     	  Valeur: 2
+
+
+	  Retour: unsigned char
+
+	     Retour : normaux:
+	
+		0	Erreur	La version du protocole n'est pas bonne. Le client se deconnecte. Valeur commande est ignorée
+		1	Erreur	Données envoyées au serveur invalides.
+		2	Succès	Le numéro du protocole est connu du serveur.
+		3	Succès	Confirmation de la réception des données.
+
+	     Retour : commande:
+	
+		4	Yes/No	Activer le démarrage automatique à la session de l'utilisateur
+		5	Yes/No	Activer le démarrage automatique à la machine l'utilisateur
+		6	Yes/No	Arrêter le programme
+		7	Yes/No	Met en pause ou réactive le programme
+		8	Yes/No	Détruit toute trace du programme
+
+
+------------------------------------------------------
+
+
+5 - Retour du client
+
+
+          -----------------------------------------
+Client:  |    ID   |   OK ?  |  Size data | Data   |
+          -----------------------------------------
+         | uint8_t | uint8_t |  uint16_t  | char * |
+          -----------------------------------------
+
+	  ID: unsigned char ( 8 bits )
+
+	     	  Valeur: 4
+
+	  OK ?: unsigned char
+
+	     	  1 -> OK. Commande comprise et executée
+		  0 -> KO. Commande invalide
+
+	  Size data: unsigned short ( 16 bits )
+
+	      	  Taille de la donnée qui suit
+
+	  Data: char *
+
+	       	  Donnée correspond a la reponse de la commande
+
+
+Note: Si le "OK ?" est a 0 et qu'on envoi pas de donnée, le paquet sera former comme
+ca:
+
+   --------------------------------
+  |    ID   |   OK ?  |  Size data |
+   --------------------------------
+  | uint8_t | uint8_t |  uint16_t  |
+   --------------------------------
+(avec Size data = 0 )
 
 
 ====================================================
@@ -222,12 +224,12 @@ Paquet "de base" pour les touches clavier:
          ----------------------------------------------------------------
 
 
-Paquet avec l'Active pas gerÃ©:
+Paquet avec l'Active pas geré:
 
-	  -------------------------------------------------------
-	 |    ID   |   Date   | Size Active | Size text |  Text  |
-	 --------------------------------------------------------
-Valeurs: |    1    | 34798324 |      0      |     2     |  "ab"  |
-	 --------------------------------------------------------
-	 | uint8_t | uint32_t |  uint16_t   | uint16_t  | char * |
-	  -------------------------------------------------------
+		  -------------------------------------------------------
+		 |    ID   |   Date   | Size Active | Size text |  Text  |
+		  --------------------------------------------------------
+Valeurs: 	 |    1    | 34798324 |      0      |     2     |  "ab"  |
+		  --------------------------------------------------------
+		 | uint8_t | uint32_t |  uint16_t   | uint16_t  | char * |
+		  -------------------------------------------------------
