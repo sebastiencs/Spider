@@ -52,7 +52,7 @@ void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMou
 				std::abs(std::abs(mouseStruct->pt.y) - std::abs(_previousPoint.y)) >= 100)) {
 				_previousPoint.x = mouseStruct->pt.x;
 				_previousPoint.y = mouseStruct->pt.y;
-				_packager->addClick(nCode, wParam, lParam);
+				_packager->addClick(nCode, wParam, lParam);	// MOUSEMOVEMENT
 			}
 		}
 		else {

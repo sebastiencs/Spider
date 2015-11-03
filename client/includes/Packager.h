@@ -30,6 +30,7 @@ public:
 	void addKey(int nCode, WPARAM wParam, LPARAM lParam);
 	void addClick(int nCode, WPARAM wParam, LPARAM lParam);
 
+	static uint32_t secondsSinceEpoch();
 
 	Paquet *getPaquet();
 	size_t isLeft();

