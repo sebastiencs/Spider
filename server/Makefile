@@ -20,7 +20,7 @@ SRC			= src/main.cpp					\
 			  src/Acceptor.cpp				\
 			  src/Signal.cpp				\
 			  src/Buffer.cpp				\
-			  src/Json.cpp					\
+			  src/DumpFile.cpp				\
 			  src/HttpPost.cpp				\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\

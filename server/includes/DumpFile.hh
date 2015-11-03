@@ -13,22 +13,26 @@
 
 # include <string>
 # include <iostream>
-# include <iostream>
 # include <fstream>
 # include <boost/asio.hpp>
 # include <boost/date_time/posix_time/posix_time.hpp>
 # include <boost/date_time/posix_time/posix_time_io.hpp>
+# include <boost/filesystem.hpp>
+# include <boost/algorithm/string/replace.hpp>
 # include "paquetMouse.hh"
 # include "paquetKeys.hh"
+# include "debug.hh"
 
-class		Json
+class		DumpFile
 {
 public:
-  Json();
-  ~Json();
-  void		openFile(const std::string &str);
+  DumpFile();
+  ~DumpFile();
+  void		createFile(const std::string &str);
   bool		checkFileExist() const;
   std::string	getName() const;
+  std::string	getTime() const;
+  bool		isDirectoryExist(const std::string &dir) const;
   bool		writePaquet(PaquetKeys *paquet);
   bool		writePaquet(PaquetMouse *paquet);
 
