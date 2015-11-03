@@ -71,25 +71,29 @@ void			Spider::doFirstConnection()
       	  _buffer.getValue<char>(_str, sizeName);
 	  _name = _str;
 
-	  try {
-	    if (_dumpFile)
-	      _dumpFile->createFile(_name);
-	  }
-	  catch (const std::exception &e) {
-	    std::cerr << e.what() << std::endl;
-	  }
+	  _buffer.reset();
+	  _socket->async_read(_buffer.data(), 4, [this]() {
 
-	  uint16_t	*reponse = new uint16_t;
+	      try {
+		if (_dumpFile)
+		  _dumpFile->createFile(_name);
+	      }
+	      catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	      }
 
-	  *reponse = 2 << 8 | 2;
+	      uint16_t	*reponse = new uint16_t;
 
-	  // char *reponse = new char[2];
-	  // reponse[0] = 2;
-	  // reponse[1] = 2;
-	  _socket->async_write(reponse, 2, [this, reponse]() mutable {
-	      delete reponse;
-	      boost::asio::spawn(_web.get_ioservice(), [this](boost::asio::yield_context yield) {
-		  getTypeInfo(yield);
+	      *reponse = 2 << 8 | 2;
+
+	      // char *reponse = new char[2];
+	      // reponse[0] = 2;
+	      // reponse[1] = 2;
+	      _socket->async_write(reponse, 2, [this, reponse]() mutable {
+		  delete reponse;
+		  boost::asio::spawn(_web.get_ioservice(), [this](boost::asio::yield_context yield) {
+		      getTypeInfo(yield);
+		    });
 		});
 	    });
       	});
@@ -102,6 +106,7 @@ void			Spider::getTypeInfo(boost::asio::yield_context yield)
     uint8_t		id = 0;
 
     _buffer.reset();
+    std::cout << "ICIIII\n";
     if (_socket->async_read(_buffer.data(), 1, yield)) {
       dieInDignity();
       return ;
@@ -123,6 +128,7 @@ void			Spider::getTypeInfo(boost::asio::yield_context yield)
       break ;
 
     default:
+      std::cerr << "ID: " << (int)id << std::endl;
       std::cerr << "Wrong data with spider " << _name << std::endl;
       return ;
     }
