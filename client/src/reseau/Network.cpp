@@ -3,6 +3,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "reseau/Network.hh"
 #include "paquetFirstClient.hh"
+#include "paquetCommandServer.hh"
 
 #ifndef CERTIFICATE_FILE
 # define CERTIFICATE_FILE ("client.crt")
@@ -36,8 +37,11 @@ void Network::initNetwork() {
 			  std::cout << "SSL: initializing HandShake" << std::endl;
 			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
 			  if (!ec) {
-				  sendFirstPaquet(yield);
+				sendFirstPaquet(yield);
+				boost::thread readThread(&Network::readLoop, this, yield);
+				readThread.join();
 			  }
+
 		  }
 		  _engine->getSocket().close();
 		}
@@ -53,6 +57,7 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	char hostName[128];
 	gethostname(hostName, sizeof(hostName));
 	paquet.setName(hostName);
+	paquet.setDate(Packager::secondsSinceEpoch());
 	paquet.createPaquet();
 
 	if (_engine->writePaquet(paquet, yield)) {
@@ -64,14 +69,14 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	}
 	std::cout << "SSL: server RET value " << (int)ret << std::endl;
 	if (ret == 1)
-	  networkLoop(yield);
+		writeLoop(yield);
 	else
 	{
 	  std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
 	}
 }
 
-void Network::networkLoop(boost::asio::yield_context yield)
+void Network::writeLoop(boost::asio::yield_context yield)
 {
 	while (1) {
 		while (_packager->isLeft() == 0)
@@ -86,5 +91,19 @@ void Network::networkLoop(boost::asio::yield_context yield)
 			return;
 		}
 		_packager->supprPaquet();
+	}
+}
+
+void Network::readLoop(boost::asio::yield_context yield)
+{
+	while (1) {
+
+		PaquetCommandServer paquet;
+		if (_engine->readPaquet(paquet, yield) != -1) {
+			;
+//			std::cout << paquet << std::endl;
+		}
+		std::cout << "Waiting packager" << std::endl;
+		boost::this_thread::sleep(boost::posix_time::microseconds(200000));
 	}
 }

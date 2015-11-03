@@ -24,7 +24,8 @@ public:
 
 	void sendFirstPaquet(boost::asio::yield_context yield);
 	void initNetwork();
-	void networkLoop(boost::asio::yield_context yield);
+	void writeLoop(boost::asio::yield_context yield);
+	void readLoop(boost::asio::yield_context yield);
 };
 
 #endif /* !NETWORK_H_ */

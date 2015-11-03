@@ -44,6 +44,35 @@ void		Web::waitSpider()
     });
 }
 
+int		Web::listSpider()
+{
+  if (_spiders.size()) {
+
+    int		num = 0;
+
+    std::cout << "Listing Spiders:" << std::endl;
+    for (auto &spider : _spiders) {
+      std::cout << num << " - " << spider->getName() << std::endl;
+    }
+  }
+  else {
+    std::cout << "No spiders connected" << std::endl;
+  }
+  return (0);
+}
+
+void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p)
+{
+  boost::shared_ptr<PaquetCommandServer>	paquet = p.lock();
+
+  std::cout << "PAQUET: " << *paquet << std::endl;
+  for (auto &spider : _spiders) {
+    spider->getSocket()->writePaquet(*paquet, [this]() {
+	std::cout << "Command send" << std::endl;
+      });
+  }
+}
+
 void		Web::insertSpider(const boost::shared_ptr<Spider> &spider)
 {
   _spiders.insert(spider);

@@ -13,6 +13,7 @@
 
 # include <boost/asio/spawn.hpp>
 # include "ISocketEngine.hh"
+# include "paquetCommandServer.hh"
 # include "paquet.hh"
 
 class		SslEngine : public ISocketEngine
@@ -31,6 +32,8 @@ public:
 					    const std::function<void()> &);
   virtual int			doHandshake(boost::asio::ssl::stream_base::handshake_type,
 					    boost::asio::yield_context);
+  virtual void			read(void *, size_t);
+  virtual void			read(PaquetCommandServer &);
   virtual void			async_read(void *, size_t, const std::function<void()> &);
   virtual int			async_read(void *buffer, size_t len, boost::asio::yield_context yield);
   virtual int			async_write(void *buffer, size_t len, boost::asio::yield_context yield);
@@ -40,6 +43,8 @@ public:
   virtual void			handleError(const std::function<void()> &);
   virtual void			writePaquet(const Paquet &, const std::function<void()> &);
   virtual int			writePaquet(const Paquet &paquet, boost::asio::yield_context yield);
+  virtual void			readPaquet(const Paquet &, const std::function<void()> &);
+  virtual int			readPaquet(const Paquet &paquet, boost::asio::yield_context yield);
 };
 
 #endif /* !SSLENGINE_H_ */
