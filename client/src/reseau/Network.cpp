@@ -86,11 +86,14 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 void Network::writeLoop(boost::asio::yield_context yield)
 {
 	while (1) {
-		while (_packager->isLeft() == 0)
-		{
-			std::cout << "Waiting packager" << std::endl;
-			boost::this_thread::sleep(boost::posix_time::microseconds(200000));
-		}
+
+		_packager.isLeft();
+		std::cout << "Packager OK" << std::endl;
+		// while (_packager->isLeft() == 0)
+		// {
+		// 	std::cout << "Waiting packager" << std::endl;
+		// 	boost::this_thread::sleep(boost::posix_time::microseconds(200000));
+		// }
 		Paquet *paquet = _packager->getPaquet();
 		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
 		if (_engine->writePaquet(*paquet, yield) == -1) {
