@@ -34,6 +34,7 @@ public:
 
   PaquetCommandServer();
   PaquetCommandServer(const void *, size_t);
+  PaquetCommandServer(uint8_t reponse);
   virtual ~PaquetCommandServer();
 
   void		setReponse(uint8_t);

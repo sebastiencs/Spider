@@ -26,6 +26,16 @@ Spider::~Spider()
   DEBUG_MSG("Spider deleted");
 }
 
+boost::shared_ptr<ISocketEngine>	&Spider::getSocket()
+{
+  return (_socket);
+}
+
+const std::string	&Spider::getName() const
+{
+  return (_name);
+}
+
 void		Spider::dieInDignity()
 {
   _web.deleteSpider(shared_from_this());
@@ -61,25 +71,29 @@ void			Spider::doFirstConnection()
       	  _buffer.getValue<char>(_str, sizeName);
 	  _name = _str;
 
-	  try {
-	    if (_dumpFile)
-	      _dumpFile->createFile(_name);
-	  }
-	  catch (const std::exception &e) {
-	    std::cerr << e.what() << std::endl;
-	  }
+	  _buffer.reset();
+	  _socket->async_read(_buffer.data(), 4, [this]() {
 
-	  uint16_t	*reponse = new uint16_t;
+	      try {
+		if (_dumpFile)
+		  _dumpFile->createFile(_name);
+	      }
+	      catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+	      }
 
-	  *reponse = 2 << 8 | 2;
+	      uint16_t	*reponse = new uint16_t;
 
-	  // char *reponse = new char[2];
-	  // reponse[0] = 2;
-	  // reponse[1] = 2;
-	  _socket->async_write(reponse, 2, [this, reponse]() mutable {
-	      delete reponse;
-	      boost::asio::spawn(_web.get_ioservice(), [this](boost::asio::yield_context yield) {
-		  getTypeInfo(yield);
+	      *reponse = 2 << 8 | 2;
+
+	      // char *reponse = new char[2];
+	      // reponse[0] = 2;
+	      // reponse[1] = 2;
+	      _socket->async_write(reponse, 2, [this, reponse]() mutable {
+		  delete reponse;
+		  boost::asio::spawn(_web.get_ioservice(), [this](boost::asio::yield_context yield) {
+		      getTypeInfo(yield);
+		    });
 		});
 	    });
       	});

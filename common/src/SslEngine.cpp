@@ -60,6 +60,34 @@ int	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
   return (0);
 }
 
+int	SslEngine::read(void *buffer, size_t len)
+{
+  try {
+    boost::asio::read(_socket, boost::asio::buffer(buffer, len));
+    return (0);
+  }
+  catch (boost::system::system_error &) {
+    return (-1);
+  }
+}
+
+int	SslEngine::read(PaquetCommandServer &paquet)
+{
+  uint8_t	id;
+  uint8_t	cmd;
+
+  try {
+    boost::asio::read(_socket, boost::asio::buffer(&id, 1));
+    boost::asio::read(_socket, boost::asio::buffer(&cmd, 1));
+    paquet.setReponse(cmd);
+    paquet.createPaquet();
+    return (0);
+  }
+  catch (boost::system::system_error &e) {
+    return (-1);
+  }
+}
+
 void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()> &func)
 {
   boost::asio::async_read(_socket, boost::asio::buffer(buffer, len),
