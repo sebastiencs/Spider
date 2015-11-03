@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <Windows.h>
+#include <boost\interprocess\sync\interprocess_semaphore.hpp>
 #include <boost\thread.hpp>
 #include <boost\thread\mutex.hpp>
 #include "paquetKeys.hh"
@@ -21,8 +22,10 @@ class Packager
 	bool _alt;
 	bool _altGr;
 	std::map<int, std::string> correspondance;
-	boost::mutex mutex;
-	boost::mutex readyMutex;
+
+	boost::interprocess::interprocess_semaphore	_sem;
+	/* boost::mutex mutex; */
+	/* boost::mutex readyMutex; */
 
 public:
 	Packager();
@@ -34,8 +37,8 @@ public:
 	Paquet *getPaquet();
 	size_t isLeft();
 	void supprPaquet();
-	boost::mutex& getMutex();
-	boost::mutex& getReadyMutex();
+	/* boost::mutex& getMutex(); */
+	/* boost::mutex& getReadyMutex(); */
 };
 
 #endif // !PACKAGER_H
