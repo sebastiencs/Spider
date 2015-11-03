@@ -50,7 +50,7 @@ std::string	DumpFile::getTime() const
 
   time_now = boost::posix_time::second_clock::local_time();
   time = boost::posix_time::to_simple_string(time_now).c_str();
-  return !time.empty() ? boost::replace_all_copy(time, " ", "-") : "0";
+  return !time.empty() ? boost::replace_all_copy(time, " ", "-") : "UnknownTime";
 }
 
 bool		DumpFile::isDirectoryExist(const std::string &dir) const
