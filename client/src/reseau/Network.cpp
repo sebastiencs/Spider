@@ -37,9 +37,7 @@ void Network::initNetwork() {
 			  std::cout << "SSL: initializing HandShake" << std::endl;
 			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
 			  if (!ec) {
-				boost::thread readThread(&Network::readLoop, this);
 				sendFirstPaquet(yield);
-				readThread.join();
 			  }
 
 		  }
@@ -75,7 +73,9 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	}
 	std::cout << "SSL: server RET value " << (int)ret << std::endl;
 	if (ret == 2)
+		boost::thread readThread(&Network::readLoop, this);
 		writeLoop(yield);
+		readThread.join();
 	else
 	{
 	  std::cerr << "SSl: Error: Wrong protocol version" << std::endl;
