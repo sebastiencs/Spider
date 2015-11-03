@@ -9,6 +9,7 @@
 #include <boost\thread\mutex.hpp>
 #include "paquetKeys.hh"
 #include "paquetMouse.hh"
+#include "Tools.hh"
 
 #pragma once
 class Packager
@@ -29,8 +30,6 @@ public:
 
 	void addKey(int nCode, WPARAM wParam, LPARAM lParam);
 	void addClick(int nCode, WPARAM wParam, LPARAM lParam);
-
-	static uint32_t secondsSinceEpoch();
 
 	Paquet *getPaquet();
 	size_t isLeft();

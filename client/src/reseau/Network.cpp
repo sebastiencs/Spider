@@ -54,7 +54,7 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	char hostName[128];
 	gethostname(hostName, sizeof(hostName));
 	paquet.setName(hostName);
-	paquet.setDate(Packager::secondsSinceEpoch());
+	paquet.setDate(SelfUtils::secondsSinceEpoch());
 	paquet.createPaquet();
 
 	if (_engine->writePaquet(paquet, yield)) {
