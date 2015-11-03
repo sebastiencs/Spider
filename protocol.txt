@@ -3,16 +3,16 @@
 Protocole de communication pour le projet Spider V1
 ====================================================
 
-Toutes les chaines de caracteres seront encod�es en ASCII, sauf si je note autre chose.
-Puisqu'on envoit la taille de la chaine de caracteres a chaque fois, il ne FAUT PAS envoy� le '\0' qui termine la chaine.
-Le communication est bas� sur un protocle TCP chiffr� par l'algorithme SSL (2.0), et le transferts de bits est en little endian.
+Toutes les chaines de caracteres seront encodees en ASCII, sauf si je note autre chose.
+Puisqu'on envoit la taille de la chaine de caracteres a chaque fois, il ne FAUT PAS envoye le '\0' qui termine la chaine.
+Le communication est base sur un protocle TCP chiffre par l'algorithme SSL (2.0), et le transferts de bits est en little endian.
 
 1 - 1ere connection
 
 
 Lorsqu'un client se connecte au serveur, il (le client) lui envoi quelques infos.
 Ensuite le serveur lui reponds pour determiner si on peut commencer l'envoi des
-donn�es.
+donnees.
 
 		 ---------------------------------------------
 Client:		| Version  | Size name |   Name    | Date     |
@@ -32,7 +32,7 @@ Client:		| Version  | Size name |   Name    | Date     |
 
 	    	 Chaine de caracteres corresponds au nom du client
 		 ( Ouais il a un nom )
-		 
+
 	Date :	uint32_t
 		Timestamp de la Date
 
@@ -61,7 +61,7 @@ Client: |   ID    |   Date   | PID      | Size Active | Active |     X     |    
 
 	 Date: unsigned int ( 32 bits )
 
-	       	  Octet qui correspond a la date des entr�s
+	       	  Octet qui correspond a la date des entres
 
 	 Size Active: unsigned short ( 16 bits )
 
@@ -108,7 +108,7 @@ Client: |   ID    |   Date   | PID      | Size Active | Active | Size text |  Te
 
 	 Date: unsigned int ( 32 bits )
 
-	       	  Octet qui correspond a la date des entr�es clavier
+	       	  Octet qui correspond a la date des entrees clavier
 
 	 Size Active: unsigned short ( 16 bits )
 
@@ -124,9 +124,9 @@ Client: |   ID    |   Date   | PID      | Size Active | Active | Size text |  Te
 
 	 Text: char *
 
-	       	  Chaine de caracteres correspondant au texte tap� au clavier
-		  encod� en UTF-8 ( comme ca y'a les CTRL, DEL, MAJ etc ).
-		  Il est possible d'envoy� plusieurs touches en meme temps,
+	       	  Chaine de caracteres correspondant au texte tape au clavier
+		  encode en UTF-8 ( comme ca y'a les CTRL, DEL, MAJ etc ).
+		  Il est possible d'envoye plusieurs touches en meme temps,
 		  c'est au client de voir.
 
 
@@ -135,7 +135,7 @@ Client: |   ID    |   Date   | PID      | Size Active | Active | Size text |  Te
 4 - Retour du serveur
 
 
-Le serveur envoi sa commande puis le client lui r�ponds
+Le serveur envoi sa commande puis le client lui reponds
 
           --------------------
 Serveur: |    ID   | Retour   |
@@ -151,19 +151,19 @@ Serveur: |    ID   | Retour   |
 	  Retour: unsigned char
 
 	     Retour : normaux:
-	
-		0	Erreur	La version du protocole n'est pas bonne. Le client se deconnecte. Valeur commande est ignor�e
-		1	Erreur	Donn�es envoy�es au serveur invalides.
-		2	Succ�s	Le num�ro du protocole est connu du serveur.
-		3	Succ�s	Confirmation de la r�ception des donn�es.
+
+		0	Erreur	La version du protocole n'est pas bonne. Le client se deconnecte. Valeur commande est ignoree
+		1	Erreur	Donnees envoyees au serveur invalides.
+		2	Succes	Le numero du protocole est connu du serveur.
+		3	Succes	Confirmation de la reception des donnees.
 
 	     Retour : commande:
-	
-		4	Yes/No	Activer le d�marrage automatique � la session de l'utilisateur
-		5	Yes/No	Activer le d�marrage automatique � la machine l'utilisateur
-		6	Yes/No	Arr�ter le programme
-		7	Yes/No	Met en pause ou r�active le programme
-		8	Yes/No	D�truit toute trace du programme
+
+		4	Yes/No	Activer le demarrage automatique a la session de l'utilisateur
+		5	Yes/No	Activer le demarrage automatique a la machine l'utilisateur
+		6	Yes/No	Arreter le programme
+		7	Yes/No	Met en pause ou reactive le programme
+		8	Yes/No	Detruit toute trace du programme
 
 
 ------------------------------------------------------
@@ -184,19 +184,19 @@ Client:  |    ID   |   OK ?  |  Size data | Data   |
 
 	  OK ?: unsigned char
 
-	     	  1 -> OK. Commande comprise et execut�e
+	     	  1 -> OK. Commande comprise et executee
 		  0 -> KO. Commande invalide
 
 	  Size data: unsigned short ( 16 bits )
 
-	      	  Taille de la donn�e qui suit
+	      	  Taille de la donnee qui suit
 
 	  Data: char *
 
-	       	  Donn�e correspond a la reponse de la commande
+	       	  Donnee correspond a la reponse de la commande
 
 
-Note: Si le "OK ?" est a 0 et qu'on envoi pas de donn�e, le paquet sera former comme
+Note: Si le "OK ?" est a 0 et qu'on envoi pas de donnee, le paquet sera former comme
 ca:
 
    --------------------------------
@@ -224,7 +224,7 @@ Paquet "de base" pour les touches clavier:
          ----------------------------------------------------------------
 
 
-Paquet avec l'Active pas ger�:
+Paquet avec l'Active pas gere:
 
 		  -------------------------------------------------------
 		 |    ID   |   Date   | Size Active | Size text |  Text  |
