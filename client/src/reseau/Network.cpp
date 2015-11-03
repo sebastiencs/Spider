@@ -37,9 +37,9 @@ void Network::initNetwork() {
 			  std::cout << "SSL: initializing HandShake" << std::endl;
 			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
 			  if (!ec) {
-				boost::thread readThread(&Network::readLoop, this);
+				//boost::thread readThread(&Network::readLoop, this);
 				sendFirstPaquet(yield);
-				readThread.join();
+				//readThread.join();
 			  }
 
 		  }
@@ -52,6 +52,8 @@ void Network::initNetwork() {
 void Network::sendFirstPaquet(boost::asio::yield_context yield)
 {
 	PaquetFirstClient	paquet;
+
+	std::cout << "test" << std::endl;
 
 	paquet.setVersion(1);
 	char hostName[128];
@@ -68,7 +70,7 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	  return ;
 	}
 	std::cout << "SSL: server RET value " << (int)(ret & 0xFF) << std::endl;
-	if (ret == 2)
+	if (ret & 0xFF == 2)
 		writeLoop(yield);
 	else
 	{
@@ -99,9 +101,6 @@ void Network::readLoop()
 	PaquetCommandServer paquet;
 
 	while (!_engine->read(paquet)) {
-
-		// Pas besoin de sleep le read est bloquant
-
 		std::cout << "Paquet recu: " << paquet << std::endl;
 	}
 }
