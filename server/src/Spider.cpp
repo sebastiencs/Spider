@@ -183,7 +183,6 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
   paquet.setText(_str);
   paquet.createPaquet();
 
-
 #ifdef DEBUG
   std::cerr << paquet << std::endl;
 #endif // !DEBUG

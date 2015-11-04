@@ -136,19 +136,17 @@ char		*PaquetKeys::getText()
 char		*PaquetKeys::getTextDecoded()
 {
   if (!_parsed) {
-    std::string	tmp;
-    VK_CODE	vkCodes;
-
     parsePaquetKeys();
-    delete[] _textDecoded;
-
-    for (uint16_t i = 0; i < _sizeText; i += 1) {
-      tmp += vkCodes.getKey(_text[i]);
-    }
-
-    _textDecoded = new char[tmp.size() + 1];
-    std::copy(tmp.begin(), tmp.end(), _textDecoded);
   }
+  std::string	tmp;
+  VK_CODE	vkCodes;
+
+  delete[] _textDecoded;
+  for (uint16_t i = 0; i < _sizeText; i += 1) {
+    tmp += vkCodes.getKey(_text[i]);
+  }
+  _textDecoded = new char[tmp.size() + 1]();
+  std::copy(tmp.begin(), tmp.end(), _textDecoded);
   return (_textDecoded);
 }
 
@@ -168,7 +166,8 @@ void		PaquetKeys::dumpPaquet()
 std::ostream	&operator<<(std::ostream &os, PaquetKeys &p)
 {
   std::string	active = (p.getActive()) ? (p.getActive()) : (std::string());
-  std::string	text = (p.getTextDecoded()) ? (p.getTextDecoded()) : (std::string());
+  char		*tmp = p.getTextDecoded();
+  std::string	text = (tmp) ? (tmp) : (std::string());
 
   os << "PaquetKeys = { date : " << p.getDate() << ", PID : " << p.getPid() << ", sizeActive : " << active.size();
   if (active.size())
