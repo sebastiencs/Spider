@@ -8,6 +8,7 @@
 // Last update Wed Oct 21 09:14:05 2015 chapui_s
 //
 
+#include <boost/range/algorithm/find.hpp>
 #include "Spider.hh"
 #include "Web.hh"
 
@@ -53,6 +54,7 @@ int		Web::listSpider()
     std::cout << "Listing Spiders:" << std::endl;
     for (auto &spider : _spiders) {
       std::cout << num << " - " << spider->getName() << std::endl;
+      num += 1;
     }
   }
   else {
@@ -65,11 +67,23 @@ void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p)
 {
   boost::shared_ptr<PaquetCommandServer>	paquet = p.lock();
 
-  std::cout << "PAQUET: " << *paquet << std::endl;
   for (auto &spider : _spiders) {
     spider->getSocket()->writePaquet(*paquet, [this]() {
-	std::cout << "Command send" << std::endl;
+	std::cout << "Command sent" << std::endl;
       });
+  }
+}
+
+void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p, std::list<std::string> listSpider)
+{
+  boost::shared_ptr<PaquetCommandServer>	paquet = p.lock();
+
+  for (auto &spider : _spiders) {
+    if (std::find(listSpider.begin(), listSpider.end(), spider->getName()) != listSpider.end()) {
+      spider->getSocket()->writePaquet(*paquet, [this, &spider]() {
+	  std::cout << "Command sent to " << spider->getName() << std::endl;
+	});
+    }
   }
 }
 

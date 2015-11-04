@@ -39,6 +39,7 @@ public:
   void				deleteSpider(const boost::shared_ptr<Spider> &);
   boost::asio::io_service	&get_ioservice();
   void				sendCommand(boost::weak_ptr<PaquetCommandServer> paquet);
+  void				sendCommand(boost::weak_ptr<PaquetCommandServer> p, std::list<std::string> listSpider);
 };
 
 #endif /* !WEB_H_ */

@@ -6,8 +6,31 @@
 #include "Hooker.hh"
 #include "reseau/Network.hh"
 
+int	__declspec(naked) isDebugging(void)
+{
+  __asm {
+
+    mov eax, fs:[0x30]
+			mov al, [eax + 10bch]
+			and al, 0x70
+      cmp al, 0x70
+      je yes
+      jmp no
+
+      yes:
+      mov eax, 1
+      ret
+      no:
+      xor eax, eax
+      ret
+  }
+}
+
 int main(int ac, char **av)
 {
+	//if (isDebugging()) {
+	//	return (-1);
+	//}
 	if (ac >= 3)
 	{
 		try {
@@ -21,7 +44,8 @@ int main(int ac, char **av)
 		}
 		catch (std::exception& e) {
 			(void)e;
-			std::cerr << "An error occured" << std::endl;
+			std::cerr << "An error occured:" << std::endl;
+			std::cerr << e.what() << std::endl;
 			return EXIT_FAILURE;
 		}
 		return EXIT_SUCCESS;

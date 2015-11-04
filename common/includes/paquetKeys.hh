@@ -11,6 +11,7 @@
 #ifndef PAQUETKEYS_H_
 # define PAQUETKEYS_H_
 
+# include <vector>
 # include <string>
 # include "paquet.hh"
 
@@ -42,6 +43,7 @@ public:
   void		setPid(uint16_t);
   void		setActive(const std::string &);
   void		setText(const std::string &);
+  void		setText(const std::vector<uint8_t> &);
 
   void		createPaquet();
 

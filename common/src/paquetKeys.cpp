@@ -60,6 +60,14 @@ void		PaquetKeys::setText(const std::string &text)
   _parsed = 0;
 }
 
+void		PaquetKeys::setText(const std::vector<uint8_t> &text)
+{
+  _sizeText = text.size();
+  _text = new char[_sizeText + 1]();
+  std::copy(text.begin(), text.end(), _text);
+  _parsed = 0;
+}
+
 void		PaquetKeys::setPid(uint16_t pid)
 {
   _pid = pid;

