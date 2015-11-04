@@ -5,6 +5,7 @@
 # include <functional>
 # include "SslEngine.hh"
 # include "Packager.h"
+# include "Startup.hh"
 # include "debug.hh"
 
 class Network
@@ -12,10 +13,11 @@ class Network
 private:
 	int _pause;
 
+	Startup		_startup;
 	std::string _port;
 	std::string _ip;
 
-	std::map<int, std::function<void (Network& net, boost::asio::yield_context yield)> > _response;
+	std::map<int, std::function<void (boost::asio::yield_context yield)> > _response;
 
 	boost::asio::io_service _ios;
 	boost::asio::ssl::context _ctx;
@@ -39,14 +41,15 @@ public:
 		_pause = i;
 	}
 
+	void spider_switchStartup(Network &net, boost::asio::yield_context yield);
 	void sendFirstPaquet(boost::asio::yield_context yield);
 	void initNetwork();
 	void writeLoop(boost::asio::yield_context yield);
 	void readLoop(boost::asio::yield_context yield);
+	void spider_exit(Network& net, boost::asio::yield_context yield);
+	void spider_remove(Network& net, boost::asio::yield_context yield);
+	void spider_pause(Network& net, boost::asio::yield_context yield);
 };
 
-void spider_exit(Network& net, boost::asio::yield_context yield);
-void spider_remove(Network& net, boost::asio::yield_context yield);
-void spider_pause(Network& net, boost::asio::yield_context yield);
 
 #endif /* !NETWORK_H_ */
