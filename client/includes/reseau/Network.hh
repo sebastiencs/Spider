@@ -15,7 +15,7 @@ private:
 	std::string _port;
 	std::string _ip;
 
-	std::map<int, std::function<void (Network& net)> > _response;
+	std::map<int, std::function<void (Network& net, boost::asio::yield_context yield)> > _response;
 
 	boost::asio::io_service _ios;
 	boost::asio::ssl::context _ctx;
@@ -31,8 +31,8 @@ public:
 	int getPause() {
 		return (_pause);
 	}
-	Packager& getPackager() {
-		return (*_packager);
+	SslEngine& getEngine() {
+		return (*_engine);
 	}
 
 	void setPause(int i) {
@@ -42,11 +42,11 @@ public:
 	void sendFirstPaquet(boost::asio::yield_context yield);
 	void initNetwork();
 	void writeLoop(boost::asio::yield_context yield);
-	void readLoop();
+	void readLoop(boost::asio::yield_context yield);
 };
 
-void spider_exit(Network& net);
-void spider_remove(Network& net);
-void spider_pause(Network& net);
+void spider_exit(Network& net, boost::asio::yield_context yield);
+void spider_remove(Network& net, boost::asio::yield_context yield);
+void spider_pause(Network& net, boost::asio::yield_context yield);
 
 #endif /* !NETWORK_H_ */
