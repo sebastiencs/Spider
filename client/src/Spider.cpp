@@ -8,6 +8,9 @@
 
 int main(int ac, char **av)
 {
+	if (IsDebuggerPresent()) {
+		return (-1);
+	}
 	if (ac >= 3)
 	{
 		try {
