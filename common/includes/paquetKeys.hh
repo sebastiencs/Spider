@@ -13,6 +13,7 @@
 
 # include <vector>
 # include <string>
+# include "vk_codes.hh"
 # include "paquet.hh"
 
 class		PaquetKeys : public Paquet
@@ -29,6 +30,7 @@ private:
   char		*_active;
   uint16_t	_sizeText;
   char		*_text;
+  char		*_textDecoded;
   char		_parsed;
 
   void		parsePaquetKeys();
@@ -50,6 +52,7 @@ public:
   uint32_t	getDate();
   char		*getActive();
   char		*getText();
+  char		*getTextDecoded();
   uint16_t	getPid();
 
   virtual void		dumpPaquet();
