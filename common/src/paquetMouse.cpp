@@ -178,7 +178,7 @@ std::ostream	&operator<<(std::ostream &os, PaquetMouse &p)
     os << "(Lelf)";
     break ;
   case (2):
-    os << "(Middle";
+    os << "(Middle)";
     break ;
   case (4):
     os << "(Right)";
