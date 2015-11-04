@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @paquet_key.name %>
+</p>
+
+<p>
+  <strong>Date:</strong>
+  <%= @paquet_key.date %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @paquet_key.active %>
+</p>
+
+<p>
+  <strong>Text:</strong>
+  <%= @paquet_key.text %>
+</p>
+
+<p>
+  <strong>Pid:</strong>
+  <%= @paquet_key.pid %>
+</p>
+
+<%= link_to 'Edit', edit_paquet_key_path(@paquet_key) %> |
+<%= link_to 'Back', paquet_keys_path %>

