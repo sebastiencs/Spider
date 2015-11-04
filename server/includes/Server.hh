@@ -36,6 +36,7 @@ public:
   void		start();
   void		stop();
   void		readCommand();
+  int		help();
 };
 
 #endif /* !SERVER_H_ */
