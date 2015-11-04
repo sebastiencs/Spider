@@ -16,12 +16,14 @@
 class Packager
 {
 	std::vector<Paquet *> _paquets;
-	bool _shift;
-	bool _win;
-	bool _ctrl;
+	bool _lshift;
+	bool _rshift;
+	bool _lwin;
+	bool _rwin;
+	bool _lctrl;
+	bool _rctrl;
 	bool _alt;
 	bool _altGr;
-	std::map<int, std::string> correspondance;
 
 	boost::interprocess::interprocess_semaphore	_sem;
 

@@ -11,8 +11,8 @@ int	__declspec(naked) isDebugging(void)
   __asm {
 
     mov eax, fs:[0x30]
-      mov al, [eax + 10bch]
-      and al, 0x70
+			mov al, [eax + 10bch]
+			and al, 0x70
       cmp al, 0x70
       je yes
       jmp no
@@ -28,9 +28,9 @@ int	__declspec(naked) isDebugging(void)
 
 int main(int ac, char **av)
 {
-	if (IsDebuggerPresent()) {
-		return (-1);
-	}
+	//if (isDebugging()) {
+	//	return (-1);
+	//}
 	if (ac >= 3)
 	{
 		try {
@@ -44,7 +44,8 @@ int main(int ac, char **av)
 		}
 		catch (std::exception& e) {
 			(void)e;
-			std::cerr << "An error occured" << std::endl;
+			std::cerr << "An error occured:" << std::endl;
+			std::cerr << e.what() << std::endl;
 			return EXIT_FAILURE;
 		}
 		return EXIT_SUCCESS;
