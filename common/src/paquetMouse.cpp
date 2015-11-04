@@ -183,10 +183,15 @@ std::ostream	&operator<<(std::ostream &os, PaquetMouse &p)
   case (4):
     os << "(Right)";
     break ;
+  case (8):
+    os << "(X1Button)";
+    break ;
+  case (16):
+    os << "(X2Button)";
+    break ;
   default:
     break ;
   }
-  os << ((p.getButton() == 1) ? ("(Left)") : ((p.getButton() == 2) ? ("(Middle)") : ("(Right)")));
   os << " };" << std::endl;
   return (os);
 }
