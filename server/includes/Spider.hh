@@ -49,6 +49,7 @@ public:
   void		prepareFirstConnection();
   void		doFirstConnection();
   void		dieInDignity();
+  void		setName(uint16_t);
   void		getTypeInfo(boost::asio::yield_context);
 //void		getTypeInfo();
   void		getKeystrokes(boost::asio::yield_context &);

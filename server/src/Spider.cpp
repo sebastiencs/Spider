@@ -48,6 +48,15 @@ void		Spider::prepareFirstConnection()
     });
 }
 
+void		Spider::setName(uint16_t size)
+{
+  for (uint16_t i = 0; i < size; i += 1) {
+    if (!isprint(_str[i]))
+      _str[i] = '_';
+  }
+  _name = (size) ? (_str) : ("Unknown");
+}
+
 void			Spider::doFirstConnection()
 {
   _socket->async_read(_buffer.data(), 4, [this]() {
@@ -71,7 +80,7 @@ void			Spider::doFirstConnection()
       _socket->async_read(_buffer.data(), sizeName, [this, sizeName]() {
 	  std::fill(_str, _str + SIZE_STRING, 0);
       	  _buffer.getValue<char>(_str, sizeName);
-	  _name = _str;
+	  setName(sizeName);
 
 	  _buffer.reset();
 	  _socket->async_read(_buffer.data(), 4, [this]() {
