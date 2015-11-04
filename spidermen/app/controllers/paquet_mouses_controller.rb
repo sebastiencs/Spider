@@ -1,6 +1,6 @@
 class PaquetMousesController < ApplicationController
   before_action :set_paquet_mouse, only: [:show, :edit, :update, :destroy]
-  
+
   skip_before_action :verify_authenticity_token, only: [:new, :create]
 
   # GET /paquet_mouses
@@ -27,16 +27,8 @@ class PaquetMousesController < ApplicationController
   # POST /paquet_mouses.json
   def create
     @paquet_mouse = PaquetMouse.new(paquet_mouse_params)
-
-    respond_to do |format|
-      if @paquet_mouse.save
-        format.html { redirect_to @paquet_mouse, notice: 'Paquet mouse was successfully created.' }
-        format.json { render :show, status: :created, location: @paquet_mouse }
-      else
-        format.html { render :new }
-        format.json { render json: @paquet_mouse.errors, status: :unprocessable_entity }
-      end
-    end
+    @paquet_mouse.save
+    render nothing: true
   end
 
   # PATCH/PUT /paquet_mouses/1
@@ -71,6 +63,6 @@ class PaquetMousesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def paquet_mouse_params
-      params.require(:paquet_mouse).permit(:name, :date, :active, :x, :y, :pid)
+      params.require(:paquet_mouse).permit(:name, :date, :active, :x, :y, :button, :pid)
     end
 end

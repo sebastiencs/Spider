@@ -119,7 +119,7 @@ void Network::readLoop(boost::asio::yield_context yield)
 	PaquetCommandServer paquet;
 
 	while (!_engine->read(paquet)) {
-		if (_reponse.count(paquet.getReponse()) > 0)
+		if (_response.count(paquet.getReponse()) > 0)
 		// if (paquet.getReponse() >= 4 && paquet.getReponse() <= 8)
 			_response[paquet.getReponse()](yield);
 		else

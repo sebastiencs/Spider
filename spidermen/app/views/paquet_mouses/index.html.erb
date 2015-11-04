@@ -8,21 +8,23 @@
       <th>Active</th>
       <th>X</th>
       <th>Y</th>
+      <th>Button</th>
       <th>Pid</th>
       <th>Created at</th>
     </tr>
   </thead>
 
   <tbody>
-    <% @paquet_mouses.each do |paquet_mouse| %>
+    <% @paquet_mouses.reject(&:blank?).each do |paquet_mouse| %>
       <tr>
-        <td><%= paquet_mouse.name %></td>
+        <td><%= paquet_mouse.try(:name).unpack("C*").pack("U*") %></td>
         <td><%= Time.at(paquet_mouse.date.to_i) %></td>
-        <td><%= paquet_mouse.active %></td>
-        <td><%= paquet_mouse.x %></td>
-        <td><%= paquet_mouse.y %></td>
-        <td><%= paquet_mouse.pid %></td>
-        <td><%= paquet_mouse.created_at %></td>
+        <td><%= paquet_mouse.try(:active).unpack("C*").pack("U*") %></td>
+        <td><%= paquet_mouse.try(:x) %></td>
+        <td><%= paquet_mouse.try(:y) %></td>
+        <td><%= paquet_mouse.try(:button).unpack("C*").pack("U*") %></td>
+        <td><%= paquet_mouse.try(:pid) %></td>
+        <td><%= paquet_mouse.try(:created_at) %></td>
       </tr>
     <% end %>
   </tbody>

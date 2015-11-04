@@ -27,16 +27,8 @@ class PaquetKeysController < ApplicationController
   # POST /paquet_keys.json
   def create
     @paquet_key = PaquetKey.new(paquet_key_params)
-
-    respond_to do |format|
-      if @paquet_key.save
-        format.html { redirect_to @paquet_key, notice: 'Paquet key was successfully created.' }
-        format.json { render :show, status: :created, location: @paquet_key }
-      else
-        format.html { render :new }
-        format.json { render json: @paquet_key.errors, status: :unprocessable_entity }
-      end
-    end
+    @paquet_key.save
+    render nothing: true
   end
 
   # PATCH/PUT /paquet_keys/1

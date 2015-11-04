@@ -7,5 +7,6 @@ class PaquetMouse
   field :active, type: String
   field :x, type: Integer
   field :y, type: Integer
+  field :button, type: String
   field :pid, type: Integer
 end

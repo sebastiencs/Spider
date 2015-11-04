@@ -79,7 +79,7 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		if (!repeat) {
 			keys.push_back(info->vkCode);
 		}
-		
+		tmp->setText(keys);
 		tmp->createPaquet();
 		_sem.post();
 		_paquets.push_back(tmp);
