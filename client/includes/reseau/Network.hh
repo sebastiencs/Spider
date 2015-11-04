@@ -15,7 +15,7 @@ private:
 	std::string _port;
 	std::string _ip;
 
-	std::map<int, std::function<void(Network& net)> > _response;
+	std::map<int, std::function<void (Network& net)> > _response;
 
 	boost::asio::io_service _ios;
 	boost::asio::ssl::context _ctx;
@@ -30,6 +30,9 @@ public:
 
 	int getPause() {
 		return (_pause);
+	}
+	Packager& getPackager() {
+		return (*_packager);
 	}
 
 	void setPause(int i) {

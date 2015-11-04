@@ -29,6 +29,7 @@ public:
 	Packager();
 	virtual ~Packager();
 
+	void addPaquet(Paquet* paquet);
 	void addKey(int nCode, WPARAM wParam, LPARAM lParam);
 	void addClick(int nCode, WPARAM wParam, LPARAM lParam);
 

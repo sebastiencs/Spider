@@ -45,6 +45,11 @@ Packager::~Packager()
 }
 
 
+void Packager::addPaquet(Paquet * paquet)
+{
+	_paquets.push_back(paquet);
+}
+
 void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 	KBDLLHOOKSTRUCT *info = (KBDLLHOOKSTRUCT *)lParam;
 	_shift = ((info->vkCode == VK_LSHIFT || info->vkCode == VK_RSHIFT) && wParam == 256) ? true : _shift;
