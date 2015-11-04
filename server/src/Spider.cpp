@@ -172,7 +172,7 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
     return ;
   }
 
-  uint16_t	reponse = 2 << 8 | 3;
+  uint16_t	reponse = 3 << 8 | 2;
   if (_socket->async_write(&reponse, 2, yield)) {
     return ;
   }
@@ -227,7 +227,7 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
     return ;
   }
 
-  uint16_t	reponse = 2 << 8 | 3;
+  uint16_t	reponse = 3 << 8 | 2;
   if (_socket->async_write(&reponse, 2, yield)) {
     return ;
   }
