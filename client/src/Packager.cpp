@@ -91,7 +91,6 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		else {
 			str += correspondance[info->vkCode];
 		}
-		std::cout << "string UNICODE : " << str << std::endl;
 		tmp->setText(str);
 		tmp->createPaquet();
 		_sem.post();
@@ -100,7 +99,6 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 }
 
 void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
-	std::cout << "addclick" << std::endl;
 	MSLLHOOKSTRUCT* info = (MSLLHOOKSTRUCT*)lParam;
 	PaquetMouse *tmp = new PaquetMouse();
 
@@ -115,15 +113,18 @@ void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
 	tmp->setX(info->pt.x);
 	tmp->setY(info->pt.y);
 	WORD highOrder = info->mouseData >> 16;
-	std::cout << "highorder : " << highOrder << std::endl;
-	if (highOrder == XBUTTON1) {
+	if (wParam == WM_LBUTTONDOWN)
 		tmp->setButton(1);
-	}
-	else if (highOrder == XBUTTON2) {
+	else if (wParam == WM_LBUTTONDOWN)
 		tmp->setButton(4);
-	}
 	else if (highOrder == WHEEL_DELTA) {
 		tmp->setButton(2);
+	}
+	if (highOrder == XBUTTON1) {
+		tmp->setButton(8);
+	}
+	else if (highOrder == XBUTTON2) {
+		tmp->setButton(16);
 	}
 	tmp->createPaquet();
 	_sem.post();
