@@ -60,10 +60,16 @@ void Network::sendFirstPaquet(boost::asio::yield_context yield)
 {
 	PaquetFirstClient	paquet;
 
-	paquet.setVersion(1);
+
+	DWORD	size = 128;
 	char hostName[128];
+	char username[128];
+
+	GetUserNameA(username, &size);
 	gethostname(hostName, sizeof(hostName));
-	paquet.setName(hostName);
+
+	paquet.setVersion(1);
+	paquet.setName(std::string(username) + "@" + std::string(hostName));
 	paquet.setDate(SelfUtils::secondsSinceEpoch());
 	paquet.createPaquet();
 
