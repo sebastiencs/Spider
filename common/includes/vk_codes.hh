@@ -47,10 +47,10 @@ public:
       _VKCODES[0x22] = "[PAGE DOWN]";
       _VKCODES[0x23] = "[END]";
       _VKCODES[0x24] = "[HOME]";
-      _VKCODES[0x25] = "[LEFT ARROW]";
-      _VKCODES[0x26] = "[UP ARROW]";
-      _VKCODES[0x27] = "[RIGHT ARROW]";
-      _VKCODES[0x28] = "[DOWN ARROW]";
+      _VKCODES[0x25] = "[LEFT]";
+      _VKCODES[0x26] = "[UP]";
+      _VKCODES[0x27] = "[RIGHT]";
+      _VKCODES[0x28] = "[DOWN]";
       _VKCODES[0x29] = "[SELECT]";
       _VKCODES[0x2A] = "[PRINT]";
       _VKCODES[0x2B] = "[EXECUTE]";
@@ -150,8 +150,8 @@ public:
       _VKCODES[0x97] = "[Unassigned]";
       _VKCODES[0xA0] = "[Left SHIFT]";
       _VKCODES[0xA1] = "[Right SHIFT]";
-      _VKCODES[0xA2] = "[Left CONTROL]";
-      _VKCODES[0xA3] = "[Right CONTROL]";
+      _VKCODES[0xA2] = "[CTRL]";
+      _VKCODES[0xA3] = "[CTRL]";
       _VKCODES[0xA4] = "[Left MENU]";
       _VKCODES[0xA5] = "[Right MENU]";
       _VKCODES[0xA6] = "[Browser Back]";
