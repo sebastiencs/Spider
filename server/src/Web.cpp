@@ -67,10 +67,15 @@ void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p)
 {
   boost::shared_ptr<PaquetCommandServer>	paquet = p.lock();
 
-  for (auto &spider : _spiders) {
-    spider->getSocket()->writePaquet(*paquet, [this]() {
-	std::cout << "Command sent" << std::endl;
-      });
+  if (!_spiders.size()) {
+    std::cout << "No spiders connected" << std::endl;
+  }
+  else {
+    for (auto &spider : _spiders) {
+      spider->getSocket()->writePaquet(*paquet, [this]() {
+	  std::cout << "Command sent" << std::endl;
+	});
+    }
   }
 }
 
