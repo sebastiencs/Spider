@@ -24,6 +24,7 @@ Network::Network(const std::string& port, const std::string& ip, Packager* packa
 	_ctx.set_verify_mode(boost::asio::ssl::context::verify_peer);
 	_engine = new SslEngine(_ios, _ctx);
 
+	_response[3] = [this](boost::asio::yield_context yield) {};
 	_response[4] = [this](boost::asio::yield_context yield) { spider_switchStartup(*this, yield); };
 	_response[5] = [this](boost::asio::yield_context yield) { spider_switchStartup(*this, yield); };
 	_response[6] = [this](boost::asio::yield_context yield) { spider_exit(*this, yield); };
@@ -118,7 +119,8 @@ void Network::readLoop(boost::asio::yield_context yield)
 	PaquetCommandServer paquet;
 
 	while (!_engine->read(paquet)) {
-		if (paquet.getReponse() >= 4 && paquet.getReponse() <= 8)
+		if (_reponse.count(paquet.getReponse()) > 0)
+		// if (paquet.getReponse() >= 4 && paquet.getReponse() <= 8)
 			_response[paquet.getReponse()](yield);
 		else
 		{
