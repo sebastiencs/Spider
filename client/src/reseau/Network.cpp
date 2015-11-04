@@ -114,6 +114,13 @@ void Network::readLoop(boost::asio::yield_context yield)
 	while (!_engine->read(paquet)) {
 		if (paquet.getReponse() >= 4 && paquet.getReponse() <= 8)
 			_response[paquet.getReponse()](*this, yield);
+		else
+		{
+			PaquetCommandClient *paquet = new PaquetCommandClient();
+			paquet->setOk(0);
+			paquet->createPaquet();
+			_engine->writePaquet(*paquet, yield);
+		}
 		std::cout << "Paquet recu: " << paquet << std::endl;
 	}
 }
