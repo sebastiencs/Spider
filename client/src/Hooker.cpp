@@ -48,8 +48,8 @@ void Hooker::receiveCallback(int nCode, WPARAM wParam, LPARAM lParam, bool isMou
 	if (isMouse) {
 		MSLLHOOKSTRUCT* mouseStruct = (MSLLHOOKSTRUCT*)lParam;
 		if (wParam == WM_MOUSEMOVE) {
-			if (((std::abs(std::abs(mouseStruct->pt.x) - std::abs(_previousPoint.x)) >= 100) ||					// Prevents mouse move spam
-				std::abs(std::abs(mouseStruct->pt.y) - std::abs(_previousPoint.y)) >= 100)) {
+			if (((std::abs(std::abs(mouseStruct->pt.x) - std::abs(_previousPoint.x)) >= MOUSE_PRECISION) ||					// Prevents mouse move spam
+				std::abs(std::abs(mouseStruct->pt.y) - std::abs(_previousPoint.y)) >= MOUSE_PRECISION)) {
 				_previousPoint.x = mouseStruct->pt.x;
 				_previousPoint.y = mouseStruct->pt.y;
 				_packager->addClick(nCode, wParam, lParam);	// MOUSEMOVEMENT

