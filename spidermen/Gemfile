@@ -56,3 +56,6 @@ gem 'rails_12factor', group: :production
 # paginate
 gem 'will_paginate', '~> 3.0'
 gem 'will_paginate-bootstrap'
+
+# Use exception notification
+gem 'exception_notification'

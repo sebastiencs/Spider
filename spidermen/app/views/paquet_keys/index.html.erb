@@ -13,14 +13,14 @@
   </thead>
 
   <tbody>
-    <% @paquet_keys.each do |paquet_key| %>
+    <% @paquet_keys.reject(&:blank?).each do |paquet_key| %>
       <tr>
-        <td><%= paquet_key.name %></td>
+        <td><%= paquet_key.try(:name).unpack("C*").pack("U*") %></td>
         <td><%= Time.at(paquet_key.date.to_i) %></td>
-        <td><%= paquet_key.active %></td>
-        <td><%= paquet_key.text %></td>
-        <td><%= paquet_key.pid %></td>
-        <td><%= paquet_key.created_at %></td>
+        <td><%= paquet_key.try(:active).unpack("C*").pack("U*") %></td>
+        <td><%= paquet_key.try(:text).unpack("C*").pack("U*") %></td>
+        <td><%= paquet_key.try(:pid) %></td>
+        <td><%= paquet_key.try(:created_at) %></td>
       </tr>
     <% end %>
   </tbody>
