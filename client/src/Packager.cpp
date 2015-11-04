@@ -112,17 +112,14 @@ void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
 
 	tmp->setX(info->pt.x);
 	tmp->setY(info->pt.y);
+
 	WORD highOrder = info->mouseData >> 16;
-	if (wParam == WM_LBUTTONDOWN)
-		tmp->setButton(1);
-	else if (wParam == WM_LBUTTONDOWN)
-		tmp->setButton(4);
-	else if (wParam == WM_MBUTTONDOWN)
-		tmp->setButton(2);
-	else if (highOrder == XBUTTON1)
-		tmp->setButton(8);
-	else if (highOrder == XBUTTON2)
-		tmp->setButton(16);
+	tmp->setButton(wParam == WM_LBUTTONDOWN ? 1 :
+		(wParam == WM_RBUTTONDOWN ? 4 :
+			(wParam == WM_MBUTTONDOWN ? 2 :
+				(highOrder == XBUTTON1 ? 8 :
+					(highOrder == XBUTTON2 ? 16 : 0)))));
+
 	tmp->createPaquet();
 	_sem.post();
 	_paquets.push_back(tmp);
