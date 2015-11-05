@@ -14,10 +14,32 @@ $(document).ready( function() {
 	    },
 	];
 	var option = {
-		percentageInnerCutout: 75
+		percentageInnerCutout: 75,
+   		responsive: true,
+	    maintainAspectRatio: false
 	};
-	var ctx = $("#statsPaquet").get(0).getContext("2d");
+	var ctx = $("#statsPaquetAll").get(0).getContext("2d");
 	var myDoughnutChart = new Chart(ctx).Doughnut(data, option);
-  	$("div.container div.row.stats div.numberMouses h3[data-toggle='tooltip']").tooltip();
-  	$("div.container div.row.stats div.numberKeys h3[data-toggle='tooltip']").tooltip();
+  	$("div.container div.row.statsTitle div.numberMouses h3[data-toggle='tooltip']").tooltip();
+  	$("div.container div.row.statsTitle div.numberKeys h3[data-toggle='tooltip']").tooltip();
+	var data = {
+	    labels: ["None", "Left", "Right", "X1Button", "X2Button"],
+	    datasets: [
+	        {
+	            fillColor: "rgba(220,220,220,0.5)",
+	            strokeColor: "rgba(220,220,220,0.8)",
+	            highlightFill: "rgba(220,220,220,0.75)",
+	            highlightStroke: "rgba(220,220,220,1)",
+	            data: [
+	            	$("div.container div.row.paquetsMouses div.statsPaquetsMouses").attr("none"),
+	            	$("div.container div.row.paquetsMouses div.statsPaquetsMouses").attr("left"),
+	            	$("div.container div.row.paquetsMouses div.statsPaquetsMouses").attr("right"),
+	            	$("div.container div.row.paquetsMouses div.statsPaquetsMouses").attr("X1Button"),
+	            	$("div.container div.row.paquetsMouses div.statsPaquetsMouses").attr("X2Button")
+	            ]
+	        }
+	    ]
+	};
+	var ctx = $("#statsPaquetMouses").get(0).getContext("2d");
+	var myBarChart = new Chart(ctx).Bar(data, option);
 });

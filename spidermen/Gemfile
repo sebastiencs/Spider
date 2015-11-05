@@ -59,3 +59,6 @@ gem 'will_paginate-bootstrap'
 
 # Use exception notification
 gem 'exception_notification'
+
+# Use roo
+gem 'roo', '~> 2.1.0'

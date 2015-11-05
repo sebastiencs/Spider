@@ -1,38 +1,36 @@
 <div class="row title">
-	<div class="col-md-6 title"><h2>Spidermen</h2></div>
-	<div class="col-md-6 sub_title"><h3>Aka Spidercochon</h3></div>
+	<div class="col-md-12 title">
+		<h2>Spidermen</h2>
+	</div>
+</div>
+
+<div class="row statsTitle">
+	<div class="col-md-12"><h3>Paquets Mouses and Paquets Keys stats</h3></div>
+	<div class="col-md-3"></div>
+	<div class="col-md-3">
+		<div class="numberKeys">
+			<h3 data-toggle="tooltip" data-placement="top" title="Paquets Keys"><%= get_percent(@paquet_keys.count)%> %</h3>
+		</div>
+	</div>
+	<div class="col-md-3">
+		<div class="numberMouses">
+			<h3 data-toggle="tooltip" data-placement="top" title="Paquets Mouses"><%= get_percent(@paquet_mouses.count)%> %</h3>
+		</div>
+	</div>
+	<div class="col-md-3"></div>
 </div>
 
 <div class="row stats">
-	<div class="statsNumber" paquetsKeys="<%= PaquetKey.count.to_s.chomp(".0") %>" paquetsMouses="<%= PaquetMouse.count.to_s.chomp(".0") %>"></div>
-	<div class="numberKeys"><h3 data-toggle="tooltip" data-placement="left" title="Paquets Keys"><%= get_percent(PaquetKey.count)%> %</h3></div>
-	<canvas id="statsPaquet" width="380" height="380"></canvas>
-	<img class="spiderCochon" alt="spider" src="https://simpsonentreamis.files.wordpress.com/2015/02/unlock_plopperpig.png"/>
-	<div class="numberMouses"><h3 data-toggle="tooltip" data-placement="right" title="Paquets Mouses"><%= get_percent(PaquetMouse.count)%> %</h3></div>
+	<div class="statsNumber" paquetsKeys="<%= @paquet_keys.count.to_s.chomp(".0") %>" paquetsMouses="<%= @paquet_mouses.count.to_s.chomp(".0") %>"></div>
+	<div class="col-md-12">
+		<canvas id="statsPaquetAll" width="380" height="380"></canvas>
+	</div>
 </div>
 
-<script>
-$(document).ready( function() {
-	var data = [
-	    {
-	        value: $("div.container div.row.stats div.statsNumber").attr("paquetsKeys"),
-	        color:"#F7464A",
-	        highlight: "#FF5A5E",
-	        label: "Paquets Keys"
-	    },
-	    {
-	        value: $("div.container div.row.stats div.statsNumber").attr("paquetsMouses"),
-	        color: "#46BFBD",
-	        highlight: "#5AD3D1",
-	        label: "Paquets Mouses"
-	    },
-	];
-	var option = {
-		percentageInnerCutout: 75
-	};
-	var ctx = $("#statsPaquet").get(0).getContext("2d");
-	var myDoughnutChart = new Chart(ctx).Doughnut(data, option);
-  	$("div.container div.row.stats div.numberMouses h3[data-toggle='tooltip']").tooltip();
-  	$("div.container div.row.stats div.numberKeys h3[data-toggle='tooltip']").tooltip();
-});	
-</script>
+<div class="row paquetsMouses">
+	<div class="statsPaquetsMouses" none="<%= @paquet_mouses_none.count.to_s.chomp(".0") %>" left="<%= @paquet_mouses_left.count.to_s.chomp(".0") %>" right="<%= @paquet_mouses_right.count.to_s.chomp(".0") %>" middle="<%= @paquet_mouses_middle.count.to_s.chomp(".0") %>" X1Button="<%= @paquet_mouses_x1.count.to_s.chomp(".0") %>" X2Button="<%= @paquet_mouses_x2.count.to_s.chomp(".0") %>"></div>
+	<div class="col-md-12"><h3>Paquets Mouses stats</h3></div>
+	<div class="col-md-12">
+		<canvas id="statsPaquetMouses" width="380" height="380"></canvas>
+	</div>
+</div>

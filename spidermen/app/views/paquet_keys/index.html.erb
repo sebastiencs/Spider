@@ -18,7 +18,7 @@
         <td><%= paquet_key.try(:name).unpack("C*").pack("U*") %></td>
         <td><%= Time.at(paquet_key.date.to_i) %></td>
         <td><%= paquet_key.try(:active).unpack("C*").pack("U*") %></td>
-        <td><%= paquet_key.try(:text).unpack("C*").pack("U*") %></td>
+        <td><%= paquet_key.try(:text).unpack("C*").pack("U*")  %></td>
         <td><%= paquet_key.try(:pid) %></td>
         <td><%= paquet_key.try(:created_at) %></td>
       </tr>
