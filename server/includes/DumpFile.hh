@@ -39,6 +39,8 @@ public:
 private:
   std::ofstream *_file;
   std::string	_name;
+
+  std::map<std::string, std::string>	_translate;
 };
 
 #endif /* !_JSON_HH_ */

