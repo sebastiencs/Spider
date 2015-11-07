@@ -250,8 +250,6 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
 #endif // !DEBUG
 
   try {
-    if (_dumpFile)
-      _dumpFile->writePaquet(&paquet);
     if (_httpPost)
       _httpPost->postPaquet(&paquet, _name);
   }

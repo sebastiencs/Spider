@@ -1,3 +1,13 @@
+//
+// HttpPost.cpp for includes in /home/bresci_b/rendu/Spider/server/src
+//
+// Made by bresci_b bresci_b
+// Login   <bresci_b@epitech.net>
+//
+// Started on  Tue Oct 27 11:35:15 2015 bresci_b bresci_b
+// Last update Tue Oct 27 17:16:43 2015 bresci_b bresci_b
+//
+
 #include "debug.hh"
 #include "HttpPost.hh"
 

@@ -1,4 +1,13 @@
-#include <boost/algorithm/string/predicate.hpp>
+//
+// DumpFile.hh for includes in /home/bresci_b/rendu/Spider/server/src
+//
+// Made by bresci_b bresci_b
+// Login   <bresci_b@epitech.net>
+//
+// Started on  Tue Oct 27 11:35:15 2015 bresci_b bresci_b
+// Last update Tue Nov 07 11:13:43 2015 bresci_b bresci_b
+//
+
 #include "DumpFile.hh"
 
 DumpFile::DumpFile()
@@ -70,13 +79,15 @@ std::string	DumpFile::getName() const
   return _name;
 }
 
-std::string	DumpFile::getTime() const
+std::string	DumpFile::getTime(PaquetKeys *paquet) const
 {
-  boost::posix_time::ptime	time_now;
+  boost::posix_time::ptime	time_paquet;
   std::string			time;
 
-  time_now = boost::posix_time::second_clock::local_time();
-  time = boost::posix_time::to_simple_string(time_now).c_str();
+  if (!paquet)
+    return "UnnownTime";
+  time_paquet = boost::posix_time::from_time_t(paquet->getDate()); 
+  time = boost::posix_time::to_simple_string(time_paquet).c_str();
   return !time.empty() ? boost::replace_all_copy(time, " ", "-") : "UnknownTime";
 }
 
@@ -101,7 +112,7 @@ bool		DumpFile::writePaquet(PaquetKeys *paquet)
     {
       if (!boost::equals(active, tmpActive)) {
 	active = tmpActive;
-	*_file << std::endl << "[" << active << "]" << std::endl << std::endl; // Faudrait la date lisible avant le '['
+	*_file << std::endl << getTime(paquet) << " " << "[" << active << "]" << std::endl << std::endl;
       }
 
       text = tmpText;
@@ -117,29 +128,6 @@ bool		DumpFile::writePaquet(PaquetKeys *paquet)
       // altgr = ((boost::starts_with(tmpText, "[Right MENU]") && std::string(tmpText).size() != 12) ? (!altgr) : (0));
 
       return true;
-    }
-  return false;
-}
-
-bool		DumpFile::writePaquet(PaquetMouse *paquet)
-{
-  std::string active = "";
-
-  if (!paquet)
-    return false;
-  if (checkFileExist())
-    {
-      // active = (paquet->getActive()) ? (paquet->getActive()) : (std::string());
-      // *_file << "PaquetMouse = {name: " << getName();
-      // *_file << ", date: " << paquet->getDate();
-      // *_file << ", sizeActive: " << active.size();
-      // if (!active.empty())
-      // 	*_file << ", active: " << active;
-      // *_file << ", X: " << paquet->getX();
-      // *_file << ", Y: " << paquet->getY();
-      // *_file << ", Button: " << static_cast<int>(paquet->getButton());
-      // *_file << ((paquet->getButton() == 1) ? ("(Left)") : ((paquet->getButton() == 2) ? ("(Middle)") : ("(Right)")));
-      // *_file << "}" << std::endl;
     }
   return false;
 }
