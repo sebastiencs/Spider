@@ -6,32 +6,12 @@
 #include "Hooker.hh"
 #include "reseau/Network.hh"
 
-int	__declspec(naked) isDebugging(void)
-{
-  __asm {
-
-    mov eax, fs:[0x30]
-			mov al, [eax + 10bch]
-			and al, 0x70
-      cmp al, 0x70
-      je yes
-      jmp no
-
-      yes:
-      mov eax, 1
-      ret
-      no:
-      xor eax, eax
-      ret
-  }
-}
-
 int main(int ac, char **av)
 {
-	//if (isDebugging()) {
-	//	return (-1);
-	//}
-	if (ac >= 3)
+	if (IsDebuggerPresent()) {
+		return (-1);
+	}
+  	if (ac >= 3)
 	{
 		try {
 			Packager* packager = new Packager();
