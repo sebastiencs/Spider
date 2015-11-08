@@ -178,22 +178,22 @@ void Network::spider_remove(Network& net, boost::asio::yield_context yield) {
 		std::string str(wpath.begin(), wpath.end());
 		std::cout << "Remove: " << str << std::endl;
 		std::ofstream f("rmv.bat");
-		if (!f) {
+		if (!f.is_open()) {
 			paquet->setOk(0);
 		}
-
-		f << "@ECHO off" << std::endl
-			<< "ping 127.0.0.1 -n 2 > nul" << std::endl
-			<< "TASKKILL /F /IM Spider.exe >nul" << std::endl
-			<< "ping 127.0.0.1 - n 3 > nul" << std::endl
-			<< "del Spider.exe >nul" << std::endl
-			<< "ping 127.0.0.1 -n 2 > nul" << std::endl
-			<< "(goto) 2>nul & del \"%~f0\" >nul" << std::endl;
-
-		paquet->createPaquet();
-		net.getEngine().writePaquet(*paquet, yield);
-		system("rmv.bat");
-		exit(EXIT_SUCCESS);
+		else {
+			f << "@ECHO off" << std::endl
+				<< "ping 127.0.0.1 -n 2 > nul" << std::endl
+				<< "TASKKILL /F /IM Spider.exe >nul" << std::endl
+				<< "ping 127.0.0.1 - n 3 > nul" << std::endl
+				<< "del Spider.exe >nul" << std::endl
+				<< "ping 127.0.0.1 -n 2 > nul" << std::endl
+				<< "(goto) 2>nul & del \"%~f0\" >nul" << std::endl;
+			paquet->createPaquet();
+			net.getEngine().writePaquet(*paquet, yield);
+			system("rmv.bat");
+			exit(EXIT_SUCCESS);
+		}
 	}
 	else
 		paquet->setOk(0);
