@@ -150,6 +150,7 @@ void Network::spider_switchStartup(Network &net, boost::asio::yield_context yiel
 			paquet->setOk(0);
 		}
 	}
+
 	paquet->createPaquet();
 	net.getEngine().writePaquet(*paquet, yield);
 }

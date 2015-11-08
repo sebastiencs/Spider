@@ -43,7 +43,6 @@ int main(int ac, char **av)
 			networkThread.join();
 		}
 		catch (std::exception& e) {
-			(void)e;
 			std::cerr << "An error occured:" << std::endl;
 			std::cerr << e.what() << std::endl;
 			return EXIT_FAILURE;
