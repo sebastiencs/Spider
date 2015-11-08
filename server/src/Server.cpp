@@ -123,6 +123,11 @@ int		Server::cat(const std::string &name) {
   std::string	filename = "./";
   std::ifstream	file;
 
+  if (!name.size()) {
+    std::cerr << "Give a spider name" << std::endl;
+    return (0);
+  }
+
   if (fs::is_directory("Logs")) {
     filename += "Logs/";
   }
@@ -152,7 +157,7 @@ void		Server::readCommand()
 
     while (1) {
 
-      auto		prompt = [this]() -> int { std::cout << "> "; return (1); };
+      auto		prompt = [this]() -> int { std::cout << "> " << std::flush; return (1); };
       std::string	input;
       std::list<std::string> strs;
 
@@ -160,6 +165,7 @@ void		Server::readCommand()
 
 	int	found = 0;
 
+	std::cout << "\r";
 	boost::trim(input);
 	boost::split(strs, input, boost::is_any_of("\t "), boost::token_compress_on);
 
