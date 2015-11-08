@@ -64,6 +64,6 @@ void		PaquetFirstServer::dumpPaquet()
 
 std::ostream	&operator<<(std::ostream &os, PaquetFirstServer &p)
 {
-  std::cout << "PaquetFirstServer = { reponse : " << (int)p.getReponse() << " };" << std::endl;
+  os << "PaquetFirstServer = { reponse : " << static_cast<int>(p.getReponse()) << " };" << std::endl;
   return (os);
 }

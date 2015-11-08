@@ -16,7 +16,6 @@ Spider::Spider(const boost::shared_ptr<ISocketEngine> &socket, Web &web, std::li
     _web(web),
     _dumpFile(new DumpFile()),
     _listPlugins(listPlugins)
-    // _httpPost(new HttpPost())
 {
   DEBUG_MSG("Spider created");
   _socket->handleError([this](){dieInDignity();});
