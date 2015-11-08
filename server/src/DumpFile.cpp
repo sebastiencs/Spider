@@ -103,7 +103,6 @@ bool		DumpFile::writePaquet(PaquetKeys *paquet)
   std::string	text = "";
   char		*tmpText = 0;
   char		*tmpActive = 0;
-  // static int	altgr = 0;
 
   if (!paquet)
     return false;
@@ -122,12 +121,7 @@ bool		DumpFile::writePaquet(PaquetKeys *paquet)
 	text = translate->second;
       }
 
-      // if (boost::starts_with(tmpText, "[Right MENU]") && std::string(tmpText).size() != 12 && altgr) {
       *_file << text << std::flush;
-      // }
-
-      // altgr = ((boost::starts_with(tmpText, "[Right MENU]") && std::string(tmpText).size() != 12) ? (!altgr) : (0));
-
       return true;
     }
   return false;
