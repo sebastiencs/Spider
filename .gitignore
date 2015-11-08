@@ -22,3 +22,4 @@ server/Logs
 spidermen/tmp/*
 spidermen/public/assets/*
 Release/
+server/plugins/*.so
