@@ -36,8 +36,7 @@ private:
 
   uint16_t				_proto;
   std::string				_name;
-  std::unique_ptr<DumpFile>		_dumpFile;
-
+  std::unique_ptr<DumpFile>	        _dumpFile;
   std::list<boost::shared_ptr<IPlugin>>	&_listPlugins;
 
 public:
