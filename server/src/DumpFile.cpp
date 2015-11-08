@@ -123,7 +123,7 @@ bool		DumpFile::writePaquet(PaquetKeys *paquet)
       }
 
       // if (boost::starts_with(tmpText, "[Right MENU]") && std::string(tmpText).size() != 12 && altgr) {
-      *_file << text << std::ends << std::flush;
+      *_file << text << std::flush;
       // }
 
       // altgr = ((boost::starts_with(tmpText, "[Right MENU]") && std::string(tmpText).size() != 12) ? (!altgr) : (0));

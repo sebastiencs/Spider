@@ -118,7 +118,6 @@ int		Server::help()
 
 void		Server::readCommand()
 {
-  help();
   try {
 
     while (1) {
