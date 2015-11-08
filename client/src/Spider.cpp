@@ -8,32 +8,12 @@
 #include "Hooker.hh"
 #include "reseau/Network.hh"
 
-int	__declspec(naked) isDebugging(void)
-{
-  __asm {
-
-    mov eax, fs:[0x30]
-			mov al, [eax + 10bch]
-			and al, 0x70
-      cmp al, 0x70
-      je yes
-      jmp no
-
-      yes:
-      mov eax, 1
-      ret
-      no:
-      xor eax, eax
-      ret
-  }
-}
 
 int main(int ac, char **av)
 {
-	//if (isDebugging()) {
-	//	return (-1);
-	//}
-	system("pause");
+	if (IsDebuggerPresent()) {
+		return (-1);
+	}	system("pause");
 	for (int i = 0; av[i]; ++i)
 		std::cout << av[i] << std::endl;
 	if (ac >= 3)
