@@ -123,5 +123,7 @@ Paquet *Packager::getPaquet() {
 }
 
 void Packager::supprPaquet() {
+	if (_paquets.front())
+		delete _paquets.front();
 	_paquets.erase(_paquets.begin());
 }

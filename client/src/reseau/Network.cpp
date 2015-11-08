@@ -123,10 +123,10 @@ void Network::readLoop(boost::asio::yield_context yield)
 			_response[paquet.getReponse()](yield);
 		else
 		{
-			PaquetCommandClient *paquet = new PaquetCommandClient();
-			paquet->setOk(0);
-			paquet->createPaquet();
-			_engine->writePaquet(*paquet, yield);
+			PaquetCommandClient paquet;
+			paquet.setOk(0);
+			paquet.createPaquet();
+			_engine->writePaquet(paquet, yield);
 		}
 		std::cout << "Network Receiving paquet: " << paquet << std::endl;
 	}
