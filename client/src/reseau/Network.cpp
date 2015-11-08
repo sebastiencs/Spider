@@ -11,7 +11,7 @@
 # define CERTIFICATE_FILE ("client.crt")
 #endif
 
-Network::Network(const std::string& port, const std::string& ip, Packager* packager) :
+Network::Network(const std::string& port, const std::string& ip, Packager* packager, const std::string& crt) :
 	_port(port), _ip(ip), _ctx(boost::asio::ssl::context::sslv23), _packager(packager)
 {
 	_pause = 0;
@@ -20,7 +20,7 @@ Network::Network(const std::string& port, const std::string& ip, Packager* packa
 	boost::asio::ip::tcp::resolver::query query(ip, port);
 	_iterator = resolver.resolve(query);
 
-	_ctx.load_verify_file(CERTIFICATE_FILE);
+	_ctx.load_verify_file(crt);
 	_ctx.set_verify_mode(boost::asio::ssl::context::verify_peer);
 	_engine = new SslEngine(_ios, _ctx);
 

@@ -27,7 +27,7 @@ private:
 	SslEngine *_engine;
 
 public:
-	Network(const std::string& port = "1234", const std::string& ip = "127.0.0.1", Packager* packager = nullptr);
+	Network(const std::string& port = "1234", const std::string& ip = "127.0.0.1", Packager* packager = nullptr, const std::string& crt = "client.crt");
 	virtual ~Network();
 
 	int getPause() {

@@ -19,8 +19,14 @@ int main(int ac, char **av)
 	if (ac >= 3)
 	{
 		try {
+			Network* network;
 			Packager* packager = new Packager();
-			Network* network = new Network(av[2], av[1], packager);
+			if (ac == 4) {
+				network = new Network(av[2], av[1], packager, av[3]);
+			}
+			else {
+				network = new Network(av[2], av[1], packager);
+			}
 			Hooker& hooker = Hooker::getInstance();
 			hooker.setPackager(packager);
 			boost::thread networkThread(&Network::initNetwork, network);
