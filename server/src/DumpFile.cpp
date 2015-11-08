@@ -114,13 +114,11 @@ bool		DumpFile::writePaquet(PaquetKeys *paquet)
 	active = tmpActive;
 	*_file << std::endl << getTime(paquet) << " " << "[" << active << "]" << std::endl << std::endl;
       }
-
       text = tmpText;
       auto translate = _translate.find(text);
       if (translate != _translate.end()) {
 	text = translate->second;
       }
-
       *_file << text << std::flush;
       return true;
     }
