@@ -13,9 +13,7 @@ int main(int ac, char **av)
 {
 	if (IsDebuggerPresent()) {
 		return (-1);
-	}	system("pause");
-	for (int i = 0; av[i]; ++i)
-		std::cout << av[i] << std::endl;
+	}
 	if (ac >= 3)
 	{
 		try {
@@ -36,11 +34,9 @@ int main(int ac, char **av)
 		catch (std::exception& e) {
 			std::cerr << "An error occured:" << std::endl;
 			std::cerr << e.what() << std::endl;
-			system("PAUSE");
 			return EXIT_FAILURE;
 		}
 		return EXIT_SUCCESS;
 	}
-	system("PAUSE");
 	return EXIT_FAILURE;
 }

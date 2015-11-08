@@ -30,12 +30,8 @@ int			Startup::isStartup() const
 	if ((RegGetValue(HKEY_LOCAL_MACHINE, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", L"Spider", RRF_RT_ANY, NULL, (LPVOID)tmp, &size) != ERROR_SUCCESS
 		&& _wappPath.compare(tmp) == -1) && (RegGetValue(HKEY_CURRENT_USER, L"Software\\Microsoft\\Windows\\CurrentVersion\\Run", L"Spider", RRF_RT_ANY, NULL, (LPVOID)tmp, &size) != ERROR_SUCCESS
 			&& _wappPath.compare(tmp) == -1)) {
-		std::cout << "IF STARTUP RETURN FALSE" << std::endl;
 		return(0);
 	}
-
-	std::cout << "IF STARTUP RETURN TRUE" << std::endl;
-
 	return (1);
 }
 
