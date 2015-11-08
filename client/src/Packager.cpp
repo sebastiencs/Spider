@@ -52,11 +52,14 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 
 		std::string fullActiveName;
 		std::string *activeNamePtr;
+		std::string *activeTitlePtr;
 
 		activeNamePtr = SelfUtils::getNameFromPID(SelfUtils::getActiveWindowPID());
-		fullActiveName = *activeNamePtr + " - " + *SelfUtils::getActiveWindowTitle();
+		activeTitlePtr = SelfUtils::getActiveWindowTitle();
+		fullActiveName = *activeNamePtr + " - " + *activeTitlePtr;
 		tmp->setActive(fullActiveName);
 		delete activeNamePtr;
+		delete activeTitlePtr;
 
 		tmp->setDate(SelfUtils::secondsSinceEpoch());
 		tmp->setPid(SelfUtils::getActiveWindowPID());
@@ -94,10 +97,15 @@ void Packager::addClick(int nCode, WPARAM wParam, LPARAM lParam) {
 	PaquetMouse *tmp = new PaquetMouse();
 
 	std::string fullActiveName;
-	fullActiveName = *SelfUtils::getNameFromPID(SelfUtils::getActiveWindowPID()) + "-"
-		+ *SelfUtils::getActiveWindowTitle();
-	tmp->setActive(fullActiveName);
+	std::string *activeNamePtr;
+	std::string *activeTitlePtr;
 
+	activeNamePtr = SelfUtils::getNameFromPID(SelfUtils::getActiveWindowPID());
+	activeTitlePtr = SelfUtils::getActiveWindowTitle();
+	fullActiveName = *activeNamePtr + " - " + *activeTitlePtr;
+	tmp->setActive(fullActiveName);
+	delete activeNamePtr;
+	delete activeTitlePtr;
 	tmp->setDate(SelfUtils::secondsSinceEpoch());
 	tmp->setPid(SelfUtils::getActiveWindowPID());
 
