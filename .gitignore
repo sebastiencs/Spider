@@ -21,3 +21,4 @@ server/server
 server/Logs
 spidermen/tmp/*
 spidermen/public/assets/*
+Release/
