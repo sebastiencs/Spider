@@ -43,7 +43,7 @@ void Network::initNetwork() {
 		boost::system::error_code ec;
 
 		for (;;) {
-				std::cout << "Try to connect to the server" << std::endl;
+				std::cout << "Trying to connect to the server" << std::endl;
 				_engine->getSocket().async_connect(endpoint, yield[ec]);
 				if (!ec) {
 					std::cout << "SSL: initializing HandShake" << std::endl;
@@ -102,10 +102,10 @@ void Network::writeLoop(boost::asio::yield_context yield)
 	while (1) {
 
 		_packager->isLeft();
-		std::cout << "Packager OK" << std::endl;
+		std::cout << "Packager: OK" << std::endl;
 		Paquet *paquet = _packager->getPaquet();
 			if (_pause == 0) {
-				std::cout << "SENDING PAQUET: " << *paquet << std::endl;
+				std::cout << "Network Sending Paquet: " << *paquet << std::endl;
 				if (_engine->writePaquet(*paquet, yield) == -1) {
 					return;
 				}
@@ -120,7 +120,6 @@ void Network::readLoop(boost::asio::yield_context yield)
 
 	while (!_engine->read(paquet)) {
 		if (_response.count(paquet.getReponse()) > 0)
-		// if (paquet.getReponse() >= 4 && paquet.getReponse() <= 8)
 			_response[paquet.getReponse()](yield);
 		else
 		{
@@ -129,7 +128,7 @@ void Network::readLoop(boost::asio::yield_context yield)
 			paquet->createPaquet();
 			_engine->writePaquet(*paquet, yield);
 		}
-		std::cout << "Paquet recu: " << paquet << std::endl;
+		std::cout << "Network Receiving paquet: " << paquet << std::endl;
 	}
 }
 
@@ -159,7 +158,7 @@ void Network::spider_exit(Network& net, boost::asio::yield_context yield) {
 	PaquetCommandClient *paquet = new PaquetCommandClient();
 
 	paquet->setOk(1);
-	std::cout << "Exit spider" << std::endl;
+	std::cout << "Exiting Spider..." << std::endl;
 	paquet->createPaquet();
 	net.getEngine().writePaquet(*paquet, yield);
 	exit(EXIT_SUCCESS);
