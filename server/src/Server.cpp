@@ -10,16 +10,24 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
+#include <boost/range/iterator_range.hpp>
 #include <boost/filesystem.hpp>
 #include <iostream>
 #include "Server.hh"
+#include "IPlugin.hh"
+#include <dlfcn.h>
+
+#define PLUGINS_DIRECTORY ("./plugins")
+
+namespace fs = boost::filesystem;
 
 Server::Server(uint16_t port)
-  : _web(new Web(port)),
+  : _web(new Web(port, _listPlugins)),
     _signal(*this)
 {
   DEBUG_MSG("Server is running");
-  boost::filesystem::create_directory("Logs");
+  try { boost::filesystem::create_directory("Logs"); }
+  catch (std::exception &) {}
   _signal.addSignal(SIGINT);
 
   _commandsSpider["startup"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(5));
@@ -30,6 +38,8 @@ Server::Server(uint16_t port)
   _commandsServer["list"] = [this]() -> int { return (_web->listSpider()); };
   _commandsServer["quit"] = [this]() -> int { _web->stop(); return (1); };
   _commandsServer["help"] = [this]() -> int { return (help()); };
+
+  loadPlugins(PLUGINS_DIRECTORY);
 }
 
 Server::~Server()
@@ -37,6 +47,43 @@ Server::~Server()
   DEBUG_MSG("Closing server");
 
   _thread.detach();
+}
+
+void		Server::loadPlugins(const std::string &path) {
+  fs::path	dir(path);
+
+  try {
+    if (fs::exists(dir) && fs::is_directory(dir)) {
+      for(auto &file : boost::make_iterator_range(fs::directory_iterator(dir), {})) {
+	if (boost::ends_with(file.path().string(), ".so") && !fs::is_directory(file.path().string())) {
+
+	  IPlugin	*(*plugin)();
+	  void		*symbol;
+
+	  if (!(symbol = dlopen(file.path().string().c_str(), RTLD_LAZY | RTLD_GLOBAL | RTLD_NOW))) {
+	    std::cerr << "Can't load library: " << dlerror() << std::endl;
+	    continue ;
+	  }
+	  if (!(plugin = reinterpret_cast<IPlugin *(*)()>(dlsym(symbol, "loadPlugin")))) {
+	    std::cerr << "Can't load library" << dlerror() << std::endl;
+	    continue ;
+	  }
+
+	  boost::shared_ptr<IPlugin> plug((plugin)());
+
+	  if (!plug) {
+	    std::cerr << "Can't load library" << std::endl;
+	    continue ;
+	  }
+	  _listPlugins.push_back(plug);
+	  std::cout << "Plugin loaded: " << file.path().filename() << std::endl;
+	}
+      }
+    }
+  }
+  catch (std::exception &e) {
+    std::cerr << "Can't load plugins" << e.what() << std::endl;
+  }
 }
 
 void		Server::start()

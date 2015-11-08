@@ -50,6 +50,7 @@ DumpFile::~DumpFile()
   DEBUG_MSG("DumpFile deleted");
   if (_file && _file->is_open())
     {
+      *_file << "\n";
       _file->close();
       delete _file;
     }
@@ -86,7 +87,7 @@ std::string	DumpFile::getTime(PaquetKeys *paquet) const
 
   if (!paquet)
     return "UnnownTime";
-  time_paquet = boost::posix_time::from_time_t(paquet->getDate()); 
+  time_paquet = boost::posix_time::from_time_t(paquet->getDate());
   time = boost::posix_time::to_simple_string(time_paquet).c_str();
   return !time.empty() ? boost::replace_all_copy(time, " ", "-") : "UnknownTime";
 }

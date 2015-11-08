@@ -12,9 +12,10 @@
 #include "Spider.hh"
 #include "Web.hh"
 
-Web::Web(uint16_t port)
+Web::Web(uint16_t port, std::list<boost::shared_ptr<IPlugin>> &listPlugins)
   : _ctx(new SslContext()),
-    _acceptor(new Acceptor(*_ctx, port))
+    _acceptor(new Acceptor(*_ctx, port)),
+    _listPlugins(listPlugins)
 {
   DEBUG_MSG("Web is running");
   waitSpider();
@@ -38,7 +39,7 @@ void		Web::stop()
 void		Web::waitSpider()
 {
   _acceptor->async_accept([this](boost::shared_ptr<ISocketEngine> &sock) {
-      const boost::shared_ptr<Spider>	spider(new Spider(sock, *this));
+      const boost::shared_ptr<Spider>	spider(new Spider(sock, *this, _listPlugins));
 
       insertSpider(spider);
       spider->prepareFirstConnection();

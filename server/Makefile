@@ -21,7 +21,6 @@ SRC			= src/main.cpp					\
 			  src/Signal.cpp				\
 			  src/Buffer.cpp				\
 			  src/DumpFile.cpp				\
-			  src/HttpPost.cpp				\
 			  $(DIR_COMMON)/src/paquet.cpp			\
 			  $(DIR_COMMON)/src/paquetKeys.cpp		\
 			  $(DIR_COMMON)/src/paquetMouse.cpp		\
@@ -41,12 +40,13 @@ RM			= rm -f
 
 override CXXFLAGS	+= -std=c++11 -Wall -Wextra $(INCLUDES) -D CERTIFICATE_FILE=\"ressources/server.crt\" -D PRIVATE_KEY_FILE=\"ressources/server.key\" -D DH_FILE=\"ressources/dh1024.pem\"
 
-LDLIBS			= -lboost_system -lboost_coroutine -lboost_filesystem -lboost_date_time -lboost_thread -lssl -lcrypto -lcurl
+LDLIBS			= -lboost_system -lboost_coroutine -lboost_filesystem -lboost_date_time -lboost_thread -lssl -lcrypto -lcurl -ldl
 
 DEPS			= $(OBJ:.o=.d)
 
 $(NAME):	$(OBJ)
 		$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJ) $(LDLIBS)
+		make -C ./plugins/HttpPost
 
 -include $(DEPS)
 
@@ -57,9 +57,11 @@ all:		$(NAME)
 
 clean:
 		$(RM) $(OBJ) $(DEPS)
+		make clean -C ./plugins/HttpPost
 
 fclean:		clean
 		$(RM) $(NAME)
+		make fclean -C ./plugins/HttpPost
 
 re:		fclean all
 

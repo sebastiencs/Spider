@@ -19,7 +19,7 @@
 # include "debug.hh"
 # include "Buffer.hh"
 # include "DumpFile.hh"
-# include "HttpPost.hh"
+# include "IPlugin.hh"
 
 # define PROTOCOL_VERSION	(1)
 # define SIZE_STRING		(2048)
@@ -37,10 +37,11 @@ private:
   uint16_t				_proto;
   std::string				_name;
   std::unique_ptr<DumpFile>		_dumpFile;
-  std::unique_ptr<HttpPost>		_httpPost;
+
+  std::list<boost::shared_ptr<IPlugin>>	&_listPlugins;
 
 public:
-  Spider(const boost::shared_ptr<ISocketEngine> &, Web &);
+  Spider(const boost::shared_ptr<ISocketEngine> &, Web &, std::list<boost::shared_ptr<IPlugin>> &);
   virtual ~Spider();
 
   boost::shared_ptr<ISocketEngine>	&getSocket();
@@ -51,7 +52,6 @@ public:
   void		dieInDignity();
   void		setName(uint16_t);
   void		getTypeInfo(boost::asio::yield_context);
-//void		getTypeInfo();
   void		getKeystrokes(boost::asio::yield_context &);
   void		getMouse(boost::asio::yield_context &);
   void		getClientCMD(boost::asio::yield_context &);

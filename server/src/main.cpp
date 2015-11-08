@@ -41,8 +41,6 @@ int		main(int argc, char **argv)
     std::cerr << "Exception : " << e.what() << std::endl;
   }
 
-
-  std::cout << "port: " << port << std::endl;
   return (0);
 }
 

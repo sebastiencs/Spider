@@ -26,10 +26,12 @@ private:
   std::shared_ptr<Acceptor>		_acceptor;
   std::set<boost::shared_ptr<Spider>>	_spiders;
 
+  std::list<boost::shared_ptr<IPlugin>>	&_listPlugins;
+
   void				insertSpider(const boost::shared_ptr<Spider> &);
 
 public:
-  Web(uint16_t);
+  Web(uint16_t, std::list<boost::shared_ptr<IPlugin>> &);
   virtual ~Web();
 
   void				start();
