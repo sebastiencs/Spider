@@ -10,10 +10,10 @@
 
 NAME			= ../HttpPost.so
 
-SRC			= HttpPost.cpp				\
-			  ../../../common/src/paquetKeys.cpp	\
-			  ../../../common/src/paquetMouse.cpp	\
-			  ../../../common/src/paquet.cpp
+SRC			= HttpPost.cpp		\
+			  paquetKeys.cpp	\
+			  paquetMouse.cpp	\
+			  paquet.cpp
 
 OBJ			= $(SRC:.cpp=.o)
 
