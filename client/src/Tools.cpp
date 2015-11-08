@@ -42,6 +42,7 @@ std::string* SelfUtils::getCleanName(const std::string& fullName) {
 std::string* SelfUtils::getNameFromPID(uint16_t pid) {
 	HANDLE Handle = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, pid);
 	std::string* buffer_str = new std::string("");
+	std::string *tmp;
 	if (Handle)
 	{
 		TCHAR buffer[MAX_PATH];
@@ -50,10 +51,11 @@ std::string* SelfUtils::getNameFromPID(uint16_t pid) {
 		{
 			std::wstring wstr(buffer);
 			buffer_str->append(wstr.begin(), wstr.end());
+			tmp = buffer_str;
 			buffer_str = SelfUtils::getCleanName(*buffer_str);
+			delete tmp;
 		}
 		CloseHandle(Handle);
 	}
 	return buffer_str;
 }
-
