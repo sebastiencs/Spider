@@ -14,9 +14,4 @@ class HomeController < ApplicationController
   def team
   end
   
-  def bonus
-    @xlsx = Roo::Spreadsheet.open("./public/TestBinary.xlsx")
-    @name_col = @xlsx.sheet(0).row(1).reject(&:blank?)
-  end
-
 end

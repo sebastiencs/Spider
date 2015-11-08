@@ -38,7 +38,9 @@ void	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
 {
   _socket.async_handshake(type, [this, func](const boost::system::error_code &e) {
 	  if (e) {
+#ifdef DEBUG
 	std::cerr << "SSL - Can't do handshake: " << e.message() << std::endl;
+#endif // !DEBUG
 	_errorFunc();
 	  }
 	  else {
@@ -54,7 +56,9 @@ int	SslEngine::doHandshake(boost::asio::ssl::stream_base::handshake_type type,
 
   _socket.async_handshake(type, yield[ec]);
   if (ec) {
+#ifdef DEBUG
 	std::cerr << "SSL - Can't do handshake" << std::endl;
+#endif // !DEBUG
 	return (-1);
   }
   return (0);
@@ -93,7 +97,9 @@ void	SslEngine::async_read(void *buffer, size_t len, const std::function<void()>
   boost::asio::async_read(_socket, boost::asio::buffer(buffer, len),
 	[this, func](const boost::system::error_code &e, std::size_t bytes_transferred UNUSED ) {
 	  if (e) {
+#ifdef DEBUG
 	std::cerr << "SSL - Can't read: " << e.message() << std::endl;
+#endif // !DEBUG
 	_errorFunc();
 	  }
 	  else {
@@ -109,7 +115,9 @@ int	SslEngine::async_read(void *buffer, size_t len, boost::asio::yield_context y
   boost::asio::async_read(_socket, boost::asio::buffer(buffer, len), yield[ec]);
 
   if (ec) {
+#ifdef DEBUG
 	std::cerr << "SSL - Can't read" << std::endl;
+#endif // !DEBUG
 	return (-1);
   }
   return (0);
@@ -118,13 +126,17 @@ int	SslEngine::async_read(void *buffer, size_t len, boost::asio::yield_context y
 void    SslEngine::async_write(void *buffer, size_t len, const std::function<void()> &func)
 {
 	boost::asio::async_write(_socket, boost::asio::buffer(buffer, len),
-		[this, func](const boost::system::error_code &e, std::size_t bytes_transferred) {
+		[this, func](const boost::system::error_code &e, std::size_t bytes_transferred UNUSED) {
 		if (e) {
+#ifdef DEBUG
 			std::cerr << "SSL - Can't write: " << e.message() << std::endl;
+#endif // !DEBUG
 			_errorFunc();
 		}
 		else {
+#ifdef DEBUG
 			std::cout << "Envoye: " << (int)bytes_transferred << std::endl;
+#endif // !DEBUG
 			func();
 		}
 	});
@@ -137,7 +149,9 @@ int    SslEngine::async_write(void *buffer, size_t len, boost::asio::yield_conte
   boost::asio::async_write(_socket, boost::asio::buffer(buffer, len), yield[ec]);
 
   if (ec) {
+#ifdef DEBUG
 	std::cerr << "SSL - Can't write" << std::endl;
+#endif // !DEBUG
 	return (-1);
   }
   return (0);
@@ -177,9 +191,9 @@ void    SslEngine::writePaquet(const Paquet &paquet, const std::function<void()>
 	if (!paquet.getSize()) {
 		DEBUG_MSG("Trying to send empty paquet");
 	}
-#endif // !DEBUG
 	std::cout << "WRITEPAQUET: " << paquet << std::endl;
 	std::cout << "WRITEPAQUET SIZE: " << paquet.getSize() << std::endl;
+#endif // !DEBUG
 	async_write(paquet.getData(), paquet.getSize(), func);
 }
 
@@ -196,13 +210,17 @@ int	SslEngine::writePaquet(const Paquet &paquet, boost::asio::yield_context yiel
 void    SslEngine::readPaquet(const Paquet &paquet, const std::function<void()> &func)
 {
 	async_read(paquet.getData(), paquet.getSize(), func);
+#ifdef DEBUG
 	std::cout << "READPAQUET: " << paquet << std::endl;
+#endif // !DEBUG
 }
 
 int	SslEngine::readPaquet(const Paquet &paquet, boost::asio::yield_context yield)
 {
 	return (async_read(paquet.getData(), paquet.getSize(), yield));
+#ifdef DEBUG
 	std::cout << "READPAQUET: " << paquet << std::endl;
+#endif // !DEBUG
 }
 
 

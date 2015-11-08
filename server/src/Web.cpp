@@ -74,7 +74,9 @@ void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p)
   else {
     for (auto &spider : _spiders) {
       spider->getSocket()->writePaquet(*paquet, [this]() {
+#ifdef DEBUG
 	  std::cout << "Command sent" << std::endl;
+#endif // !DEBUG
 	});
     }
   }
@@ -87,7 +89,9 @@ void		Web::sendCommand(boost::weak_ptr<PaquetCommandServer> p, std::list<std::st
   for (auto &spider : _spiders) {
     if (std::find(listSpider.begin(), listSpider.end(), spider->getName()) != listSpider.end()) {
       spider->getSocket()->writePaquet(*paquet, [this, &spider]() {
+#ifdef DEBUG
 	  std::cout << "Command sent to " << spider->getName() << std::endl;
+#endif // !DEBUG
 	});
     }
   }

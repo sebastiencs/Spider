@@ -26,10 +26,10 @@ private:
   boost::thread		_thread;
   Signal		_signal;
 
-  std::map<std::string, boost::shared_ptr<PaquetCommandServer>>	_commandsSpider;
-  std::map<std::string, std::function<int()>>			_commandsServer;
+  std::map<std::string, boost::shared_ptr<PaquetCommandServer>>	 _commandsSpider;
+  std::map<std::string, std::function<int(const std::string &)>> _commandsServer;
 
-  std::list<boost::shared_ptr<IPlugin>>				_listPlugins;
+  std::list<boost::shared_ptr<IPlugin>>				 _listPlugins;
 
 public:
   Server(uint16_t);
@@ -40,6 +40,7 @@ public:
   void		readCommand();
   int		help();
   void		loadPlugins(const std::string &);
+  int		cat(const std::string &);
 };
 
 #endif /* !SERVER_H_ */
