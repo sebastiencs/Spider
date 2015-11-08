@@ -46,7 +46,9 @@ bool	HttpPost::getKey(PaquetKeys *paquet, const std::string &name)
   _res = curl_easy_perform(_curl);
   if (_res != CURLE_OK)
     {
+#ifdef DEBUG
       std::cerr << curl_easy_strerror(_res) << std::endl;
+#endif /* !DEBUG */
       return false;
     }
   return true;
@@ -71,7 +73,9 @@ bool	HttpPost::getMouse(PaquetMouse *paquet, const std::string &name)
   _res = curl_easy_perform(_curl);
   if (_res != CURLE_OK)
     {
+#ifdef DEBUG
       std::cerr << curl_easy_strerror(_res) << std::endl;
+#endif /* !DEBUG */
       return false;
     }
   return true;
