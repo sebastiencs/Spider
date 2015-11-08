@@ -145,7 +145,7 @@ void Network::spider_switchStartup(Network &net, boost::asio::yield_context yiel
 		}
 	}
 	else {
-		_startup.addStartup();
+		_startup.addStartup(_ip, _port);
 		if (!_startup.isStartup()) {
 			paquet->setOk(0);
 		}

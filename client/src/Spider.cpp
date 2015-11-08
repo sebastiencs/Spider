@@ -1,5 +1,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
+#include <chrono>
+#include <thread>
 #include <stdio.h>
 #include <iostream>
 #include <boost/thread.hpp>
@@ -31,6 +33,9 @@ int main(int ac, char **av)
 	//if (isDebugging()) {
 	//	return (-1);
 	//}
+	system("pause");
+	for (int i = 0; av[i]; ++i)
+		std::cout << av[i] << std::endl;
 	if (ac >= 3)
 	{
 		try {
@@ -45,10 +50,11 @@ int main(int ac, char **av)
 		catch (std::exception& e) {
 			std::cerr << "An error occured:" << std::endl;
 			std::cerr << e.what() << std::endl;
+			system("PAUSE");
 			return EXIT_FAILURE;
 		}
 		return EXIT_SUCCESS;
 	}
-	std::cerr << "Usage: " << av[0] << " [ip]" << " [port]" << std::endl;
+	system("PAUSE");
 	return EXIT_FAILURE;
 }
