@@ -22,6 +22,7 @@ find_package(
   Boost 1.59.0 REQUIRED
   date_time
   system
+  filesystem
   thread
   coroutine
   )
@@ -66,5 +67,6 @@ target_link_libraries(
   server
   ${Boost_LIBRARIES}
   ssl
+  dl
   crypto
   )

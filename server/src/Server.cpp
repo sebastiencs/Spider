@@ -181,6 +181,7 @@ void		Server::readCommand()
 	      _web->sendCommand(command.second, strs);
 	    }
 	    found = 1;
+	    break ;
 	  }
 	}
 
@@ -195,6 +196,7 @@ void		Server::readCommand()
 	      command.second("");
 	    }
 	    found = 1;
+	    break ;
 	  }
 	}
 	if (!found && input.size()) {
